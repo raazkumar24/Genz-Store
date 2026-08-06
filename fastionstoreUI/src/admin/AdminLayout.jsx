@@ -91,7 +91,7 @@ const AdminLayout = () => {
             </aside>
 
             {/* Main Content Area */}
-            <main className="flex-1 flex flex-col h-screen overflow-hidden bg-gray-50 relative">
+            <main className="flex-1 flex flex-col h-screen overflow-hidden bg-gray-50 relative min-w-0">
                 {/* Background Pattern */}
                 <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
                     <div className="h-full w-full bg-[radial-gradient(circle_at_2px_2px,black_1px,transparent_0)] bg-[length:32px_32px]" />

@@ -23,7 +23,7 @@ const Dashboard = () => {
     }, [products]);
 
     return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-6xl mx-auto pb-24">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-6xl mx-auto pb-24 min-w-0">
             {/* Dashboard Header */}
             <Card className="mb-10 flex flex-col gap-4 md:gap-6 md:flex-row md:items-end md:justify-between p-5 sm:p-6 md:p-8">
                 <div>
@@ -129,17 +129,17 @@ const Dashboard = () => {
                         <div className="py-10 text-center text-sm font-medium text-gray-400 animate-pulse">Loading Inventory...</div>
                     ) : products?.length > 0 ? (
                         products.slice(0, 4).map(product => (
-                            <div key={product._id} className="flex items-center justify-between rounded-2xl border border-transparent hover:border-gray-200 hover:bg-gray-50 p-4 group transition-all">
-                                <div className="flex items-center gap-6">
-                                    <div className="h-16 w-16 rounded-xl bg-gray-100 overflow-hidden shrink-0 border border-gray-200 group-hover:shadow-sm transition-all flex items-center justify-center">
+                            <div key={product._id} className="flex items-center justify-between gap-2 rounded-2xl border border-transparent hover:border-gray-200 hover:bg-gray-50 p-4 group transition-all">
+                                <div className="flex items-center gap-3 sm:gap-6 flex-1 min-w-0">
+                                    <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl bg-gray-100 overflow-hidden shrink-0 border border-gray-200 group-hover:shadow-sm transition-all flex items-center justify-center">
                                         {product.variants?.[0]?.images?.[0] ? (
                                             <img src={product.variants[0].images[0]} alt={product.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         ) : (
                                             <span className="text-[10px] text-gray-400 text-center px-1 leading-tight">No Image</span>
                                         )}
                                     </div>
-                                    <div>
-                                        <p className="font-bold text-gray-900 text-lg md:text-xl line-clamp-1">{product.name}</p>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-bold text-gray-900 text-base sm:text-lg md:text-xl truncate">{product.name}</p>
                                         <div className="flex items-center gap-3 mt-1">
                                             <span className="text-sm font-semibold text-[var(--color-primary)]">
                                                 ₹{product.variants?.[0]?.price ?? 'N/A'}
