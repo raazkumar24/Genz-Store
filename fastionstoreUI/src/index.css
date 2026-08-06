@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@plugin "@toolwind/corner-shape";
+
+
+:root {
+  /* Backgrounds */
+  --color-bg: #F4F4F0; /* Stark off-white */
+  --color-bg-secondary: #FFFFFF;
+  --color-surface: #E5E5E5;
+
+  /* Primary */
+  --color-primary: #FF2A00; /* Intense Streetwear Red */
+  --color-primary-hover: #CC2200;
+  --color-primary-light: #FFD4CC;
+
+  /* Text */
+  --color-text: #111111; /* Near Black */
+  --color-text-muted: #737373; /* Neutral gray */
+
+  /* Accent */
+  --color-accent: #0033FF; /* Hyper Blue */
+  --color-accent-hover: #0022CC;
+
+  /* Utility */
+  --color-border: #E5E7EB; /* Light gray borders */
+  --color-success: #10B981;
+  --color-error: #EF4444;
+  --color-white: #FFFFFF;
+
+  /* Fonts */
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+  display: flex;
+  width: max-content;
+}
