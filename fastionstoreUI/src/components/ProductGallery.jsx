@@ -8,33 +8,34 @@ const ProductGallery = ({ displayImages, activeImage, setActiveImage, productNam
   if (!displayImages || displayImages.length === 0) return null;
 
   return (
-    <section className="grid gap-4 md:grid-cols-[80px_1fr] lg:gap-6">
-      {/* Thumbnails */}
-      <div className="order-2 flex gap-3 overflow-x-auto md:order-1 md:flex-col md:overflow-visible hide-scrollbar pb-2 md:pb-0">
+    <section className="flex flex-col gap-4 md:grid md:grid-cols-[90px_1fr] lg:gap-8">
+      {/* Mobile: Main Image appears first, Desktop: Main Image is second column */}
+      <div className="order-1 md:order-2 overflow-hidden rounded-2xl bg-[#f8f8f8] shadow-sm border border-gray-100 relative group w-full h-[55vh] md:h-[70vh] lg:h-[80vh]">
+        <img
+          src={activeImage || displayImages[0]}
+          alt={productName}
+          className="absolute inset-0 h-full w-full object-contain object-center transition-opacity duration-300"
+        />
+      </div>
+
+      {/* Thumbnails: Horizontal scroll on mobile, Vertical on desktop */}
+      <div className="order-2 md:order-1 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-2 md:pb-0 md:flex-col md:overflow-visible w-full">
         {displayImages.map((image) => (
           <button
             key={image}
             type="button"
             onClick={() => setActiveImage(image)}
-            className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--color-surface)] transition-all duration-300 md:w-full md:h-24 ${activeImage === image
-                ? "ring-2 ring-[var(--color-primary)] ring-offset-2 ring-offset-[var(--color-bg)]"
-                : "opacity-70 hover:opacity-100 hover:shadow-md"
-              }`}
+            className={`relative h-16 w-16 shrink-0 snap-center overflow-hidden rounded-xl bg-gray-100 transition-all duration-300 md:h-24 md:w-24 lg:h-28 lg:w-full ${
+              activeImage === image
+                ? "ring-2 ring-[var(--color-primary)] ring-offset-2"
+                : "opacity-60 hover:opacity-100 hover:shadow-sm"
+            }`}
             aria-label="Select product image"
           >
             <img src={image} alt="" className="h-full w-full object-cover" />
             {activeImage !== image && <div className="absolute inset-0 bg-black/5 transition-colors hover:bg-transparent" />}
           </button>
         ))}
-      </div>
-
-      {/* Main Image */}
-      <div className="order-1 overflow-hidden rounded-2xl bg-gray-100 md:order-2 shadow-sm border border-gray-200 relative group aspect-[3/4] md:aspect-[4/5]">
-        <img
-          src={activeImage || displayImages[0]}
-          alt={productName}
-          className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
-        />
       </div>
     </section>
   );

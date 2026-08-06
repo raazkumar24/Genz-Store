@@ -201,7 +201,7 @@ const ProductDetails = () => {
   const isAddDisabled = !selectedVariant || selectedVariant.stock === 0;
 
   return (
-    <div className="bg-[var(--color-bg)] px-4 py-8 md:px-8 md:py-16">
+    <div className="bg-[var(--color-bg)] px-4 py-8 md:px-8 md:py-16 pb-28 md:pb-16">
       <div className="mx-auto max-w-7xl">
         <Link
           to="/"
@@ -212,7 +212,7 @@ const ProductDetails = () => {
           Back to Collection
         </Link>
 
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] items-start">
+        <div className="grid gap-8 lg:gap-12 md:grid-cols-2 lg:grid-cols-[1fr_1.1fr] items-start">
 
           {/* Left Column: Image Gallery */}
           <ProductGallery 
@@ -381,8 +381,8 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            {/* Add To Cart Button */}
-            <div className="mt-10">
+            {/* Desktop Add To Cart Button */}
+            <div className="mt-10 hidden md:block">
               <Button
                 type="button"
                 onClick={handleAddToCart}
@@ -400,6 +400,31 @@ const ProductDetails = () => {
       
       {/* Similar Products Section */}
       <SimilarProducts currentProduct={product} allProducts={products} />
+
+      {/* Mobile Sticky Add To Cart Footer */}
+      <div 
+        className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] md:hidden"
+        style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Total Price</span>
+            <span className="text-xl font-black text-gray-900 leading-tight">
+              ₹{selectedVariant?.isSale && selectedVariant?.salePrice > 0 ? selectedVariant.salePrice : selectedVariant?.price || (variants[0]?.price || 0)}
+            </span>
+          </div>
+          <Button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={isAddDisabled}
+            variant="primary"
+            size="lg"
+            className="flex-1 py-3 text-sm"
+          >
+            {isAddDisabled ? "SOLD OUT" : "ADD TO BAG"}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

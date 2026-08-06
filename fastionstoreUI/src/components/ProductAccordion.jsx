@@ -28,7 +28,7 @@ const ProductAccordion = ({ product }) => {
       )}
 
       {(product.productDetails?.specifications?.length > 0 || product.productDetails?.style) && (
-        <details className="group border-b border-gray-100 pb-4" open>
+        <details className="group border-b border-gray-100 pb-4">
           <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-900 list-none [&::-webkit-details-marker]:hidden">
             Specifications
             <span className="transition group-open:rotate-180 text-gray-500">
@@ -54,7 +54,7 @@ const ProductAccordion = ({ product }) => {
         </details>
       )}
 
-      <details className="group pb-2" open>
+      <details className="group pb-2">
         <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-900 list-none [&::-webkit-details-marker]:hidden">
           Item details
           <span className="transition group-open:rotate-180 text-gray-500">

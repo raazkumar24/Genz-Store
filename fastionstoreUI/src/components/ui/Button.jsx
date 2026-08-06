@@ -18,7 +18,7 @@ const Button = ({
     loading = false,
     ...props
 }) => {
-    const baseStyles = 'inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] active:scale-[0.97] disabled:active:scale-100';
+    const baseStyles = 'inline-flex items-center justify-center whitespace-nowrap font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] active:scale-[0.97] disabled:active:scale-100';
     
     const variants = {
         primary: 'bg-[var(--color-primary)] text-white hover:brightness-110 shadow-[0_4px_16px_rgba(205,84,100,0.3)] hover:shadow-[0_8px_24px_rgba(205,84,100,0.4)] focus:ring-[var(--color-primary)]',
