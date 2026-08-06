@@ -25,7 +25,7 @@ const Dashboard = () => {
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-6xl mx-auto pb-24">
             {/* Dashboard Header */}
-            <Card className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between p-8">
+            <Card className="mb-10 flex flex-col gap-4 md:gap-6 md:flex-row md:items-end md:justify-between p-5 sm:p-6 md:p-8">
                 <div>
                     <Badge variant="primary" className="mb-4 inline-flex items-center gap-2 px-3 py-1">
                         <span className="relative flex h-2 w-2">
@@ -59,7 +59,7 @@ const Dashboard = () => {
             {/* Metrics Cards Grid */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10">
                 {/* 1. Products Card */}
-                <Card className="group p-6 hover:-translate-y-1 transition-transform">
+                <Card className="group p-5 md:p-6 hover:-translate-y-1 transition-transform">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-primary-light)] text-[var(--color-primary)]">
                             <Package size={24} />
@@ -78,7 +78,7 @@ const Dashboard = () => {
                 </Card>
 
                 {/* 2. Orders Card */}
-                <Card className="group p-6 hover:-translate-y-1 transition-transform">
+                <Card className="group p-5 md:p-6 hover:-translate-y-1 transition-transform">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-500">
                             <ShoppingBag size={24} />
@@ -96,7 +96,7 @@ const Dashboard = () => {
                 </Card>
 
                 {/* 3. Revenue Card (Mock) */}
-                <Card className="group p-6 hover:-translate-y-1 transition-transform sm:col-span-2 lg:col-span-1">
+                <Card className="group p-5 md:p-6 hover:-translate-y-1 transition-transform sm:col-span-2 lg:col-span-1">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-green-500">
                             <IndianRupee size={24} />
@@ -116,7 +116,7 @@ const Dashboard = () => {
             </div>
 
             {/* Quick Access Section */}
-            <Card className="p-6 md:p-8">
+            <Card className="p-5 md:p-8">
                 <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
                     <h3 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-heading)' }}>Recent Drops</h3>
                     <Button to="/admin/products" variant="secondary" size="sm">

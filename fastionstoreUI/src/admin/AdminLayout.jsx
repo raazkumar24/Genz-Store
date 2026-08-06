@@ -120,7 +120,7 @@ const AdminLayout = () => {
                 </header>
 
                 {/* Scrollable Page Content */}
-                <div className="flex-1 overflow-auto p-6 md:p-10 relative z-10">
+                <div className="flex-1 overflow-auto p-4 sm:p-6 md:p-10 relative z-10">
                     <div className="mx-auto max-w-6xl">
                         <Outlet />
                     </div>

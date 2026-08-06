@@ -34,7 +34,7 @@ const ProductList = () => {
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-6xl mx-auto pb-24">
             
             {/* Header Section */}
-            <Card className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between p-8">
+            <Card className="mb-8 md:mb-10 flex flex-col gap-4 md:gap-6 md:flex-row md:items-end md:justify-between p-5 sm:p-6 md:p-8">
                 <div>
                     <Badge variant="primary" className="mb-4 inline-flex items-center gap-2 px-3 py-1">
                         <Package size={14} />
@@ -82,10 +82,10 @@ const ProductList = () => {
                     <table className="w-full text-left text-sm text-gray-700">
                         <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
                             <tr>
-                                <th className="px-6 py-4">Product Details</th>
-                                <th className="px-6 py-4">Price</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4 text-right">Actions</th>
+                                <th className="px-4 py-3 md:px-6 md:py-4">Product Details</th>
+                                <th className="px-4 py-3 md:px-6 md:py-4">Price</th>
+                                <th className="px-4 py-3 md:px-6 md:py-4 hidden sm:table-cell">Status</th>
+                                <th className="px-4 py-3 md:px-6 md:py-4 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
@@ -130,10 +130,10 @@ const ProductList = () => {
 
                                 return (
                                 <tr key={product._id} className="transition-colors hover:bg-gray-50 group">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-4">
+                                    <td className="px-4 py-3 md:px-6 md:py-4">
+                                        <div className="flex items-center gap-3 md:gap-4">
                                             {/* Image from first variant */}
-                                            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm transition-transform group-hover:shadow-md flex items-center justify-center">
+                                            <div className="h-14 w-14 md:h-16 md:w-16 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm transition-transform group-hover:shadow-md flex items-center justify-center">
                                                 {displayImage ? (
                                                     <img 
                                                         src={displayImage} 
@@ -154,7 +154,7 @@ const ProductList = () => {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 font-semibold text-gray-900">
+                                    <td className="px-4 py-3 md:px-6 md:py-4 font-semibold text-gray-900">
                                         {/* Price from first variant */}
                                         {displayPrice !== null ? (
                                             <>
@@ -165,13 +165,13 @@ const ProductList = () => {
                                             <span className="text-sm text-gray-400 italic">No variants</span>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-4 py-3 md:px-6 md:py-4 hidden sm:table-cell">
                                         <Badge variant={totalStock > 0 ? 'success' : 'error'} className="px-2 py-1 flex items-center gap-1 w-fit">
                                             <span className={`h-2 w-2 rounded-full ${totalStock > 0 ? 'bg-green-500' : 'bg-red-500'}`}></span>
                                             {totalStock > 0 ? 'In Stock' : 'Out of Stock'}
                                         </Badge>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
+                                    <td className="px-4 py-3 md:px-6 md:py-4 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             <Button 
                                                 to={`/admin/products/edit/${product._id}`} 
