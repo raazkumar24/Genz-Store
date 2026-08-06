@@ -212,7 +212,7 @@ const ProductDetails = () => {
           Back to Collection
         </Link>
 
-        <div className="grid gap-8 lg:gap-12 md:grid-cols-2 lg:grid-cols-[1fr_1.1fr] items-start">
+        <div className="grid gap-8 lg:gap-12 md:grid-cols-2 lg:grid-cols-[1fr_1.1fr] items-start w-full min-w-0">
 
           {/* Left Column: Image Gallery */}
           <ProductGallery 

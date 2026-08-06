@@ -12,7 +12,7 @@ const SimilarProducts = ({ currentProduct, allProducts }) => {
   const similarProducts = allProducts
     .filter(
       (p) =>
-        p._id !== currentProduct._id && p.category === currentProduct.category
+        p._id !== currentProduct._id && p.category === currentProduct.category,
     )
     .slice(0, 4);
 
@@ -26,8 +26,7 @@ const SimilarProducts = ({ currentProduct, allProducts }) => {
 
   return (
     <div className="w-full bg-[var(--color-bg)] py-16 md:py-24 border-t border-[var(--color-border)]">
-      <div className="mx-auto max-w-7xl px-4 md:px-8">
-        
+      <div className="mx-auto max-w-7xl px-0">
         {/* Header Area */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
@@ -38,19 +37,27 @@ const SimilarProducts = ({ currentProduct, allProducts }) => {
               </span>
               You Might Also Like
             </span>
-            <h2 className="text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase" style={{ fontFamily: "var(--font-heading)" }}>
-              Similar <span className="text-transparent" style={{ WebkitTextStroke: '2px var(--color-text)' }}>Drops</span>
+            <h2
+              className="text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              Similar{" "}
+              <span
+                className="text-transparent"
+                style={{ WebkitTextStroke: "2px var(--color-text)" }}
+              >
+                Drops
+              </span>
             </h2>
           </div>
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-4">
           {displayProducts.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </div>
-        
       </div>
     </div>
   );

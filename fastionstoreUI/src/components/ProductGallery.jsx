@@ -1,14 +1,19 @@
-import React from 'react';
+import React from "react";
 
 /**
  * ProductGallery Component
  * Renders the product image gallery including thumbnails and the main image view.
  */
-const ProductGallery = ({ displayImages, activeImage, setActiveImage, productName }) => {
+const ProductGallery = ({
+  displayImages,
+  activeImage,
+  setActiveImage,
+  productName,
+}) => {
   if (!displayImages || displayImages.length === 0) return null;
 
   return (
-    <section className="flex flex-col gap-4 md:grid md:grid-cols-[90px_1fr] lg:gap-8">
+    <section className="flex flex-col gap-4 md:grid md:grid-cols-[90px_1fr] lg:gap-8 w-full min-w-0">
       {/* Mobile: Main Image appears first, Desktop: Main Image is second column */}
       <div className="order-1 md:order-2 overflow-hidden rounded-2xl bg-[#f8f8f8] shadow-sm border border-gray-100 relative group w-full h-[55vh] md:h-[70vh] lg:h-[80vh]">
         <img
@@ -19,7 +24,7 @@ const ProductGallery = ({ displayImages, activeImage, setActiveImage, productNam
       </div>
 
       {/* Thumbnails: Horizontal scroll on mobile, Vertical on desktop */}
-      <div className="order-2 md:order-1 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-2 md:pb-0 md:flex-col md:overflow-visible w-full">
+      <div className="order-2 md:order-1 flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar p-1 md:p-2 md:flex-col md:overflow-y-auto w-full min-w-0">
         {displayImages.map((image) => (
           <button
             key={image}
@@ -33,7 +38,9 @@ const ProductGallery = ({ displayImages, activeImage, setActiveImage, productNam
             aria-label="Select product image"
           >
             <img src={image} alt="" className="h-full w-full object-cover" />
-            {activeImage !== image && <div className="absolute inset-0 bg-black/5 transition-colors hover:bg-transparent" />}
+            {activeImage !== image && (
+              <div className="absolute inset-0 bg-black/5 transition-colors hover:bg-transparent" />
+            )}
           </button>
         ))}
       </div>

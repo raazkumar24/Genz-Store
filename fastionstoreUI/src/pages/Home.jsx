@@ -143,7 +143,7 @@ const Home = () => {
 
         {/* Products Grid or Empty State or Loading State */}
         {loading ? (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-1 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -177,7 +177,7 @@ const Home = () => {
             </p>
           </Card>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-1 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
