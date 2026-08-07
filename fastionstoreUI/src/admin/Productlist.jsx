@@ -84,9 +84,10 @@ const ProductList = () => {
           <Button
             to="/admin/products/new"
             variant="primary"
-            className="flex items-center gap-2 shrink-0"
+            className="shrink-0"
+            icon={<Plus size={20} />}
+            iconPosition="left"
           >
-            <Plus size={20} />
             Add Drop
           </Button>
         </div>

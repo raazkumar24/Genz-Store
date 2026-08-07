@@ -64,8 +64,15 @@ const Cart = () => {
                             // Render size directly. If it's old comma-separated data, show the first one.
                             const displaySize = item.size ? item.size.split(',')[0].trim() : '';
 
-                            // Product page URL
-                            const productUrl = `/products/${item.productId}`;
+                            // Product page URL with variant and size pre-selection
+                            let productUrl = `/products/${item.productId}`;
+                            const params = new URLSearchParams();
+                            if (item.variantId) params.append('variant', item.variantId);
+                            if (item.size) params.append('size', item.size);
+                            
+                            if (params.toString()) {
+                                productUrl += `?${params.toString()}`;
+                            }
 
                             return (
                             <Card key={`${item.productId}-${item.variantId}-${item.size}`} className="p-5">

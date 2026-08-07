@@ -33,6 +33,7 @@ const ProductDetails = () => {
   const { productId } = useParams();
   const [searchParams] = useSearchParams();
   const variantId = searchParams.get('variant');
+  const sizeParam = searchParams.get('size');
   const { loading, getProductById, products } = useProducts();
   const { addToCart } = useCart();
   const { addToast } = useToast();
@@ -67,7 +68,13 @@ const ProductDetails = () => {
 
     if (firstAvailableVariant) {
       const sizesArray = (firstAvailableVariant.size || "").split(',').map(s => s.trim()).filter(Boolean);
-      setSelectedSize(sizesArray[0] || "");
+      
+      if (sizeParam && sizesArray.includes(sizeParam)) {
+        setSelectedSize(sizeParam);
+      } else {
+        setSelectedSize(sizesArray[0] || "");
+      }
+      
       setSelectedColor(firstAvailableVariant.color || "");
       if (firstAvailableVariant.images && firstAvailableVariant.images.length > 0) {
         setActiveImage(firstAvailableVariant.images[0]);
@@ -76,7 +83,7 @@ const ProductDetails = () => {
         setActiveImage(anyVariantWithImage ? anyVariantWithImage.images[0] : "");
       }
     }
-  }, [product, variants, variantId]);
+  }, [product, variants, variantId, sizeParam]);
 
   const sizes = useMemo(() => {
     const allSizes = [];
@@ -201,8 +208,9 @@ const ProductDetails = () => {
   const isAddDisabled = !selectedVariant || selectedVariant.stock === 0;
 
   return (
-    <div className="bg-[var(--color-bg)] px-4 py-8 md:px-8 md:py-16 pb-28 md:pb-16">
-      <div className="mx-auto max-w-7xl">
+    <div className="bg-[var(--color-bg)] min-h-screen">
+      <div className="px-4 py-8 md:px-8 md:py-16 pb-28 md:pb-16">
+        <div className="mx-auto max-w-7xl">
         <Link
           to="/"
           className="inline-flex items-center gap-2 mb-8 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
@@ -396,6 +404,7 @@ const ProductDetails = () => {
             </div>
           </section>
         </div>
+      </div>
       </div>
       
       {/* Similar Products Section */}
