@@ -120,9 +120,9 @@ const ProductCard = ({ product, highlight: highlightProp = false }) => {
           }}
         />
 
-        {/* Color Swatches on Top Right */}
+        {/* Color Swatches on Bottom Left */}
         {colors.length > 0 && (
-          <div className="absolute top-1.5 right-1.5 md:top-4 md:right-4 flex items-center -space-x-1.5 bg-white/50 backdrop-blur-md p-1 md:p-1.5 rounded-full shadow-sm z-20">
+          <div className="absolute bottom-2 left-2 md:bottom-3 md:left-3 flex items-center -space-x-1.5 bg-white/70 backdrop-blur-md p-1 md:p-1.5 rounded-full shadow-sm z-20">
             {colors.map((c, i) => {
               const cleanColor = c.split(/[- ]+/).pop().toLowerCase();
               const directColor = c.replace(/[^a-zA-Z]/g, "").toLowerCase();

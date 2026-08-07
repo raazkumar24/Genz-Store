@@ -118,6 +118,14 @@ const Navbar = () => {
                     </NavLink>
 
                     <div className="flex items-center gap-4">
+                        <NavLink to="/wishlist" aria-label="Wishlist" onClick={closeMobileMenu} className="relative text-[var(--color-text)] hover:text-[var(--color-primary)]">
+                            <Heart size={22} strokeWidth={1.5} />
+                            {wishlistCount > 0 && (
+                                <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm">
+                                    {wishlistCount}
+                                </span>
+                            )}
+                        </NavLink>
                         <NavLink to="/cart" aria-label="Cart" onClick={closeMobileMenu} className="relative text-[var(--color-text)] hover:text-[var(--color-primary)]">
                             <ShoppingCart size={22} strokeWidth={1.5} />
                             {cartCount > 0 && (
@@ -151,6 +159,15 @@ const Navbar = () => {
                                             {link.label}
                                         </NavLink>
                                     ))}
+
+                                    <NavLink to="/wishlist" onClick={closeMobileMenu} className={mobileNavLinkClass}>
+                                        <span className="flex items-center gap-2">Wishlist / Favorites</span>
+                                        {wishlistCount > 0 && (
+                                            <span className="rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white">
+                                                {wishlistCount}
+                                            </span>
+                                        )}
+                                    </NavLink>
                                     
                                     <div className="mt-8">
                                         <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)] mb-4">Collections</p>
