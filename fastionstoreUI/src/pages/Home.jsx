@@ -50,8 +50,8 @@ const Home = () => {
         const haystack = [
           product.name,
           product.description,
-          product.category,
-          product.collection,
+          Array.isArray(product.category) ? product.category.join(" ") : product.category,
+          Array.isArray(product.collection) ? product.collection.join(" ") : product.collection,
           ...(product.variants || []).flatMap((v) => v.keywords || []),
         ]
           .join(" ")

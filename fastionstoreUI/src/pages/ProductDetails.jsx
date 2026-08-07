@@ -250,9 +250,11 @@ const ProductDetails = () => {
               </div>
             )}
 
-            <div className="mb-2">
+            <div className="mb-2 flex flex-col">
+              {product.brand && <span className="text-sm font-bold uppercase tracking-widest text-[var(--color-primary)]">{product.brand}</span>}
               <span className="text-sm font-bold uppercase tracking-widest text-[var(--color-text-muted)]">
-                {product.collection ? `${product.collection}'s ` : ""}{product.category || "Apparel"}
+                {Array.isArray(product.collection) && product.collection.length > 0 ? `${product.collection.join(", ")} | ` : (product.collection ? `${product.collection} | ` : "")}
+                {Array.isArray(product.category) ? product.category.join(", ") : (product.category || "Apparel")}
               </span>
             </div>
 

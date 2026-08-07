@@ -12,7 +12,9 @@ const SimilarProducts = ({ currentProduct, allProducts }) => {
   const similarProducts = allProducts
     .filter(
       (p) =>
-        p._id !== currentProduct._id && p.category === currentProduct.category,
+        p._id !== currentProduct._id && 
+        ((Array.isArray(p.category) && Array.isArray(currentProduct.category) && p.category.some(c => currentProduct.category.includes(c))) || 
+         p.category === currentProduct.category),
     )
     .slice(0, 4);
 

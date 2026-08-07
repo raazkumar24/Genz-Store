@@ -27,7 +27,7 @@ export const addProduct = async (req, res) => {
     if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({ message: "Request body is empty or not parsed. Form-data check karein." });
     }
-    const { name, description, category, variants, collection, productDetails } = req.body;
+    const { name, description, brand, category, variants, collection, productDetails } = req.body;
 
     try {
         let parsedVariants = variants;
@@ -38,6 +38,25 @@ export const addProduct = async (req, res) => {
         let parsedProductDetails = productDetails;
         if (typeof productDetails === 'string') {
             parsedProductDetails = JSON.parse(productDetails);
+        }
+
+        let parsedCategory = category || ['Uncategorized'];
+        if (typeof category === 'string') {
+            try {
+                parsedCategory = JSON.parse(category);
+            } catch (e) {
+                // If it fails to parse, it might be a simple string. Just wrap it in an array.
+                parsedCategory = [category];
+            }
+        }
+
+        let parsedCollection = collection || [];
+        if (typeof collection === 'string') {
+            try {
+                parsedCollection = JSON.parse(collection);
+            } catch (e) {
+                parsedCollection = [collection];
+            }
         }
 
         // 🔑 Map variant specific images
@@ -56,9 +75,10 @@ export const addProduct = async (req, res) => {
         const product = new Product({
             name,
             description: description || '',
-            category: category || 'Uncategorized',
+            brand: brand || '',
+            category: parsedCategory,
+            collection: parsedCollection,
             variants: parsedVariants,
-            collection: collection || '',
             productDetails: parsedProductDetails || undefined,
         });
 
@@ -79,13 +99,38 @@ export const updateProduct = async (req, res) => {
             return res.status(404).json({ message: 'Product not found ❌' });
         }
 
-        const { name, description, category, variants, collection, productDetails } = req.body;
+        const { name, description, brand, category, variants, collection, productDetails } = req.body;
 
         let updateData = {};
+        console.log("UPDATE REQ BODY CATEGORY:", category);
+        console.log("UPDATE REQ BODY COLLECTION:", collection);
         if (name !== undefined) updateData.name = name;
         if (description !== undefined) updateData.description = description;
-        if (category !== undefined) updateData.category = category;
-        if (collection !== undefined) updateData.collection = collection;
+        if (brand !== undefined) updateData.brand = brand;
+        
+        if (category !== undefined) {
+            if (typeof category === 'string') {
+                try {
+                    updateData.category = JSON.parse(category);
+                } catch (e) {
+                    updateData.category = [category];
+                }
+            } else {
+                updateData.category = category;
+            }
+        }
+        
+        if (collection !== undefined) {
+            if (typeof collection === 'string') {
+                try {
+                    updateData.collection = JSON.parse(collection);
+                } catch (e) {
+                    updateData.collection = [collection];
+                }
+            } else {
+                updateData.collection = collection;
+            }
+        }
         if (productDetails !== undefined) {
             updateData.productDetails = typeof productDetails === 'string' ? JSON.parse(productDetails) : productDetails;
         }

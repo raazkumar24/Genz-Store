@@ -189,9 +189,12 @@ const ProductCard = ({ product, isFeatured = false }) => {
         </div>
 
         <div className="mt-0.5 md:mt-1">
-          <span className="text-[11px] md:text-[13px] font-medium text-gray-500 line-clamp-1">
-            {product.collection ? `${product.collection}'s ` : ""}
-            {product.category || "Apparel"}
+          <span className="text-[11px] md:text-[13px] font-medium text-gray-500 line-clamp-1 flex flex-col">
+            {product.brand && <span className="font-bold text-gray-700">{product.brand}</span>}
+            <span>
+              {Array.isArray(product.collection) && product.collection.length > 0 ? `${product.collection.join(", ")} | ` : (product.collection ? `${product.collection} | ` : "")}
+              {Array.isArray(product.category) ? product.category.join(", ") : (product.category || "Apparel")}
+            </span>
           </span>
         </div>
 

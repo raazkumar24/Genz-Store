@@ -221,7 +221,7 @@ const Dashboard = () => {
                         variant="secondary"
                         className="px-2 py-0.5 text-[10px]"
                       >
-                        {product.category || "Apparel"}
+                        {Array.isArray(product.category) ? product.category.join(", ") : (product.category || "Apparel")}
                       </Badge>
                     </div>
                   </div>

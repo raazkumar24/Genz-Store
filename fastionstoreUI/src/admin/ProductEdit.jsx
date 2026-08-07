@@ -34,6 +34,7 @@ const ProductEdit = () => {
     description: "",
     category: "",
     collection: "",
+    brand: "",
     topHighlights: "",
     itemDetails: "",
   });
@@ -65,8 +66,9 @@ const ProductEdit = () => {
       setFormData({
         name: product.name || "",
         description: product.description || "",
-        category: product.category || "",
-        collection: product.collection || "",
+        category: Array.isArray(product.category) ? product.category.join(", ") : (product.category || ""),
+        collection: Array.isArray(product.collection) ? product.collection.join(", ") : (product.collection || ""),
+        brand: product.brand || "",
         topHighlights: product.productDetails?.topHighlights?.join("\n") || "",
         itemDetails: product.productDetails?.itemDetails || "",
       });
@@ -187,9 +189,17 @@ const ProductEdit = () => {
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("description", formData.description);
-      if (formData.category) payload.append("category", formData.category);
-      if (formData.collection)
-        payload.append("collection", formData.collection);
+      if (formData.brand) payload.append("brand", formData.brand);
+      
+      if (formData.category) {
+        const categoryArray = formData.category.split(",").map(c => c.trim()).filter(Boolean);
+        payload.append("category", JSON.stringify(categoryArray));
+      }
+      
+      if (formData.collection) {
+        const collectionArray = formData.collection.split(",").map(c => c.trim()).filter(Boolean);
+        payload.append("collection", JSON.stringify(collectionArray));
+      }
 
       const topHighlightsArray = formData.topHighlights
         .split("\n")
@@ -331,6 +341,20 @@ const ProductEdit = () => {
 
                 <div className="md:col-span-2">
                   <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                    Brand
+                  </label>
+                  <input
+                    type="text"
+                    name="brand"
+                    value={formData.brand}
+                    onChange={handleChange}
+                    placeholder="e.g., Veirdo"
+                    className="w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
                     Top Highlights (One per line)
                   </label>
                   <textarea
@@ -422,32 +446,28 @@ const ProductEdit = () => {
               <div className="space-y-5">
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Category
+                    Categories (Comma Separated)
                   </label>
-                  <select
+                  <input
+                    type="text"
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
+                    placeholder="e.g., T-Shirts, Men, Oversized"
                     className="w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all"
-                  >
-                    <option value="">Select Category</option>
-                    <option value="T-Shirts">T-Shirts</option>
-                    <option value="Hoodies">Hoodies</option>
-                    <option value="Bottoms">Bottoms</option>
-                    <option value="Accessories">Accessories</option>
-                  </select>
+                  />
                 </div>
 
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Collection
+                    Collections (Comma Separated)
                   </label>
                   <input
                     type="text"
                     name="collection"
                     value={formData.collection}
                     onChange={handleChange}
-                    placeholder="e.g., Summer Collection"
+                    placeholder="e.g., Summer Collection, Trending"
                     className="w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all"
                   />
                 </div>

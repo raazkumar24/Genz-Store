@@ -29,12 +29,25 @@ const Collection = () => {
     ? collectionName.charAt(0).toUpperCase() + collectionName.slice(1) 
     : "Collection";
 
-  // Filter products by collection (case-insensitive)
+  // Filter products by collection (flexible subset matching)
   const collectionProducts = useMemo(() => {
     if (!collectionName || !products) return [];
-    return products.filter((p) => 
-      p.collection && p.collection.toLowerCase() === collectionName.toLowerCase()
-    );
+    
+    const searchString = collectionName.toLowerCase().replace(/-/g, ' ').trim();
+    
+    return products.filter((p) => {
+      if (Array.isArray(p.collection)) {
+        return p.collection.some(c => {
+          const item = c.toLowerCase().trim();
+          return item.includes(searchString) || searchString.includes(item);
+        });
+      }
+      if (p.collection) {
+        const item = p.collection.toLowerCase().trim();
+        return item.includes(searchString) || searchString.includes(item);
+      }
+      return false;
+    });
   }, [products, collectionName]);
 
   return (

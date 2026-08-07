@@ -202,7 +202,7 @@ const ProductList = () => {
                               variant="secondary"
                               className="mt-1 px-2 py-0.5 text-[10px]"
                             >
-                              {product.category || "Apparel"}
+                              {Array.isArray(product.category) ? product.category.join(", ") : (product.category || "Apparel")}
                             </Badge>
                             {/* Variant count */}
                             <p className="mt-1 text-[10px] text-gray-400">

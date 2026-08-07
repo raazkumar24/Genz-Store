@@ -16,8 +16,9 @@ const variantSchema = new mongoose.Schema({
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, default: '' },
-  category: { type: String, default: 'Uncategorized' },
-  collection: { type: String, default: '' },
+  brand: { type: String, default: '' },
+  category: { type: [String], default: ['Uncategorized'] },
+  collection: { type: [String], default: [] },
   productDetails: {
     topHighlights: [{ type: String }],
     specifications: [{ key: String, value: String }],
