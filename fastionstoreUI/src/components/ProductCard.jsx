@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Badge, Button, Card } from "./ui";
 import { useCart } from "../context/CartContext";
-import { ShoppingBag, Check } from "lucide-react";
+import { useWishlist } from "../context/WishlistContext";
+import { ShoppingBag, Check, Heart } from "lucide-react";
 
 // Simple color mapper for swatches
 const colorMap = {
@@ -51,10 +52,13 @@ const colorMap = {
   magenta: "#ff00ff",
 };
 
-const ProductCard = ({ product, isFeatured = false }) => {
+const ProductCard = ({ product, highlight: highlightProp = false }) => {
   const navigate = useNavigate();
   const { addToCart, isInCart } = useCart();
-  const [added, setAdded] = useState(false); // Cart add feedback state
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const [added, setAdded] = useState(false);
+
+  const isFav = isInWishlist(product._id); // Cart add feedback state
 
   const primaryVariant =
     product.matchedVariant ||
@@ -79,7 +83,7 @@ const ProductCard = ({ product, isFeatured = false }) => {
     (primaryVariant?.keywords &&
       primaryVariant.keywords.some((k) => k.toLowerCase() === "hot"));
 
-  const highlight = isFeatured || isProductTrending;
+  const isHighlight = highlightProp || isProductTrending;
 
   const isProductSale = primaryVariant?.isSale;
   let salePrice = primaryVariant?.salePrice || 0;
@@ -148,9 +152,26 @@ const ProductCard = ({ product, isFeatured = false }) => {
           </div>
         )}
 
+        {/* Wishlist / Favorite Heart Button on Top Left */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleWishlist(product);
+          }}
+          className={`absolute top-1.5 left-1.5 md:top-3 md:left-3 z-30 flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full backdrop-blur-md transition-all shadow-sm ${
+            isFav
+              ? "bg-red-500 text-white shadow-red-200"
+              : "bg-white/75 text-gray-700 hover:bg-white hover:text-red-500 hover:scale-110"
+          }`}
+          title={isFav ? "Remove from Wishlist" : "Add to Wishlist"}
+        >
+          <Heart size={14} className={`md:w-4 md:h-4 ${isFav ? "fill-white" : ""}`} />
+        </button>
+
         {/* Featured / Hot Badge */}
-        {highlight && !isOutOfStock && (
-          <div className="absolute top-1.5 left-1.5 md:top-4 md:left-4 z-10">
+        {isHighlight && !isOutOfStock && (
+          <div className="absolute top-1.5 right-1.5 md:top-4 md:right-4 z-10">
             <Badge
               variant="primary"
               className="shadow-sm font-bold uppercase tracking-wider text-[9px] md:text-[10px] px-1.5 py-0.5 md:px-2 md:py-1"

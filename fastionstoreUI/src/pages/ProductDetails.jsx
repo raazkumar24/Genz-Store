@@ -2,8 +2,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { useToast } from "../context/ToastContext";
 import { Button, Card, Badge } from "../components/ui";
+import { Heart } from "lucide-react";
 import ProductAccordion from "../components/ProductAccordion";
 import ProductGallery from "../components/ProductGallery";
 import SimilarProducts from "../components/SimilarProducts";
@@ -36,6 +38,7 @@ const ProductDetails = () => {
   const sizeParam = searchParams.get('size');
   const { loading, getProductById, products } = useProducts();
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const { addToast } = useToast();
   const product = getProductById(productId);
 
@@ -400,18 +403,30 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            {/* Desktop Add To Cart Button */}
-            <div className="mt-10 hidden md:block">
+            {/* Desktop Add To Cart Button + Wishlist Button */}
+            <div className="mt-10 hidden md:flex items-center gap-3">
               <Button
                 type="button"
                 onClick={handleAddToCart}
                 disabled={isAddDisabled}
                 variant="primary"
                 size="lg"
-                fullWidth
+                className="flex-1"
               >
                 {isAddDisabled ? "SOLD OUT" : "ADD TO BAG"}
               </Button>
+              <button
+                type="button"
+                onClick={() => product && toggleWishlist(product)}
+                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition-all ${
+                  product && isInWishlist(product._id)
+                    ? "border-red-500 bg-red-500 text-white shadow-md shadow-red-200"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-red-500 hover:text-red-500"
+                }`}
+                title={product && isInWishlist(product._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+              >
+                <Heart size={20} className={product && isInWishlist(product._id) ? "fill-white" : ""} />
+              </button>
             </div>
           </section>
         </div>
@@ -433,16 +448,29 @@ const ProductDetails = () => {
               ₹{selectedVariant?.isSale && selectedVariant?.salePrice > 0 ? selectedVariant.salePrice : selectedVariant?.price || (variants[0]?.price || 0)}
             </span>
           </div>
-          <Button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={isAddDisabled}
-            variant="primary"
-            size="lg"
-            className="flex-1 py-3 text-sm"
-          >
-            {isAddDisabled ? "SOLD OUT" : "ADD TO BAG"}
-          </Button>
+          <div className="flex items-center gap-2 flex-1">
+            <button
+              type="button"
+              onClick={() => product && toggleWishlist(product)}
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-all ${
+                product && isInWishlist(product._id)
+                  ? "border-red-500 bg-red-500 text-white"
+                  : "border-gray-200 bg-gray-50 text-gray-700"
+              }`}
+            >
+              <Heart size={18} className={product && isInWishlist(product._id) ? "fill-white" : ""} />
+            </button>
+            <Button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={isAddDisabled}
+              variant="primary"
+              size="lg"
+              className="flex-1 py-3 text-sm"
+            >
+              {isAddDisabled ? "SOLD OUT" : "ADD TO BAG"}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

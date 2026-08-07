@@ -5,10 +5,12 @@ import { Button } from "./ui";
 import { clearAuth, isAdminUser, isLoggedIn as hasAuthToken } from '../utils/auth';
 import SearchBox from './SearchBox';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const Navbar = () => {
-    // Real cart count from CartContext
+    // Real cart count & wishlist count
     const { cartCount } = useCart();
+    const { wishlistCount } = useWishlist();
     const [isScrolled, setIsScrolled] = useState(false);
     const [showAdminLink, setShowAdminLink] = useState(isAdminUser());
     const [isLoggedIn, setIsLoggedIn] = useState(hasAuthToken());
@@ -259,9 +261,14 @@ const Navbar = () => {
                         </div>
 
                         <div className={`flex items-center gap-6 transition-opacity duration-200 ${showSearch ? 'opacity-0 pointer-events-none w-0 overflow-hidden' : 'opacity-100'}`}>
-                            <button aria-label="Wishlist" className={actionIconButtonClass}>
+                            <NavLink to="/wishlist" aria-label="Wishlist" className={`relative ${actionIconButtonClass}`}>
                                 <Heart size={20} strokeWidth={1.5} />
-                            </button>
+                                {wishlistCount > 0 && (
+                                    <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow-sm">
+                                        {wishlistCount}
+                                    </span>
+                                )}
+                            </NavLink>
 
                             <NavLink to="/cart" aria-label="Cart" className={`relative ${actionIconButtonClass}`}>
                                 <ShoppingCart size={20} strokeWidth={1.5} />

@@ -13,8 +13,10 @@ import Collection from "./pages/Collection";
 import Dashboard from "./admin/Dashboard";
 import AdminLayout from "./admin/AdminLayout";
 import Cart from "./pages/Cart";
+import Wishlist from "./pages/Wishlist";
 import { ProductProvider } from "./context/ProductContext";
 import { CartProvider } from "./context/CartContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import "./App.css";
 
 import NewArrivals from "./pages/NewArrivals";
@@ -51,6 +53,7 @@ function AppContent() {
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<User />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlist" element={<Wishlist />} />
 
             {/* 🛡️ FIXED ADMIN ROUTES: Using AdminLayout for Sidebar & Topbar UI */}
             <Route
@@ -83,7 +86,9 @@ function App() {
     <ToastProvider>
       <ProductProvider>
         <CartProvider>
-          <AppContent />
+          <WishlistProvider>
+            <AppContent />
+          </WishlistProvider>
         </CartProvider>
       </ProductProvider>
     </ToastProvider>

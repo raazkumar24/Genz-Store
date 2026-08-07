@@ -36,12 +36,12 @@ const Collection = () => {
     const searchString = collectionName.toLowerCase().replace(/-/g, ' ').trim();
     
     return products.filter((p) => {
-      // 1. Gender check for Men / Women collection pages
+      // 1. Strict Gender check for Men / Women collection pages
       if (searchString === 'men' || searchString === 'menswear') {
-        if (p.gender === 'Men' || p.gender === 'Unisex') return true;
+        return p.gender === 'Men' || p.gender === 'Unisex';
       }
       if (searchString === 'women' || searchString === 'womenswear') {
-        if (p.gender === 'Women' || p.gender === 'Unisex') return true;
+        return p.gender === 'Women' || p.gender === 'Unisex';
       }
 
       const cols = Array.isArray(p.collection) 
