@@ -19,7 +19,7 @@ const categories = [
   {
     name: "Cargos",
     image: "/collections/baggy_pants.png",
-    link: "/collections/baggy-pants",
+    link: "/collections/cargos",
     bgColor: "bg-[#f1f5f9]", // Light gray/blue
   },
   {

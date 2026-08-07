@@ -32,6 +32,7 @@ const ProductEdit = () => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    gender: "Men",
     category: "",
     collection: "",
     brand: "",
@@ -66,6 +67,7 @@ const ProductEdit = () => {
       setFormData({
         name: product.name || "",
         description: product.description || "",
+        gender: product.gender || "Men",
         category: Array.isArray(product.category) ? product.category.join(", ") : (product.category || ""),
         collection: Array.isArray(product.collection) ? product.collection.join(", ") : (product.collection || ""),
         brand: product.brand || "",
@@ -189,6 +191,7 @@ const ProductEdit = () => {
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("description", formData.description);
+      payload.append("gender", formData.gender);
       if (formData.brand) payload.append("brand", formData.brand);
       
       if (formData.category) {
@@ -446,16 +449,18 @@ const ProductEdit = () => {
               <div className="space-y-5">
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Categories (Comma Separated)
+                    Gender Target
                   </label>
-                  <input
-                    type="text"
-                    name="category"
-                    value={formData.category}
+                  <select
+                    name="gender"
+                    value={formData.gender}
                     onChange={handleChange}
-                    placeholder="e.g., T-Shirts, Men, Oversized"
-                    className="w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all"
-                  />
+                    className="w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all font-semibold"
+                  >
+                    <option value="Men">Men (Male)</option>
+                    <option value="Women">Women (Female)</option>
+                    <option value="Unisex">Unisex (Both)</option>
+                  </select>
                 </div>
 
                 <div>
@@ -467,9 +472,12 @@ const ProductEdit = () => {
                     name="collection"
                     value={formData.collection}
                     onChange={handleChange}
-                    placeholder="e.g., Summer Collection, Trending"
+                    placeholder="e.g., Oversized Tees, Hoodies, Cargos, Trending"
                     className="w-full rounded-xl border border-gray-300 bg-gray-50/50 px-4 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Enter any tags where this product should appear (e.g. Oversized Tees, Hoodies, Cargos).
+                  </p>
                 </div>
               </div>
             </div>

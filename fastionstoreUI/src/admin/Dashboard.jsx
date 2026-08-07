@@ -219,9 +219,9 @@ const Dashboard = () => {
                       </span>
                       <Badge
                         variant="secondary"
-                        className="px-2 py-0.5 text-[10px]"
+                        className="px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold"
                       >
-                        {Array.isArray(product.category) ? product.category.join(", ") : (product.category || "Apparel")}
+                        {product.gender || "Men"}{Array.isArray(product.collection) && product.collection.length > 0 ? ` · ${product.collection.join(", ")}` : (product.collection ? ` · ${product.collection}` : "")}
                       </Badge>
                     </div>
                   </div>

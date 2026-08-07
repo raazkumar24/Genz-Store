@@ -189,13 +189,20 @@ const ProductCard = ({ product, isFeatured = false }) => {
         </div>
 
         <div className="mt-0.5 md:mt-1">
-          <span className="text-[11px] md:text-[13px] font-medium text-gray-500 line-clamp-1 flex flex-col">
-            {product.brand && <span className="font-bold text-gray-700">{product.brand}</span>}
-            <span>
-              {Array.isArray(product.collection) && product.collection.length > 0 ? `${product.collection.join(", ")} | ` : (product.collection ? `${product.collection} | ` : "")}
-              {Array.isArray(product.category) ? product.category.join(", ") : (product.category || "Apparel")}
-            </span>
-          </span>
+          <div className="text-[11px] md:text-[13px] font-medium text-gray-500 truncate" title={`${product.gender || 'Men'} | ${(Array.isArray(product.collection) ? product.collection : [product.collection]).filter(Boolean).join(', ')}`}>
+            {product.brand && <span className="font-bold text-gray-700 mr-1">{product.brand} •</span>}
+            <span className="font-semibold text-gray-800">{product.gender || 'Men'}</span>
+            {(() => {
+              const genderLower = (product.gender || 'men').toLowerCase();
+              const rawCols = Array.isArray(product.collection) ? product.collection : [product.collection].filter(Boolean);
+              const filteredCols = rawCols.filter(c => {
+                const item = c.toLowerCase().trim();
+                return item !== genderLower && item !== 'men' && item !== 'women' && item !== 'unisex';
+              });
+              if (filteredCols.length === 0) return null;
+              return <span className="text-gray-400"> | {filteredCols.slice(0, 2).join(", ")}</span>;
+            })()}
+          </div>
         </div>
 
         {/* Action Buttons */}

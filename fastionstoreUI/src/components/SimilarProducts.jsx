@@ -8,21 +8,37 @@ import ProductCard from "./ProductCard";
 const SimilarProducts = ({ currentProduct, allProducts }) => {
   if (!currentProduct || !allProducts || allProducts.length === 0) return null;
 
-  // Find products in the same category, excluding the current one
+  // Find products in the same specific collection tag (excluding generic gender tags), excluding current product
+  const ignoreTags = ["men", "women", "unisex", "menswear", "womenswear"];
+  
+  const getSpecificTags = (cols) => {
+    const arr = Array.isArray(cols) ? cols : [cols];
+    return arr
+      .filter(Boolean)
+      .map((c) => c.toLowerCase().trim())
+      .filter((c) => !ignoreTags.includes(c));
+  };
+
+  const currentTags = getSpecificTags(currentProduct.collection);
+
   const similarProducts = allProducts
-    .filter(
-      (p) =>
-        p._id !== currentProduct._id && 
-        ((Array.isArray(p.category) && Array.isArray(currentProduct.category) && p.category.some(c => currentProduct.category.includes(c))) || 
-         p.category === currentProduct.category),
-    )
+    .filter((p) => {
+      if (p._id === currentProduct._id) return false;
+
+      const pTags = getSpecificTags(p.collection);
+
+      // Check if there is any overlap in specific collection tags (e.g. Cargos with Cargos)
+      return pTags.some((t) => currentTags.some((ct) => t.includes(ct) || ct.includes(t)));
+    })
     .slice(0, 4);
 
-  // If there are no similar products in the same category, we can just show some other products as fallback
+  // Fallback: If no products match the specific collection tag, show products with the same gender
   const displayProducts =
     similarProducts.length > 0
       ? similarProducts
-      : allProducts.filter((p) => p._id !== currentProduct._id).slice(0, 4);
+      : allProducts
+          .filter((p) => p._id !== currentProduct._id && (p.gender === currentProduct.gender || p.gender === "Unisex"))
+          .slice(0, 4);
 
   if (displayProducts.length === 0) return null;
 

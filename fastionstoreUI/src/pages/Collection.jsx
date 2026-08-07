@@ -36,17 +36,35 @@ const Collection = () => {
     const searchString = collectionName.toLowerCase().replace(/-/g, ' ').trim();
     
     return products.filter((p) => {
-      if (Array.isArray(p.collection)) {
-        return p.collection.some(c => {
-          const item = c.toLowerCase().trim();
-          return item.includes(searchString) || searchString.includes(item);
-        });
+      // 1. Gender check for Men / Women collection pages
+      if (searchString === 'men' || searchString === 'menswear') {
+        if (p.gender === 'Men' || p.gender === 'Unisex') return true;
       }
-      if (p.collection) {
-        const item = p.collection.toLowerCase().trim();
-        return item.includes(searchString) || searchString.includes(item);
+      if (searchString === 'women' || searchString === 'womenswear') {
+        if (p.gender === 'Women' || p.gender === 'Unisex') return true;
       }
-      return false;
+
+      const cols = Array.isArray(p.collection) 
+        ? p.collection.map(c => c.toLowerCase().trim()) 
+        : [p.collection ? p.collection.toLowerCase().trim() : ''];
+
+      // 2. Alias / Synonym group checks (Cargos, Oversized, Hoodies)
+      const isCargosSearch = searchString.includes('cargo') || searchString.includes('baggy') || searchString.includes('pants');
+      const isOversizedSearch = searchString.includes('oversized') || searchString.includes('tee');
+      const isHoodieSearch = searchString.includes('hoodie');
+
+      if (isCargosSearch) {
+        if (cols.some(c => c.includes('cargo') || c.includes('baggy') || c.includes('pant') || c.includes('bottom'))) return true;
+      }
+      if (isOversizedSearch) {
+        if (cols.some(c => c.includes('oversized') || c.includes('tee') || c.includes('tshirt') || c.includes('t-shirt'))) return true;
+      }
+      if (isHoodieSearch) {
+        if (cols.some(c => c.includes('hoodie') || c.includes('sweatshirt'))) return true;
+      }
+
+      // 3. General flexible collection tags check
+      return cols.some(item => item && (item.includes(searchString) || searchString.includes(item)));
     });
   }, [products, collectionName]);
 

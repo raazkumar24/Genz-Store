@@ -27,7 +27,7 @@ const Navbar = () => {
     const collectionLinks = [
         { label: 'Oversized Tees', to: '/collections/oversized-tees' },
         { label: 'Hoodies', to: '/collections/hoodies' },
-        { label: 'Cargos', to: '/collections/baggy-pants' },
+        { label: 'Cargos', to: '/collections/cargos' },
         { label: 'Menswear', to: '/collections/men' },
         { label: 'Womenswear', to: '/collections/women' },
     ];

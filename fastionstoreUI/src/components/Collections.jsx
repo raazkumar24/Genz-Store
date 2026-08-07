@@ -5,11 +5,11 @@ import { ArrowRight } from "lucide-react";
 const Collections = () => {
   const collectionData = [
     {
-      id: "baggy-pants",
-      title: "Baggy Pants",
-      subtitle: "Streetwear Essential",
+      id: "cargos",
+      title: "Cargos & Baggy Pants",
+      subtitle: "Relaxed Fit Cargos",
       image: "/collections/baggy_pants.png",
-      link: "/collections/baggy-pants",
+      link: "/collections/cargos",
       colSpan: "md:col-span-8",
       height: "h-[350px] md:h-[500px]",
     },

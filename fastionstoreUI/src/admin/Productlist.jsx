@@ -103,38 +103,32 @@ const ProductList = () => {
         </div>
       )}
 
-      {/* Data Table */}
+      {/* Responsive View: Desktop Table & Mobile Cards */}
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px] whitespace-nowrap text-left text-sm text-gray-700">
+        
+        {/* Desktop Table View (Hidden on mobile) */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left text-sm text-gray-700">
             <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
               <tr>
-                <th className="px-4 py-3 md:px-6 md:py-4">Product Details</th>
-                <th className="px-4 py-3 md:px-6 md:py-4">Price</th>
-                <th className="px-4 py-3 md:px-6 md:py-4 hidden sm:table-cell">
-                  Status
-                </th>
-                <th className="px-4 py-3 md:px-6 md:py-4 text-right">
-                  Actions
-                </th>
+                <th className="px-6 py-4">Product Details</th>
+                <th className="px-6 py-4">Price</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {/* Loading State */}
               {loading && (
                 <tr>
                   <td colSpan="4" className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-4 text-gray-500">
                       <div className="h-8 w-8 animate-spin rounded-full border-2 border-t-[var(--color-primary)] border-gray-200"></div>
-                      <span className="font-medium tracking-wide">
-                        Loading drops...
-                      </span>
+                      <span className="font-medium tracking-wide">Loading drops...</span>
                     </div>
                   </td>
                 </tr>
               )}
 
-              {/* Empty State */}
               {!loading && filteredProducts.length === 0 && (
                 <tr>
                   <td colSpan="4" className="px-6 py-16 text-center">
@@ -143,129 +137,155 @@ const ProductList = () => {
                         <PackageOpen size={40} />
                       </div>
                       <div>
-                        <p
-                          className="text-xl font-bold text-gray-900"
-                          style={{ fontFamily: "var(--font-heading)" }}
-                        >
+                        <p className="text-xl font-bold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
                           Empty Vault
                         </p>
-                        <p className="mt-1 text-sm text-gray-500">
-                          No products match your search.
-                        </p>
+                        <p className="mt-1 text-sm text-gray-500">No products match your search.</p>
                       </div>
                     </div>
                   </td>
                 </tr>
               )}
 
-              {/* Data Rows — image aur price variant se liya kyunki root pe nahi hote */}
-              {!loading &&
-                filteredProducts.map((product) => {
-                  // Pehla variant from which we derive image and price
-                  const firstVariant = product.variants?.[0];
-                  const displayImage = firstVariant?.images?.[0] || null;
-                  const displayPrice = firstVariant?.price ?? null;
-                  const salePrice = firstVariant?.isSale
-                    ? firstVariant?.salePrice
-                    : null;
-                  const totalStock = (product.variants || []).reduce(
-                    (sum, v) => sum + (v.stock || 0),
-                    0,
-                  );
+              {!loading && filteredProducts.map((product) => {
+                const firstVariant = product.variants?.[0];
+                const displayImage = firstVariant?.images?.[0] || null;
+                const displayPrice = firstVariant?.price ?? null;
+                const salePrice = firstVariant?.isSale ? firstVariant?.salePrice : null;
+                const totalStock = (product.variants || []).reduce((sum, v) => sum + (v.stock || 0), 0);
 
-                  return (
-                    <tr
-                      key={product._id}
-                      className="transition-colors hover:bg-gray-50 group"
-                    >
-                      <td className="px-4 py-3 md:px-6 md:py-4">
-                        <div className="flex items-center gap-3 md:gap-4">
-                          {/* Image from first variant */}
-                          <div className="h-14 w-14 md:h-16 md:w-16 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm transition-transform group-hover:shadow-md flex items-center justify-center">
-                            {displayImage ? (
-                              <img
-                                src={displayImage}
-                                alt={product.name}
-                                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              />
-                            ) : (
-                              <span className="text-[10px] text-gray-400 text-center px-1 leading-tight">
-                                No Image
-                              </span>
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-bold text-gray-900 text-base">
-                              {product.name}
-                            </p>
-                            <Badge
-                              variant="secondary"
-                              className="mt-1 px-2 py-0.5 text-[10px]"
-                            >
-                              {Array.isArray(product.category) ? product.category.join(", ") : (product.category || "Apparel")}
-                            </Badge>
-                            {/* Variant count */}
-                            <p className="mt-1 text-[10px] text-gray-400">
-                              {product.variants?.length || 0} variant(s) ·
-                              Stock: {totalStock}
-                            </p>
-                          </div>
+                return (
+                  <tr key={product._id} className="transition-colors hover:bg-gray-50 group">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
+                        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-sm flex items-center justify-center">
+                          {displayImage ? (
+                            <img src={displayImage} alt={product.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          ) : (
+                            <span className="text-[10px] text-gray-400 text-center px-1">No Image</span>
+                          )}
                         </div>
-                      </td>
-                      <td className="px-4 py-3 md:px-6 md:py-4 font-semibold text-gray-900">
-                        {/* Price from first variant */}
-                        {displayPrice !== null ? (
-                          <>
-                            <div className="text-lg">₹{displayPrice}</div>
-                            {salePrice && (
-                              <div className="text-xs text-red-500 font-bold">
-                                Sale: ₹{salePrice}
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <span className="text-sm text-gray-400 italic">
-                            No variants
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 md:px-6 md:py-4 hidden sm:table-cell">
-                        <Badge
-                          variant={totalStock > 0 ? "success" : "error"}
-                          className="px-2 py-1 flex items-center gap-1 w-fit"
-                        >
-                          <span
-                            className={`h-2 w-2 rounded-full ${totalStock > 0 ? "bg-green-500" : "bg-red-500"}`}
-                          ></span>
-                          {totalStock > 0 ? "In Stock" : "Out of Stock"}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3 md:px-6 md:py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            to={`/admin/products/edit/${product._id}`}
-                            variant="outline"
-                            size="sm"
-                            title="Edit Product"
-                            className="px-2 py-2"
-                          >
-                            <Edit2 size={16} />
-                          </Button>
-                          <button
-                            onClick={() => handleDelete(product._id)}
-                            className="flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition-colors"
-                            title="Delete Product"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                        <div>
+                          <p className="font-bold text-gray-900 text-base line-clamp-1">{product.name}</p>
+                          <Badge variant="secondary" className="mt-1 px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold">
+                            {product.gender || "Men"}{Array.isArray(product.collection) && product.collection.length > 0 ? ` · ${product.collection.join(", ")}` : (product.collection ? ` · ${product.collection}` : "")}
+                          </Badge>
+                          <p className="mt-1 text-[11px] text-gray-400">
+                            {product.variants?.length || 0} variant(s) · Stock: {totalStock}
+                          </p>
                         </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-900">
+                      {displayPrice !== null ? (
+                        <>
+                          <div className="text-base font-bold">₹{displayPrice}</div>
+                          {salePrice && <div className="text-xs text-red-500 font-bold">Sale: ₹{salePrice}</div>}
+                        </>
+                      ) : (
+                        <span className="text-xs text-gray-400 italic">No variants</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <Badge variant={totalStock > 0 ? "success" : "error"} className="px-2.5 py-1 flex items-center gap-1.5 w-fit">
+                        <span className={`h-2 w-2 rounded-full ${totalStock > 0 ? "bg-green-500" : "bg-red-500"}`} />
+                        {totalStock > 0 ? "In Stock" : "Out of Stock"}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button to={`/admin/products/edit/${product._id}`} variant="outline" size="sm" title="Edit Product" className="px-3 py-2">
+                          <Edit2 size={16} />
+                        </Button>
+                        <button onClick={() => handleDelete(product._id)} className="flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition-colors" title="Delete Product">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
+
+        {/* Mobile Card List View (Visible only on small screens < md) */}
+        <div className="block md:hidden divide-y divide-gray-100">
+          {loading && (
+            <div className="p-8 text-center text-gray-500 flex flex-col items-center gap-3">
+              <div className="h-7 w-7 animate-spin rounded-full border-2 border-t-[var(--color-primary)] border-gray-200" />
+              <span className="text-sm font-medium">Loading drops...</span>
+            </div>
+          )}
+
+          {!loading && filteredProducts.length === 0 && (
+            <div className="p-8 text-center text-gray-500">
+              <PackageOpen size={36} className="mx-auto mb-2 opacity-50" />
+              <p className="font-bold text-gray-900">No products found</p>
+            </div>
+          )}
+
+          {!loading && filteredProducts.map((product) => {
+            const firstVariant = product.variants?.[0];
+            const displayImage = firstVariant?.images?.[0] || null;
+            const displayPrice = firstVariant?.price ?? null;
+            const salePrice = firstVariant?.isSale ? firstVariant?.salePrice : null;
+            const totalStock = (product.variants || []).reduce((sum, v) => sum + (v.stock || 0), 0);
+
+            return (
+              <div key={product._id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
+                <div className="flex gap-3.5 items-start">
+                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center">
+                    {displayImage ? (
+                      <img src={displayImage} alt={product.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <span className="text-[9px] text-gray-400 text-center">No Image</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-gray-900 text-sm leading-snug line-clamp-2">{product.name}</h3>
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                      <Badge variant="secondary" className="px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold">
+                        {product.gender || "Men"}{Array.isArray(product.collection) && product.collection.length > 0 ? ` · ${product.collection.join(", ")}` : (product.collection ? ` · ${product.collection}` : "")}
+                      </Badge>
+                      <Badge variant={totalStock > 0 ? "success" : "error"} className="px-1.5 py-0.5 text-[9px]">
+                        {totalStock > 0 ? "In Stock" : "Out of Stock"}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-1">
+                  <div className="flex items-baseline gap-2">
+                    {displayPrice !== null ? (
+                      <>
+                        <span className="text-base font-bold text-gray-900">₹{displayPrice}</span>
+                        {salePrice && <span className="text-xs text-red-500 font-bold line-through">₹{salePrice}</span>}
+                      </>
+                    ) : (
+                      <span className="text-xs text-gray-400 italic">No variants</span>
+                    )}
+                    <span className="text-[11px] text-gray-400 ml-1">({totalStock} left)</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Button to={`/admin/products/edit/${product._id}`} variant="outline" size="sm" className="px-3 py-1.5 text-xs font-semibold">
+                      <Edit2 size={14} className="mr-1 inline" /> Edit
+                    </Button>
+                    <button
+                      onClick={() => handleDelete(product._id)}
+                      className="p-1.5 rounded-lg border border-red-200 text-red-500 hover:bg-red-50"
+                      title="Delete Product"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
       </div>
     </div>
   );

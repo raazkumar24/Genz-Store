@@ -252,10 +252,19 @@ const ProductDetails = () => {
 
             <div className="mb-2 flex flex-col">
               {product.brand && <span className="text-sm font-bold uppercase tracking-widest text-[var(--color-primary)]">{product.brand}</span>}
-              <span className="text-sm font-bold uppercase tracking-widest text-[var(--color-text-muted)]">
-                {Array.isArray(product.collection) && product.collection.length > 0 ? `${product.collection.join(", ")} | ` : (product.collection ? `${product.collection} | ` : "")}
-                {Array.isArray(product.category) ? product.category.join(", ") : (product.category || "Apparel")}
-              </span>
+              <div className="text-sm font-bold uppercase tracking-widest text-[var(--color-text-muted)] truncate">
+                <span className="text-[var(--color-primary)] font-extrabold">{product.gender || 'Men'}</span>
+                {(() => {
+                  const genderLower = (product.gender || 'men').toLowerCase();
+                  const rawCols = Array.isArray(product.collection) ? product.collection : [product.collection].filter(Boolean);
+                  const filteredCols = rawCols.filter(c => {
+                    const item = c.toLowerCase().trim();
+                    return item !== genderLower && item !== 'men' && item !== 'women' && item !== 'unisex';
+                  });
+                  if (filteredCols.length === 0) return null;
+                  return <span> | {filteredCols.join(", ")}</span>;
+                })()}
+              </div>
             </div>
 
             <h1

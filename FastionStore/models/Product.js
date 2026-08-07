@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, default: '' },
   brand: { type: String, default: '' },
+  gender: { type: String, default: 'Men' }, // Men, Women, Unisex
   category: { type: [String], default: ['Uncategorized'] },
   collection: { type: [String], default: [] },
   productDetails: {
