@@ -82,7 +82,7 @@ const Collection = () => {
       </section>
 
       {/* Main Content Area */}
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-16 md:px-8 w-full flex-grow">
+      <section className="relative z-10 mx-auto max-w-7xl px-3 py-16 md:px-8 w-full flex-grow">
         
         {/* Toolbar (Results count & Filters stub) */}
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[var(--color-border)]/50">
@@ -100,7 +100,7 @@ const Collection = () => {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -125,7 +125,7 @@ const Collection = () => {
             </div>
           </Card>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-4">
             {collectionProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}

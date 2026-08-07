@@ -162,13 +162,13 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = () => {
-    if (!selectedVariant) return addToast("Kripya size aur colour select karein!", "error");
-    if (selectedVariant.stock === 0) return addToast("Ye variant out of stock hai!", "error");
-    if (!selectedSize) return addToast("Kripya size select karein!", "error");
+    if (!selectedVariant) return addToast("Please select size and color!", "error");
+    if (selectedVariant.stock === 0) return addToast("This variant is out of stock!", "error");
+    if (!selectedSize) return addToast("Please select a size!", "error");
 
     // Use Context's addToCart to safely update cart state
     addToCart(product, selectedVariant, 1, selectedSize, selectedColor);
-    addToast(`${product.name} cart me add ho gaya!`, "success");
+    addToast(`${product.name} added to cart!`, "success");
   };
 
   if (loading) {

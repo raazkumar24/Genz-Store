@@ -24,11 +24,11 @@ export const ToastProvider = ({ children }) => {
     <ToastContext.Provider value={{ addToast }}>
       {children}
       {/* Toast Container */}
-      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none">
+      <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 z-[9999] flex flex-col items-center md:items-end gap-3 pointer-events-none">
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="flex items-center gap-3 min-w-[250px] max-w-sm px-4 py-3 rounded-xl shadow-2xl bg-white border border-gray-100 transform transition-all duration-300 ease-out translate-y-0 opacity-100 pointer-events-auto"
+            className="flex items-center gap-3 w-full md:w-auto min-w-[250px] max-w-full md:max-w-sm px-4 py-3 rounded-xl shadow-2xl bg-white border border-gray-100 transform transition-all duration-300 ease-out translate-y-0 opacity-100 pointer-events-auto"
             style={{ fontFamily: "var(--font-body)" }}
           >
             {toast.type === 'success' && <CheckCircle size={20} className="text-green-500 shrink-0" />}

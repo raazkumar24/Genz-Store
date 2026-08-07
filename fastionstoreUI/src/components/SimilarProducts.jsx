@@ -26,7 +26,7 @@ const SimilarProducts = ({ currentProduct, allProducts }) => {
 
   return (
     <div className="w-full bg-[var(--color-bg)] py-16 md:py-24 border-t border-[var(--color-border)]">
-      <div className="mx-auto max-w-7xl px-0">
+      <div className="mx-auto max-w-7xl px-3 md:px-8">
         {/* Header Area */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>

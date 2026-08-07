@@ -40,7 +40,7 @@ const NewArrivals = () => {
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,var(--color-text)_1px,transparent_0)] bg-[length:32px_32px]" />
       </div>
 
-      <section className="relative z-10 mx-auto max-w-7xl px-6 py-16 md:px-8 w-full">
+      <section className="relative z-10 mx-auto max-w-7xl px-3 py-16 md:px-8 w-full">
         <div className="mb-12 flex flex-col items-center text-center">
           <Badge variant="primary" className="px-4 py-1.5 flex items-center gap-2">
             <span className="relative flex h-2 w-2">
@@ -63,7 +63,7 @@ const NewArrivals = () => {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -83,7 +83,7 @@ const NewArrivals = () => {
             </p>
           </Card>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-4">
             {newArrivalProducts.map((product) => (
               <div key={product._uniqueId || product._id} className="transition-transform duration-300 hover:-translate-y-1">
                 <ProductCard product={product} />

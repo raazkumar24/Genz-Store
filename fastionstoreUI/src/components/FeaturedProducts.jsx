@@ -7,10 +7,10 @@ const FeaturedProducts = ({ products, loading }) => {
   // Skeleton Loader for this section specifically
   if (loading) {
     return (
-      <div className="w-full bg-[var(--color-bg-secondary)] px-6 py-20 border-y border-[var(--color-border)]">
+      <div className="w-full bg-[var(--color-bg-secondary)] px-3 md:px-8 py-20 border-y border-[var(--color-border)]">
         <div className="mx-auto max-w-7xl">
           <div className="h-8 w-48 bg-[var(--color-surface)] rounded animate-pulse mb-10"></div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-1 sm:gap-4">
             {[1,2,3,4].map(i => (
               <div key={i} className="aspect-[3/4] rounded-2xl bg-[var(--color-surface)] animate-pulse"></div>
             ))}
@@ -24,7 +24,7 @@ const FeaturedProducts = ({ products, loading }) => {
   if (!products || products.length === 0) return null;
 
   return (
-    <div className="relative w-full bg-[var(--color-bg-secondary)] px-3 py-20 md:py-28 md:px-6 overflow-hidden border-y border-[var(--color-border)]">
+    <div className="relative w-full bg-[var(--color-bg-secondary)] px-3 py-20 md:py-28 md:px-8 overflow-hidden border-y border-[var(--color-border)]">
       
       {/* Decorative large background text */}
       <div className="absolute -left-10 top-10 opacity-[0.02] pointer-events-none rotate-90 origin-left">
@@ -59,7 +59,7 @@ const FeaturedProducts = ({ products, loading }) => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-4">
           {products.slice(0, 4).map((product) => (
             <ProductCard key={product._uniqueId || product._id} product={product} isFeatured={true} />
           ))}

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { addToCartAPI, updateCartAPI, removeFromCartAPI } from '../services/cartService';
 
 /**
  * CartContext — localStorage-based cart state management
@@ -82,6 +83,16 @@ export const CartProvider = ({ children }) => {
                 },
             ];
         });
+
+        // Sync with backend
+        addToCartAPI({
+            productId: product._id,
+            variantId: variant._id,
+            color: selectedColor || variant.color || '',
+            size: selectedSize || variant.size || '',
+            quantity
+        }).catch(err => console.error('Failed to save to backend cart', err));
+
     }, []);
 
     // Quantity update karo
@@ -94,6 +105,14 @@ export const CartProvider = ({ children }) => {
                     : item
             )
         );
+
+        // Sync with backend
+        updateCartAPI({
+            productId,
+            variantId,
+            size,
+            quantity
+        }).catch(err => console.error('Failed to update backend cart', err));
     }, []);
 
     // Item remove karo
@@ -103,6 +122,13 @@ export const CartProvider = ({ children }) => {
                 (item) => !(item.productId === productId && item.variantId === variantId && item.size === size)
             )
         );
+
+        // Sync with backend
+        removeFromCartAPI({
+            productId,
+            variantId,
+            size
+        }).catch(err => console.error('Failed to remove from backend cart', err));
     }, []);
 
     // Cart saaf karo
