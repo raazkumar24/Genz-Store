@@ -105,7 +105,7 @@ const ProductList = () => {
       {/* Data Table */}
       <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-700">
+          <table className="w-full min-w-[600px] whitespace-nowrap text-left text-sm text-gray-700">
             <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
               <tr>
                 <th className="px-4 py-3 md:px-6 md:py-4">Product Details</th>
