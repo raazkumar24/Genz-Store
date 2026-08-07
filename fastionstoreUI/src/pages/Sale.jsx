@@ -39,12 +39,12 @@ const Sale = () => {
   }, [products]);
 
   return (
-    <div className="relative w-full min-h-screen bg-[var(--color-bg)] flex flex-col pt-10">
+    <div className="relative w-full min-h-screen bg-[var(--color-bg)] flex flex-col pt-4 md:pt-10">
       <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,var(--color-text)_1px,transparent_0)] bg-[length:32px_32px]" />
       </div>
 
-      <section className="relative z-10 mx-auto max-w-7xl px-3 py-16 md:px-8 w-full">
+      <section className="relative z-10 mx-auto max-w-7xl px-3 py-8 md:py-16 md:px-8 w-full">
         <div className="mb-12 flex flex-col items-center text-center">
           <Badge
             variant="error"

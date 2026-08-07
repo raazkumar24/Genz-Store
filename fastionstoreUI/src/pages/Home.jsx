@@ -95,7 +95,7 @@ const Home = () => {
 
       {/* Main Product Listing Section */}
       {/* Main Content Area */}
-      <section className="relative z-10 mx-auto max-w-7xl px-3 py-16 md:px-8 w-full">
+      <section className="relative z-10 mx-auto max-w-7xl px-3 py-8 md:py-16 md:px-8 w-full">
         {/* Section Header */}
         <div className="mb-12 flex flex-col items-center text-center mt-8">
           <Badge

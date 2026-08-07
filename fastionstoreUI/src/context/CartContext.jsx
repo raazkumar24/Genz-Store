@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { addToCartAPI, updateCartAPI, removeFromCartAPI } from '../services/cartService';
+import { addToCartAPI, updateCartAPI, removeFromCartAPI, fetchCartAPI } from '../services/cartService';
 
 /**
  * CartContext — localStorage-based cart state management
@@ -42,6 +42,56 @@ const saveCartToStorage = (items) => {
 
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState(loadCartFromStorage);
+
+    // Initial cart load from backend if user is logged in
+    useEffect(() => {
+        const loadBackendCart = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    // pass 'me' or any string as userId since backend uses req.user.id
+                    const response = await fetchCartAPI('me');
+                    if (response && response.items) {
+                        const fetchedItems = response.items.map(item => {
+                            const product = item.product || {};
+                            const variant = product.variants?.find(v => v._id === item.variantId) || {};
+                            return {
+                                productId: product._id,
+                                variantId: item.variantId,
+                                name: product.name,
+                                color: item.color,
+                                size: item.size,
+                                price: variant.isSale && variant.salePrice ? variant.salePrice : variant.price,
+                                image: variant.images?.[0] || '',
+                                quantity: item.quantity,
+                                maxStock: variant.stock || 10,
+                            };
+                        });
+                        setCartItems(fetchedItems);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch cart from backend", error);
+                }
+            }
+        };
+
+        const handleAuthChange = () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                loadBackendCart();
+            } else {
+                // If logged out, clear cart or load from local storage
+                setCartItems(loadCartFromStorage());
+            }
+        };
+
+        window.addEventListener('authChange', handleAuthChange);
+        loadBackendCart();
+
+        return () => {
+            window.removeEventListener('authChange', handleAuthChange);
+        };
+    }, []);
 
     // Jab bhi cartItems change ho, storage update karo
     useEffect(() => {

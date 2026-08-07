@@ -45,7 +45,7 @@ const Collection = () => {
       </div>
 
       {/* Collection Hero Section */}
-      <section className="relative z-10 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)] pt-16 pb-20 md:pt-24 md:pb-32 overflow-hidden">
+      <section className="relative z-10 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)] pt-10 pb-10 md:pt-24 md:pb-32 overflow-hidden">
         {/* Huge Background Text for aesthetic */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none whitespace-nowrap">
           <h1 className="text-[15vw] font-black uppercase tracking-tighter" style={{ fontFamily: "var(--font-heading)" }}>
@@ -82,7 +82,7 @@ const Collection = () => {
       </section>
 
       {/* Main Content Area */}
-      <section className="relative z-10 mx-auto max-w-7xl px-3 py-16 md:px-8 w-full flex-grow">
+      <section className="relative z-10 mx-auto max-w-7xl px-3 py-8 md:py-16 md:px-8 w-full flex-grow">
         
         {/* Toolbar (Results count & Filters stub) */}
         <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[var(--color-border)]/50">
