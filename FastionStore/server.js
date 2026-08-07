@@ -142,6 +142,7 @@ import connectDB from './config/database.js';
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import collectionRoutes from './routes/collectionRoutes.js';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -167,6 +168,7 @@ app.get('/', (req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/collections', collectionRoutes);
 
 
 // Start the server

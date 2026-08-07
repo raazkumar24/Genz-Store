@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import AdminRoute from "./components/AdminRoute";
 import ProductList from "./admin/Productlist"; // Name matching case check kar lijiye page folder se
 import ProductEdit from "./admin/ProductEdit";
+import CollectionsEdit from "./admin/CollectionsEdit";
 import NotFound from "./pages/NotFound";
 import Collection from "./pages/Collection";
 import Dashboard from "./admin/Dashboard";
@@ -68,6 +69,7 @@ function AppContent() {
               <Route path="products" element={<ProductList />} />
               <Route path="products/new" element={<ProductEdit />} />
               <Route path="products/edit/:productId" element={<ProductEdit />} />
+              <Route path="collections" element={<CollectionsEdit />} />
               <Route path="*" element={<Dashboard />} />
             </Route>
 

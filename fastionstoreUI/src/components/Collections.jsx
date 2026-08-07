@@ -1,46 +1,63 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { fetchAllCollections } from "../services/collectionService";
+
+const defaultCollectionData = [
+  {
+    _id: "cargos",
+    name: "Cargos & Baggy Pants",
+    subtitle: "Relaxed Fit Cargos",
+    image: "/collections/baggy_pants.png",
+    link: "/collections/cargos",
+    colSpan: "md:col-span-8",
+    height: "h-[350px] md:h-[500px]",
+  },
+  {
+    _id: "oversized-tees",
+    name: "Oversized Tees",
+    subtitle: "Relaxed Fit",
+    image: "/collections/oversized_tees.png",
+    link: "/collections/oversized-tees",
+    colSpan: "md:col-span-4",
+    height: "h-[350px] md:h-[500px]",
+  },
+  {
+    _id: "men",
+    name: "Men's Core",
+    subtitle: "Modern Tailoring",
+    image: "https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?auto=format&fit=crop&q=80",
+    link: "/collections/men",
+    colSpan: "md:col-span-6",
+    height: "h-[300px] md:h-[400px]",
+  },
+  {
+    _id: "women",
+    name: "Women's Edit",
+    subtitle: "The New Elegance",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80",
+    link: "/collections/women",
+    colSpan: "md:col-span-6",
+    height: "h-[300px] md:h-[400px]",
+  },
+];
 
 const Collections = () => {
-  const collectionData = [
-    {
-      id: "cargos",
-      title: "Cargos & Baggy Pants",
-      subtitle: "Relaxed Fit Cargos",
-      image: "/collections/baggy_pants.png",
-      link: "/collections/cargos",
-      colSpan: "md:col-span-8",
-      height: "h-[350px] md:h-[500px]",
-    },
-    {
-      id: "oversized-tees",
-      title: "Oversized Tees",
-      subtitle: "Relaxed Fit",
-      image: "/collections/oversized_tees.png",
-      link: "/collections/oversized-tees",
-      colSpan: "md:col-span-4",
-      height: "h-[350px] md:h-[500px]",
-    },
-    {
-      id: "men",
-      title: "Men's Core",
-      subtitle: "Modern Tailoring",
-      image: "https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?auto=format&fit=crop&q=80",
-      link: "/collections/men",
-      colSpan: "md:col-span-6",
-      height: "h-[300px] md:h-[400px]",
-    },
-    {
-      id: "women",
-      title: "Women's Edit",
-      subtitle: "The New Elegance",
-      image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80",
-      link: "/collections/women",
-      colSpan: "md:col-span-6",
-      height: "h-[300px] md:h-[400px]",
-    },
-  ];
+  const [collectionData, setCollectionData] = useState(defaultCollectionData);
+
+  useEffect(() => {
+    const loadCollections = async () => {
+      try {
+        const data = await fetchAllCollections();
+        if (data && data.length > 0) {
+          setCollectionData(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch dynamic collections for grid:", err);
+      }
+    };
+    loadCollections();
+  }, []);
 
   return (
     <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-[var(--color-bg)] overflow-hidden border-y border-[var(--color-border)]">
@@ -68,11 +85,11 @@ const Collections = () => {
 
         {/* Dynamic Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          {collectionData.map((item) => (
+          {collectionData.map((item, index) => (
             <Link
-              key={item.id}
-              to={item.link}
-              className={`group relative overflow-hidden rounded-2xl block ${item.colSpan} ${item.height} bg-[var(--color-surface)]`}
+              key={item._id || index}
+              to={item.link || `/collections/${item.slug || ''}`}
+              className={`group relative overflow-hidden rounded-2xl block ${item.colSpan || (index % 3 === 0 ? 'md:col-span-8' : 'md:col-span-4')} ${item.height || 'h-[350px] md:h-[450px]'} bg-[var(--color-surface)]`}
             >
               {/* Image with zoom effect */}
               <div
@@ -86,13 +103,15 @@ const Collections = () => {
               {/* Content block */}
               <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-end">
                 <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                  <p className="text-white/80 text-sm font-bold tracking-[0.2em] uppercase mb-2">
-                    {item.subtitle}
-                  </p>
+                  {item.subtitle && (
+                    <p className="text-white/80 text-sm font-bold tracking-[0.2em] uppercase mb-2">
+                      {item.subtitle}
+                    </p>
+                  )}
                   
                   {/* Title with stroke effect on hover */}
                   <h3 className="text-4xl md:text-6xl font-black text-white uppercase mb-6 transition-all duration-500 group-hover:text-transparent" style={{ fontFamily: "var(--font-heading)", WebkitTextStroke: '1px white' }}>
-                    {item.title}
+                    {item.name || item.title}
                   </h3>
                   
                   {/* Animated Button */}

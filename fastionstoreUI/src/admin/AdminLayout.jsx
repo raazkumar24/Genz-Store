@@ -8,6 +8,7 @@ import {
   Menu,
   X,
   PlusCircle,
+  Layers,
 } from "lucide-react";
 import { clearAuth } from "../utils/auth";
 
@@ -106,6 +107,16 @@ const AdminLayout = () => {
           >
             <PlusCircle size={20} strokeWidth={2.5} />
             Add Product
+          </NavLink>
+
+          <NavLink
+            to="/admin/collections"
+            onClick={() => setIsSidebarOpen(false)}
+            className={getLinkClass}
+            end
+          >
+            <Layers size={20} strokeWidth={2.5} />
+            Collections
           </NavLink>
         </div>
 
