@@ -1,11 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui';
+import { ArrowLeft } from 'lucide-react';
 
 const About = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* Hero Section */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-black text-white text-center overflow-hidden">
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-black text-white text-center overflow-hidden">
+        <div className="relative z-20 max-w-7xl mx-auto flex">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 mb-4 text-sm font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer"
+          >
+            <ArrowLeft size={16} />
+            <span>Back</span>
+          </button>
+        </div>
         <div className="absolute inset-0 opacity-40">
           <img 
             src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80" 

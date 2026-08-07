@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams, Link, useSearchParams } from "react-router-dom";
+import { useParams, Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { useToast } from "../context/ToastContext";
 import { Button, Card, Badge } from "../components/ui";
-import { Heart } from "lucide-react";
+import { Heart, ArrowLeft } from "lucide-react";
 import ProductAccordion from "../components/ProductAccordion";
 import ProductGallery from "../components/ProductGallery";
 import SimilarProducts from "../components/SimilarProducts";
@@ -32,6 +32,7 @@ const getColorHex = (colorString) => {
 };
 
 const ProductDetails = () => {
+  const navigate = useNavigate();
   const { productId } = useParams();
   const [searchParams] = useSearchParams();
   const variantId = searchParams.get('variant');
@@ -214,14 +215,14 @@ const ProductDetails = () => {
     <div className="bg-[var(--color-bg)] min-h-screen">
       <div className="px-4 py-8 md:px-8 md:py-16 pb-28 md:pb-16">
         <div className="mx-auto max-w-7xl">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 mb-8 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 mb-8 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
           style={{ fontFamily: "var(--font-heading)" }}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-          Back to Collection
-        </Link>
+          <ArrowLeft size={16} />
+          <span>Back</span>
+        </button>
 
         <div className="grid gap-8 lg:gap-12 md:grid-cols-2 lg:grid-cols-[1fr_1.1fr] items-start w-full min-w-0">
 

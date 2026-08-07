@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
 import ProductCard from "../components/ProductCard";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Badge, Card, Button } from "../components/ui";
 
 // Loading skeleton
@@ -21,6 +21,7 @@ const ProductSkeleton = () => (
 );
 
 const Collection = () => {
+  const navigate = useNavigate();
   const { collectionName } = useParams();
   const { products, loading } = useProducts();
 
@@ -85,6 +86,15 @@ const Collection = () => {
         </div>
 
         <div className="mx-auto max-w-7xl px-6 md:px-8 relative z-10 flex flex-col items-center text-center">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="self-start inline-flex items-center gap-2 mb-6 text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
+          >
+            <ArrowLeft size={16} />
+            <span>Back</span>
+          </button>
+
           {/* Breadcrumb */}
           <nav className="mb-8 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--color-text-muted)]">
             <Link to="/" className="hover:text-[var(--color-primary)] transition-colors">Home</Link>

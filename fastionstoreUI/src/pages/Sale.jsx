@@ -1,7 +1,9 @@
 import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useProducts } from "../context/ProductContext";
 import { Badge, Card } from "../components/ui";
+import { ArrowLeft } from "lucide-react";
 
 const ProductSkeleton = () => (
   <Card className="animate-pulse p-4">
@@ -18,6 +20,7 @@ const ProductSkeleton = () => (
 );
 
 const Sale = () => {
+  const navigate = useNavigate();
   const { products, loading } = useProducts();
 
   const saleProducts = useMemo(() => {
@@ -44,7 +47,16 @@ const Sale = () => {
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,var(--color-text)_1px,transparent_0)] bg-[length:32px_32px]" />
       </div>
 
-      <section className="relative z-10 mx-auto max-w-7xl px-3 py-8 md:py-16 md:px-8 w-full">
+      <section className="relative z-10 mx-auto max-w-7xl px-3 py-6 md:py-12 md:px-8 w-full">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
+        >
+          <ArrowLeft size={16} />
+          <span>Back</span>
+        </button>
+
         <div className="mb-12 flex flex-col items-center text-center">
           <Badge
             variant="error"

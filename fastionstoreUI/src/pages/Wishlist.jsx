@@ -1,12 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
 import ProductCard from "../components/ProductCard";
-import { Heart, ArrowLeft, ShoppingBag } from "lucide-react";
+import { Heart, ArrowLeft } from "lucide-react";
 import { Button, Badge } from "../components/ui";
 
 const Wishlist = () => {
   const { wishlist } = useWishlist();
+  const navigate = useNavigate();
 
   return (
     <div className="relative w-full min-h-screen bg-[var(--color-bg)] flex flex-col pb-24">
@@ -15,17 +16,18 @@ const Wishlist = () => {
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,var(--color-text)_1px,transparent_0)] bg-[length:32px_32px]" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 md:py-16 md:px-8 w-full">
+      <div className="relative z-10 mx-auto max-w-7xl px-3 py-6 md:py-12 md:px-8 w-full">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
+        >
+          <ArrowLeft size={16} />
+          <span>Back</span>
+        </button>
+
         {/* Header */}
         <div className="mb-8 md:mb-12">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
-          >
-            <ArrowLeft size={16} />
-            Back to Store
-          </Link>
-
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <Badge variant="primary" className="mb-3 inline-flex items-center gap-1.5 px-3 py-1">
@@ -65,10 +67,15 @@ const Wishlist = () => {
             </Button>
           </div>
         ) : (
-          /* Grid of Saved Products */
-          <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+          /* Grid of Saved Products - Exactly matching Home / Collection / Sale product grid */
+          <div className="grid grid-cols-2 gap-1 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {wishlist.map((product) => (
-              <ProductCard key={product._id} product={product} />
+              <div
+                key={product._id}
+                className="transition-transform duration-300 hover:-translate-y-1"
+              >
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
         )}

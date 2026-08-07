@@ -1,6 +1,6 @@
 import React from 'react';
-import { Navigate, Link } from 'react-router-dom';
-import { Mail, Shield, User as UserIcon, LogOut, Settings, Package } from 'lucide-react';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { Mail, Shield, User as UserIcon, LogOut, Settings, Package, ArrowLeft } from 'lucide-react';
 import { getStoredUser, getUserRole, isLoggedIn, clearAuth } from '../utils/auth';
 import { Card, Badge, Button } from '../components/ui';
 
@@ -11,6 +11,7 @@ import { Card, Badge, Button } from '../components/ui';
  * - Logout button se localStorage clear ho jata hai
  */
 const User = () => {
+    const navigate = useNavigate();
     // Agar logged in nahi hai to login page pe redirect karo
     if (!isLoggedIn()) {
         return <Navigate to="/login" replace />;
@@ -34,7 +35,7 @@ const User = () => {
     };
 
     return (
-        <section className="min-h-screen bg-[var(--color-bg)] px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+        <section className="min-h-screen bg-[var(--color-bg)] px-4 py-8 sm:px-6 lg:px-8 relative overflow-hidden">
 
             {/* Subtle dot grid background */}
             <div className="absolute inset-0 z-0 opacity-[0.025] pointer-events-none">
@@ -42,6 +43,14 @@ const User = () => {
             </div>
 
             <div className="relative z-10 mx-auto max-w-4xl">
+                {/* Back Button */}
+                <button
+                    onClick={() => navigate(-1)}
+                    className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-gray-500 hover:text-[var(--color-primary)] transition-colors cursor-pointer"
+                >
+                    <ArrowLeft size={16} />
+                    <span>Back</span>
+                </button>
 
                 {/* ── Page Header ── */}
                 <div className="mb-10">

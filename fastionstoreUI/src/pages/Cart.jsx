@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingBag, Trash2, Plus, Minus, ArrowRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Card, Badge, Button } from '../components/ui';
 
@@ -11,6 +11,7 @@ import { Card, Badge, Button } from '../components/ui';
  * - Total price calculate karta hai
  */
 const Cart = () => {
+    const navigate = useNavigate();
     const { cartItems, cartTotal, cartCount, updateQuantity, removeFromCart, clearCart } = useCart();
 
     // Empty cart state
@@ -34,8 +35,16 @@ const Cart = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[var(--color-bg)] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[var(--color-bg)] px-4 py-8 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-5xl">
+                {/* Back Button */}
+                <button
+                    onClick={() => navigate(-1)}
+                    className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
+                >
+                    <ArrowLeft size={16} />
+                    <span>Back</span>
+                </button>
 
                 {/* ── Header ── */}
                 <div className="mb-8 flex items-center justify-between">

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Send } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { MapPin, Phone, Mail, Send, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui';
 
 const Contact = () => {
+  const navigate = useNavigate();
   const [status, setStatus] = useState(null);
 
   const handleSubmit = (e) => {
@@ -13,8 +15,17 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--color-bg)] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
+        >
+          <ArrowLeft size={16} />
+          <span>Back</span>
+        </button>
+
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-black uppercase text-gray-900 mb-4" style={{ fontFamily: 'var(--font-heading)' }}>
             Get in <span className="text-transparent" style={{ WebkitTextStroke: '1px #111' }}>Touch</span>
