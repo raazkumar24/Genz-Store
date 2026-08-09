@@ -1,13 +1,12 @@
 import React from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
 import ProductCard from "../components/ProductCard";
-import { Heart, ArrowLeft } from "lucide-react";
-import { Button, Badge } from "../components/ui";
+import { Heart } from "lucide-react";
+import { Button, Badge, BackButton } from "../components/ui";
 
 const Wishlist = () => {
   const { wishlist } = useWishlist();
-  const navigate = useNavigate();
 
   return (
     <div className="relative w-full min-h-screen bg-[var(--color-bg)] flex flex-col pb-24">
@@ -18,13 +17,9 @@ const Wishlist = () => {
 
       <div className="relative z-10 mx-auto max-w-7xl px-3 py-6 md:py-12 md:px-8 w-full">
         {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
-        >
-          <ArrowLeft size={16} />
-          <span>Back</span>
-        </button>
+        <div className="mb-6">
+          <BackButton />
+        </div>
 
         {/* Header */}
         <div className="mb-8 md:mb-12">

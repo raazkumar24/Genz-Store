@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { addToCartAPI, updateCartAPI, removeFromCartAPI, fetchCartAPI } from '../services/cartService';
+import { useToast } from './ToastContext';
 
 /**
  * CartContext — localStorage-based cart state management
@@ -100,6 +101,8 @@ export const CartProvider = ({ children }) => {
         window.dispatchEvent(new Event('cartChange'));
     }, [cartItems]);
 
+    const { addToast } = useToast();
+
     // Item add karo — agar same variant aur size pehle se hai to quantity badhao
     const addToCart = useCallback((product, variant, quantity = 1, selectedSize = '', selectedColor = '') => {
         setCartItems((prev) => {
@@ -134,6 +137,10 @@ export const CartProvider = ({ children }) => {
             ];
         });
 
+        // Trigger custom notification
+        const productName = product?.name || 'Item';
+        addToast(`Added "${productName.length > 25 ? productName.slice(0, 25) + '...' : productName}" to Bag`, 'success', 'bag');
+
         // Sync with backend
         addToCartAPI({
             productId: product._id,
@@ -143,7 +150,7 @@ export const CartProvider = ({ children }) => {
             quantity
         }).catch(err => console.error('Failed to save to backend cart', err));
 
-    }, []);
+    }, [addToast]);
 
     // Quantity update karo
     const updateQuantity = useCallback((productId, variantId, size, quantity) => {
@@ -173,18 +180,21 @@ export const CartProvider = ({ children }) => {
             )
         );
 
+        addToast('Item removed from cart', 'info');
+
         // Sync with backend
         removeFromCartAPI({
             productId,
             variantId,
             size
         }).catch(err => console.error('Failed to remove from backend cart', err));
-    }, []);
+    }, [addToast]);
 
     // Cart saaf karo
     const clearCart = useCallback(() => {
         setCartItems([]);
-    }, []);
+        addToast('Cart cleared', 'info');
+    }, [addToast]);
 
     // Total items count (for badge)
     const cartCount = cartItems.length;

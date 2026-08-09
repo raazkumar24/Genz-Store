@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ShoppingBag, Trash2, Plus, Minus, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { Card, Badge, Button } from '../components/ui';
+import { Card, Badge, Button, BackButton } from '../components/ui';
 
 /**
  * Cart Page
@@ -11,14 +11,16 @@ import { Card, Badge, Button } from '../components/ui';
  * - Total price calculate karta hai
  */
 const Cart = () => {
-    const navigate = useNavigate();
     const { cartItems, cartTotal, cartCount, updateQuantity, removeFromCart, clearCart } = useCart();
 
     // Empty cart state
     if (cartItems.length === 0) {
         return (
-            <div className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center justify-center px-6 py-24 text-center">
-                <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gray-100 text-gray-400 mb-6">
+            <div className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center justify-center px-6 py-16 text-center">
+                <div className="w-full max-w-md flex justify-start mb-6">
+                    <BackButton />
+                </div>
+                <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gray-100 text-gray-400 mb-6 shadow-xs">
                     <ShoppingBag size={48} />
                 </div>
                 <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-heading)' }}>
@@ -38,13 +40,9 @@ const Cart = () => {
         <div className="min-h-screen bg-[var(--color-bg)] px-4 py-8 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-5xl">
                 {/* Back Button */}
-                <button
-                    onClick={() => navigate(-1)}
-                    className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
-                >
-                    <ArrowLeft size={16} />
-                    <span>Back</span>
-                </button>
+                <div className="mb-6">
+                    <BackButton />
+                </div>
 
                 {/* ── Header ── */}
                 <div className="mb-8 flex items-center justify-between">

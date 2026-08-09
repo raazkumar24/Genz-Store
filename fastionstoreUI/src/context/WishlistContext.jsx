@@ -32,7 +32,7 @@ export const WishlistProvider = ({ children }) => {
         addToast(`Removed "${product.name.slice(0, 20)}..." from Wishlist`, "info");
         return prev.filter((item) => item._id !== product._id);
       } else {
-        addToast(`Added "${product.name.slice(0, 20)}..." to Wishlist ❤️`, "success");
+        addToast(`Added "${product.name.slice(0, 25)}..." to Wishlist`, "success", "heart");
         return [...prev, product];
       }
     });

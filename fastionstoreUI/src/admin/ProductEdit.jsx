@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
 import { updateProduct, createProduct } from "../services/productService";
 import { useToast } from "../context/ToastContext";
+import { BackButton } from "../components/ui";
 import {
   Save,
   ArrowLeft,
@@ -288,12 +289,7 @@ const ProductEdit = () => {
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full max-w-6xl mx-auto pb-24 min-w-0">
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link
-            to="/admin/products"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft size={20} />
-          </Link>
+          <BackButton fallbackPath="/admin/products" text="Back" />
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
               {isNewProduct ? "Add Product" : "Edit Product"}

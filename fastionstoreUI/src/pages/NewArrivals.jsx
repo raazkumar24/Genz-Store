@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useProducts } from "../context/ProductContext";
-import { Badge, Card } from "../components/ui";
-import { ArrowLeft } from "lucide-react";
+import { Badge, Card, BackButton } from "../components/ui";
 
 const ProductSkeleton = () => (
   <Card className="animate-pulse p-4">
@@ -20,7 +18,6 @@ const ProductSkeleton = () => (
 );
 
 const NewArrivals = () => {
-  const navigate = useNavigate();
   const { products, loading } = useProducts();
 
   const newArrivalProducts = useMemo(() => {
@@ -45,13 +42,9 @@ const NewArrivals = () => {
 
       <section className="relative z-10 mx-auto max-w-7xl px-3 py-6 md:py-12 md:px-8 w-full">
         {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
-        >
-          <ArrowLeft size={16} />
-          <span>Back</span>
-        </button>
+        <div className="mb-6">
+          <BackButton />
+        </div>
         <div className="mb-12 flex flex-col items-center text-center">
           <Badge variant="primary" className="px-4 py-1.5 flex items-center gap-2">
             <span className="relative flex h-2 w-2">

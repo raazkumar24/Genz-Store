@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Badge, Button } from "../components/ui";
+import { Badge, Button, BackButton } from "../components/ui";
 
 const NotFound = () => {
     return (
@@ -10,7 +10,7 @@ const NotFound = () => {
                 </h1>
             </div>
 
-            <div className="relative z-10 max-w-2xl">
+            <div className="relative z-10 max-w-2xl flex flex-col items-center">
                 <Badge variant="error" className="mb-6 inline-flex px-6 py-2">
                     <span className="h-2 w-2 rounded-full bg-white animate-pulse mr-2"></span>
                     System Error
@@ -24,7 +24,8 @@ const NotFound = () => {
                     The page you are looking for has been sold out, moved, or never existed in the first place.
                 </p>
                 
-                <div className="mt-10">
+                <div className="mt-10 flex items-center justify-center gap-4 flex-wrap">
+                    <BackButton size="lg" text="Go Back" />
                     <Button to="/" variant="primary" size="lg">
                         Return to Base
                     </Button>

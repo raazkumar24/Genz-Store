@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle } from "lucide-react";
-import { Input, Button, Card } from "../components/ui";
+import { Input, Button, Card, BackButton } from "../components/ui";
 import axios from "axios";
 
 // Backend ka real login API endpoint
@@ -83,10 +83,14 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg)] p-6 pt-24 relative overflow-hidden">
+    <div className="flex flex-col min-h-screen items-center justify-center bg-[var(--color-bg)] p-6 pt-12 pb-16 relative overflow-hidden">
       {/* Decorative background blobs */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--color-primary-light)] rounded-full mix-blend-multiply filter blur-[100px] opacity-30 animate-blob"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[var(--color-accent)] rounded-full mix-blend-multiply filter blur-[100px] opacity-10 animate-blob animation-delay-2000"></div>
+
+      <div className="relative z-10 w-full max-w-5xl mb-4 flex justify-start">
+        <BackButton />
+      </div>
 
       <Card className="relative z-10 w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 overflow-hidden p-0">
         {/* ============ LEFT — Login Form ============ */}
