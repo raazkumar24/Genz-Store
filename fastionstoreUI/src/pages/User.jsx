@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { Mail, Shield, User as UserIcon, LogOut, Settings, Package } from 'lucide-react';
 import { getStoredUser, getUserRole, isLoggedIn, clearAuth } from '../utils/auth';
-import { Card, Badge, Button, BackButton } from '../components/ui';
+import { Card, Badge, BackButton } from '../components/ui';
 
 /**
  * User Profile Page

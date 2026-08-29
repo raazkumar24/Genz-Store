@@ -1,90 +1,110 @@
-import React, { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import React, { useMemo, useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
 import Hero from "../components/hero";
 import ProductCard from "../components/ProductCard";
-import FeauturedProducts from "../components/FeaturedProducts";
 import PromoBanner from "../components/PromoBanner";
-import { Badge, Card } from "../components/ui";
 import { useProducts } from "../context/ProductContext";
 import Marquee from "../components/Marquee";
 import CategoryScroll from "../components/CategoryScroll";
+import { Sparkles, SlidersHorizontal, ArrowLeft, RefreshCw } from "lucide-react";
+import ProductFilters, { applyProductFilters } from "../components/ProductFilters";
 
 // Loading skeleton for products to show before data is fetched
 const ProductSkeleton = () => (
-  <div className="animate-pulse rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-4">
-    <div className="aspect-[3/4] w-full rounded-xl bg-[var(--color-surface)]" />
-    <div className="mt-4 space-y-3">
-      <div className="h-4 w-3/4 rounded bg-[var(--color-surface)]" />
-      <div className="h-3 w-1/2 rounded bg-[var(--color-surface)]" />
+  <div className="animate-pulse rounded-2xl border border-neutral-200/80 bg-white p-3 space-y-3">
+    <div className="aspect-[4/5] w-full rounded-xl bg-neutral-200/60" />
+    <div className="space-y-2 pt-1">
+      <div className="h-3.5 w-3/4 rounded bg-neutral-200/60" />
+      <div className="h-3 w-1/2 rounded bg-neutral-200/60" />
       <div className="flex items-center justify-between pt-2">
-        <div className="h-5 w-20 rounded bg-[var(--color-surface)]" />
-        <div className="h-8 w-24 rounded-full bg-[var(--color-surface)]" />
+        <div className="h-5 w-16 rounded bg-neutral-200/60" />
+        <div className="h-8 w-8 rounded-full bg-neutral-200/60" />
       </div>
     </div>
   </div>
 );
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+};
+
+const initialFiltersState = {
+  searchQuery: "",
+  category: "all",
+  gender: "all",
+  priceRange: "all",
+  size: "all",
+  color: "all",
+  inStockOnly: false,
+  onSaleOnly: false,
+  sortBy: "latest",
+};
+
 const Home = () => {
-  // Fetching products and loading state from context
   const { products, loading } = useProducts();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  // Extracting search query from URL
-  const searchQuery = (searchParams.get("search") || "").trim().toLowerCase();
+  const urlSearch = searchParams.get("search") || "";
 
-  // Filtering products based on the search query — name, description, category, keywords bhi check hoga
-  // Filtering products based on the search query
+  const [filters, setFilters] = useState({
+    ...initialFiltersState,
+    searchQuery: urlSearch,
+  });
+
+  // Sync URL search query with filter state
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      searchQuery: urlSearch,
+    }));
+  }, [urlSearch]);
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleResetFilters = () => {
+    setFilters(initialFiltersState);
+    if (urlSearch) {
+      navigate("/");
+    }
+  };
+
+  // Compute filtered and sorted products
   const filteredProducts = useMemo(() => {
-    if (!searchQuery) return products;
-
-    return products
-      .map((product) => {
-        // Find the specific variant that matches the search (if any)
-        const matchedVariant = product.variants?.find((v) => {
-          const vHaystack = [v.color, v.size, ...(v.keywords || [])]
-            .join(" ")
-            .toLowerCase();
-          return vHaystack.includes(searchQuery);
-        });
-
-        const haystack = [
-          product.name,
-          product.description,
-          product.gender,
-          Array.isArray(product.collection) ? product.collection.join(" ") : product.collection,
-          ...(product.variants || []).flatMap((v) => v.keywords || []),
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        if (haystack.includes(searchQuery)) {
-          return { ...product, matchedVariant: matchedVariant || null };
-        }
-        return null;
-      })
-      .filter(Boolean);
-  }, [products, searchQuery]);
-
-  // Loading state is now handled inline in the respective sections
-  // so the Hero component can render immediately without waiting for products.
+    return applyProductFilters(products, filters);
+  }, [products, filters]);
 
   return (
-    // Main Container for the Home Page
-    <div className="relative w-full min-h-screen bg-[var(--color-bg)] flex flex-col">
-      {/* Background Pattern - Subtle dots */}
-      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
-        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,var(--color-text)_1px,transparent_0)] bg-[length:32px_32px]" />
+    <div className="relative w-full min-h-screen bg-[#FBFBFA] flex flex-col">
+      {/* Subtle Grid Background Accent */}
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.03]">
+        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
       </div>
 
-      {/* Show these sections ONLY when there is no search query */}
-      {!searchQuery && (
+      {/* Show Hero, Marquee, and Category highlights when not in active search mode */}
+      {!urlSearch && (
         <>
           <Marquee
             items={[
-              "FREE SHIPPING ON ALL ORDERS OVER ₹999",
-              "PREMIUM OVERSIZED TEES",
-              "NEW DROPS EVERY FRIDAY",
-              "100% SUPIMA COTTON",
+              "FREE SHIPPING ON ORDERS OVER ₹999",
+              "280 GSM HEAVYWEIGHT COMBED COTTON",
+              "DROP 04 IS LIVE WORLDWIDE",
+              "14-DAY HASSLE-FREE DOORSTEP EXCHANGE",
+              "100% AUTHENTIC STREETWEAR SILHOUETTES",
             ]}
           />
           <Hero />
@@ -93,100 +113,99 @@ const Home = () => {
         </>
       )}
 
-      {/* Main Product Listing Section */}
-      {/* Main Content Area */}
-      <section className="relative z-10 mx-auto max-w-7xl px-3 py-8 md:py-16 md:px-8 w-full">
+      {/* Main Product Section */}
+      <section className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-14 w-full">
         {/* Section Header */}
-        <div className="mb-12 flex flex-col items-center text-center mt-8">
-          <Badge
-            variant="primary"
-            className="px-4 py-1.5 flex items-center gap-2"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-            </span>
-            {searchQuery ? "Search Mode" : "Handpicked for you"}
-          </Badge>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 border-b border-neutral-200/80 pb-5">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-2.5">
+              <Sparkles size={13} className="text-amber-400" />
+              {urlSearch ? "Search Results" : "Curated Drops"}
+            </div>
 
-          <h2
-            className="mt-6 text-4xl font-black uppercase tracking-tight text-gray-900 sm:text-5xl lg:text-6xl"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            {searchQuery ? (
-              <>
-                Results for{" "}
-                <span className="text-[var(--color-primary)]">
-                  "{searchQuery}"
-                </span>
-              </>
-            ) : (
-              <>
-                LATEST{" "}
-                <span
-                  className="text-transparent"
-                  style={{ WebkitTextStroke: "2px #111" }}
+            <div className="flex items-center gap-3">
+              {urlSearch && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-200/80 hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer"
+                  title="Back to All Drops"
                 >
-                  DROPS
-                </span>
-              </>
-            )}
-          </h2>
-
-          {/* Subtitle */}
-          <p className="mt-4 max-w-2xl text-sm font-medium text-gray-500 md:text-base">
-            {searchQuery
-              ? `Showing ${filteredProducts.length} ${filteredProducts.length === 1 ? "item" : "items"} that match your search.`
-              : "Explore our complete range of fashion essentials. Carefully curated to elevate your everyday style."}
-          </p>
+                  <ArrowLeft size={16} />
+                </button>
+              )}
+              <h2
+                className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-neutral-900"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                {urlSearch ? (
+                  <>
+                    Drops For <span className="text-[var(--color-primary)]">"{urlSearch}"</span>
+                  </>
+                ) : (
+                  <>
+                    Streetwear <span className="text-[var(--color-primary)]">Catalog</span>
+                  </>
+                )}
+              </h2>
+            </div>
+            <p className="mt-1 text-xs sm:text-sm font-medium text-neutral-500 max-w-md">
+              {urlSearch
+                ? `Found ${filteredProducts.length} items matching "${urlSearch}".`
+                : "Heavyweight 280+ GSM combed cotton, drop-shoulder silhouettes, and boxy fits."}
+            </p>
+          </div>
         </div>
 
-        {/* Products Grid or Empty State or Loading State */}
+        {/* Filter Controls Component */}
+        <div className="mb-6">
+          <ProductFilters
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onResetFilters={handleResetFilters}
+            totalResults={filteredProducts.length}
+            showCategoryTabs={!urlSearch}
+          />
+        </div>
+
+        {/* Products Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 gap-1 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <Card className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-100 text-[var(--color-primary)]">
-              <svg
-                className="h-10 w-10"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                />
-              </svg>
+          <div className="flex flex-col items-center justify-center py-16 text-center rounded-3xl bg-white border border-neutral-200/80 p-8 shadow-xs">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-400">
+              <SlidersHorizontal size={28} />
             </div>
-            <h3
-              className="text-xl font-bold text-gray-900"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              No products found
+            <h3 className="text-xl font-bold text-neutral-900" style={{ fontFamily: "var(--font-heading)" }}>
+              No Streetwear Drops Found
             </h3>
-            <p className="mt-2 max-w-sm text-sm text-gray-500">
-              No matches for "{searchQuery}". Try checking for typos or use a
-              broader term.
+            <p className="mt-1 text-sm text-neutral-500 max-w-sm">
+              We couldn't find any products matching your current filters or search query. Try clearing filters or searching for something else.
             </p>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-2 gap-1 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {filteredProducts.map((product) => (
-              <div
-                key={product._id}
-                className="transition-transform duration-300 hover:-translate-y-1"
-              >
-                <ProductCard product={product} />
-              </div>
-            ))}
+            <button
+              onClick={handleResetFilters}
+              className="mt-5 flex items-center gap-2 rounded-full bg-neutral-900 px-6 py-2.5 text-xs font-black uppercase tracking-wider text-white hover:bg-[var(--color-primary)] transition-colors shadow-xs cursor-pointer"
+            >
+              <RefreshCw size={14} /> Reset All Filters
+            </button>
           </div>
+        ) : (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4"
+          >
+            {filteredProducts.map((product) => (
+              <motion.div key={product._id} variants={itemVariants}>
+                <ProductCard product={product} />
+              </motion.div>
+            ))}
+          </motion.div>
         )}
       </section>
     </div>

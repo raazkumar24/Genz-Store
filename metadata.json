@@ -1,0 +1,6 @@
+{
+  "name": "Genz-Store",
+  "description": "Streetwear fashion ecommerce store with product catalog, collections, cart, and admin dashboard",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "motion/react";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -6,7 +7,7 @@ import ProductDetails from "./pages/ProductDetails";
 import User from "./pages/User";
 import Navbar from "./components/Navbar";
 import AdminRoute from "./components/AdminRoute";
-import ProductList from "./admin/Productlist"; // Name matching case check kar lijiye page folder se
+import ProductList from "./admin/Productlist";
 import ProductEdit from "./admin/ProductEdit";
 import CollectionsEdit from "./admin/CollectionsEdit";
 import NotFound from "./pages/NotFound";
@@ -18,6 +19,7 @@ import Wishlist from "./pages/Wishlist";
 import { ProductProvider } from "./context/ProductContext";
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
+import { ToastProvider } from "./context/ToastContext";
 import "./App.css";
 
 import NewArrivals from "./pages/NewArrivals";
@@ -27,14 +29,32 @@ import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 
-import { useLocation } from "react-router-dom";
+const pageVariants = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
+  exit: { opacity: 0, y: -10, transition: { duration: 0.2, ease: "easeIn" } },
+};
+
+function AnimatedRouteWrapper({ children }) {
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="w-full"
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#FAFAFA] selection:bg-[var(--color-primary)] selection:text-white">
       <ScrollToTop />
       {!isAdminRoute && (
         <div className="sticky top-0 z-50 shrink-0">
@@ -42,21 +62,22 @@ function AppContent() {
         </div>
       )}
       <main className={`flex-grow ${isAdminRoute ? 'h-screen overflow-hidden' : 'min-h-[90vh]'}`}>
-        <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/new-arrivals" element={<NewArrivals />} />
-            <Route path="/sale" element={<Sale />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/products/:productId" element={<ProductDetails />} />
-            <Route path="/collections/:collectionName" element={<Collection />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<User />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/wishlist" element={<Wishlist />} />
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<AnimatedRouteWrapper><Home /></AnimatedRouteWrapper>} />
+            <Route path="/new-arrivals" element={<AnimatedRouteWrapper><NewArrivals /></AnimatedRouteWrapper>} />
+            <Route path="/sale" element={<AnimatedRouteWrapper><Sale /></AnimatedRouteWrapper>} />
+            <Route path="/about" element={<AnimatedRouteWrapper><About /></AnimatedRouteWrapper>} />
+            <Route path="/contact" element={<AnimatedRouteWrapper><Contact /></AnimatedRouteWrapper>} />
+            <Route path="/products/:productId" element={<AnimatedRouteWrapper><ProductDetails /></AnimatedRouteWrapper>} />
+            <Route path="/collections/:collectionName" element={<AnimatedRouteWrapper><Collection /></AnimatedRouteWrapper>} />
+            <Route path="/login" element={<AnimatedRouteWrapper><Login /></AnimatedRouteWrapper>} />
+            <Route path="/register" element={<AnimatedRouteWrapper><Register /></AnimatedRouteWrapper>} />
+            <Route path="/profile" element={<AnimatedRouteWrapper><User /></AnimatedRouteWrapper>} />
+            <Route path="/cart" element={<AnimatedRouteWrapper><Cart /></AnimatedRouteWrapper>} />
+            <Route path="/wishlist" element={<AnimatedRouteWrapper><Wishlist /></AnimatedRouteWrapper>} />
 
-            {/* 🛡️ FIXED ADMIN ROUTES: Using AdminLayout for Sidebar & Topbar UI */}
+            {/* 🛡️ ADMIN ROUTES */}
             <Route
               path="/admin/*"
               element={
@@ -73,15 +94,14 @@ function AppContent() {
               <Route path="*" element={<Dashboard />} />
             </Route>
 
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<AnimatedRouteWrapper><NotFound /></AnimatedRouteWrapper>} />
           </Routes>
+        </AnimatePresence>
       </main>
       {!isAdminRoute && <Footer />}
     </div>
   );
 }
-
-import { ToastProvider } from "./context/ToastContext";
 
 function App() {
   return (

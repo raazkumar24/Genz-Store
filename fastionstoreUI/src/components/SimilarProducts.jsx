@@ -59,13 +59,7 @@ const SimilarProducts = ({ currentProduct, allProducts }) => {
               className="text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Similar{" "}
-              <span
-                className="text-transparent"
-                style={{ WebkitTextStroke: "2px var(--color-text)" }}
-              >
-                Drops
-              </span>
+              Similar <span className="text-[var(--color-primary)]">Drops</span>
             </h2>
           </div>
         </div>

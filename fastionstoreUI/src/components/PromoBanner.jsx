@@ -86,10 +86,10 @@ const PromoBanner = () => {
           </div>
           
           <h2 
-            className="text-5xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-none mb-6"
+            className="text-5xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-none mb-6 text-white"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Summer <span className="text-transparent" style={{ WebkitTextStroke: "2px white" }}>Blowout</span>
+            Summer <span className="text-red-500">Blowout</span>
           </h2>
           
           <p className="text-white/70 text-base md:text-lg font-medium max-w-md mb-8 leading-relaxed mx-auto md:mx-0">
