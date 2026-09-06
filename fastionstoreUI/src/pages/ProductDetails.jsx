@@ -344,12 +344,14 @@ const ProductDetails = () => {
               setActiveImage={setActiveImage}
               productName={product.name}
               onOpenLightbox={() => setIsLightboxOpen(true)}
+              isWishlisted={Boolean(product && isInWishlist(product._id))}
+              onToggleWishlist={() => product && toggleWishlist(product)}
             />
           </div>
 
           {/* Right Column: Buying Options & Streetwear Details */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="rounded-3xl bg-white p-5 sm:p-7 border border-neutral-200/80 shadow-xs">
+            <div className="rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-7 border border-neutral-200/80 shadow-xs">
               
               {/* Header Badges: Brand, Drop & Stock Status */}
               <div className="flex items-center justify-between gap-2 mb-3">
@@ -384,7 +386,7 @@ const ProductDetails = () => {
               </h1>
 
               {/* Live Demand & Rating Pulse */}
-              <div className="flex flex-wrap items-center gap-y-2 gap-x-4 mb-4 pb-4 border-b border-neutral-100">
+              <div className="flex flex-wrap items-center justify-between gap-2.5 mb-4 pb-4 border-b border-neutral-100">
                 <div className="flex items-center gap-1.5">
                   <div className="flex items-center text-amber-400">
                     <StarSVG size={14} className="fill-amber-400 text-amber-400" />
@@ -397,7 +399,7 @@ const ProductDetails = () => {
                   <span className="text-xs font-medium text-neutral-400">(142 Reviews)</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
@@ -504,7 +506,7 @@ const ProductDetails = () => {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
                   {sizes.map((size) => {
                     const hasSelectedColor = availableSizesForColor.includes(size);
                     const sizeVariants = variants.filter((v) =>
@@ -519,7 +521,7 @@ const ProductDetails = () => {
                         type="button"
                         onClick={() => handleSizeSelect(size)}
                         disabled={allOutOfStock}
-                        className={`relative flex h-11 items-center justify-center rounded-xl border text-xs font-black uppercase transition-all duration-200 cursor-pointer ${
+                        className={`relative flex h-10 sm:h-11 items-center justify-center rounded-xl border text-xs font-black uppercase transition-all duration-200 cursor-pointer ${
                           isSelected
                             ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white shadow-xs"
                             : "border-neutral-200 bg-white text-neutral-800 hover:border-neutral-400"
@@ -546,25 +548,25 @@ const ProductDetails = () => {
 
               {/* Quantity Selector & Action Buttons */}
               <div className="mt-6 space-y-3">
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2 sm:gap-2.5">
                   {/* Quantity Stepper */}
-                  <div className="flex h-12 items-center rounded-xl border border-neutral-200 bg-neutral-50 px-1.5 shrink-0">
+                  <div className="flex h-11 sm:h-12 items-center rounded-xl border border-neutral-200 bg-neutral-50 px-1 sm:px-1.5 shrink-0">
                     <button
                       type="button"
                       onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-600 hover:bg-white hover:shadow-2xs transition cursor-pointer"
+                      className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-neutral-600 hover:bg-white transition cursor-pointer"
                       aria-label="Decrease quantity"
                     >
-                      <Minus size={14} />
+                      <Minus size={13} />
                     </button>
-                    <span className="w-8 text-center font-black text-neutral-900 text-xs">{quantity}</span>
+                    <span className="w-6 sm:w-8 text-center font-black text-neutral-900 text-xs">{quantity}</span>
                     <button
                       type="button"
                       onClick={() => setQuantity((prev) => prev + 1)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-600 hover:bg-white hover:shadow-2xs transition cursor-pointer"
+                      className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-neutral-600 hover:bg-white transition cursor-pointer"
                       aria-label="Increase quantity"
                     >
-                      <Plus size={14} />
+                      <Plus size={13} />
                     </button>
                   </div>
 
@@ -574,40 +576,39 @@ const ProductDetails = () => {
                     onClick={handleAddToCart}
                     disabled={isAddDisabled}
                     variant="primary"
-                    size="lg"
-                    icon={!isAddDisabled ? <ShoppingBag size={17} /> : undefined}
-                    className="flex-1 h-12 text-xs font-black uppercase tracking-wider rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-2"
+                    size="md"
+                    icon={!isAddDisabled ? <ShoppingBag size={16} /> : undefined}
+                    className="flex-1 min-w-0 h-11 sm:h-12 px-3 sm:px-6 text-xs font-black uppercase tracking-wider rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     {isAddDisabled ? "SOLD OUT" : "ADD TO BAG"}
                   </Button>
 
-                  {/* Wishlist Button */}
+                  {/* Wishlist Heart Button */}
                   <button
                     type="button"
                     onClick={() => product && toggleWishlist(product)}
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition-all cursor-pointer ${
+                    className={`flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl border transition-all cursor-pointer ${
                       product && isInWishlist(product._id)
                         ? "border-red-500 bg-red-500 text-white shadow-xs"
                         : "border-neutral-200 bg-white text-neutral-700 hover:border-red-500 hover:text-red-500"
                     }`}
                     title={product && isInWishlist(product._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                    aria-label="Wishlist"
                   >
-                    <Heart size={20} className={product && isInWishlist(product._id) ? "fill-white" : ""} />
+                    <Heart size={18} className={product && isInWishlist(product._id) ? "fill-white" : ""} />
                   </button>
                 </div>
 
                 {/* Buy Now Direct Button */}
                 {!isAddDisabled && (
-                  <Button
+                  <button
                     type="button"
                     onClick={handleBuyNow}
-                    variant="white"
-                    size="lg"
-                    className="w-full h-12 text-xs font-black uppercase tracking-wider rounded-xl border-2 border-neutral-900 bg-neutral-900 text-white hover:bg-neutral-800 transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
-                    icon={<Zap size={16} className="text-amber-400 fill-amber-400" />}
+                    className="w-full h-11 sm:h-12 px-3 sm:px-4 text-xs font-black uppercase tracking-wider rounded-xl border-2 border-neutral-900 bg-neutral-900 text-white hover:bg-neutral-800 transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
                   >
-                    BUY IT NOW — EXPRESS CHECKOUT
-                  </Button>
+                    <Zap size={16} className="text-amber-400 fill-amber-400 shrink-0" />
+                    <span className="truncate">BUY IT NOW — EXPRESS CHECKOUT</span>
+                  </button>
                 )}
               </div>
 
@@ -831,18 +832,31 @@ const ProductDetails = () => {
       )}
 
       {/* Floating Sticky Mobile Buy Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200 px-4 py-3 shadow-lg">
-        <div className="flex items-center gap-3">
-          <div className="min-w-0">
-            <p className="text-xs font-extrabold text-neutral-900 truncate">{product.name}</p>
-            <p className="text-base font-black text-[var(--color-primary)]">₹{currentPrice}</p>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200 px-3.5 py-2.5 shadow-lg">
+        <div className="flex items-center gap-2.5">
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-extrabold text-neutral-900 truncate leading-tight">{product.name}</p>
+            <p className="text-sm font-black text-[var(--color-primary)]">₹{currentPrice}</p>
           </div>
+          <button
+            type="button"
+            onClick={() => product && toggleWishlist(product)}
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors cursor-pointer ${
+              product && isInWishlist(product._id)
+                ? "border-red-500 bg-red-50 text-red-500"
+                : "border-neutral-200 bg-neutral-50 text-neutral-600"
+            }`}
+            title={product && isInWishlist(product._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+            aria-label="Wishlist"
+          >
+            <Heart size={18} className={product && isInWishlist(product._id) ? "fill-red-500 text-red-500" : ""} />
+          </button>
           <Button
             onClick={handleAddToCart}
             disabled={isAddDisabled}
             variant="primary"
-            size="md"
-            className="flex-1 text-xs font-black uppercase tracking-wider py-3 shadow-md"
+            size="sm"
+            className="h-10 px-4 text-xs font-black uppercase tracking-wider shadow-md shrink-0"
           >
             {isAddDisabled ? "Sold Out" : "Add to Bag"}
           </Button>
