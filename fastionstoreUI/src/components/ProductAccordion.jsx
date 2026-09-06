@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { 
+<<<<<<< HEAD
   CheckCircle2, ShieldCheck, Truck, RotateCcw, 
   Award, Droplets, Scissors, ThumbsUp, Layers
 } from "lucide-react";
@@ -19,6 +20,11 @@ const StarSVG = ({ size = 14, className = "" }) => (
     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
   </svg>
 );
+=======
+  Sparkles, CheckCircle2, ShieldCheck, Truck, RotateCcw, 
+  Star, Award, Droplets, Scissors, ThumbsUp
+} from "lucide-react";
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 
 /**
  * ProductAccordion Component
@@ -102,7 +108,11 @@ const ProductAccordion = ({ product }) => {
 
           <div>
             <h4 className="text-xs font-black uppercase tracking-widest text-neutral-900 mb-3 flex items-center gap-1.5">
+<<<<<<< HEAD
               <Layers size={14} className="text-[var(--color-primary)]" />
+=======
+              <Sparkles size={14} className="text-[var(--color-primary)]" />
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
               Key Drop Highlights
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -232,11 +242,19 @@ const ProductAccordion = ({ product }) => {
               <div className="text-center">
                 <span className="text-4xl font-black text-neutral-900" style={{ fontFamily: "var(--font-heading)" }}>4.9</span>
                 <div className="flex items-center text-amber-400 mt-1">
+<<<<<<< HEAD
                   <StarSVG size={14} className="fill-amber-400 text-amber-400" />
                   <StarSVG size={14} className="fill-amber-400 text-amber-400" />
                   <StarSVG size={14} className="fill-amber-400 text-amber-400" />
                   <StarSVG size={14} className="fill-amber-400 text-amber-400" />
                   <StarSVG size={14} className="fill-amber-400 text-amber-400" />
+=======
+                  <Star size={14} className="fill-amber-400" />
+                  <Star size={14} className="fill-amber-400" />
+                  <Star size={14} className="fill-amber-400" />
+                  <Star size={14} className="fill-amber-400" />
+                  <Star size={14} className="fill-amber-400" />
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                 </div>
                 <span className="text-[10px] font-bold text-neutral-400 uppercase">142 verified drops</span>
               </div>
@@ -268,7 +286,11 @@ const ProductAccordion = ({ product }) => {
                 <div className="flex items-center gap-2">
                   <div className="flex text-amber-400">
                     {[...Array(rev.rating)].map((_, i) => (
+<<<<<<< HEAD
                       <StarSVG key={i} size={13} className="fill-amber-400 text-amber-400" />
+=======
+                      <Star key={i} size={13} className="fill-amber-400" />
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                     ))}
                   </div>
                   <span className="text-[11px] font-semibold text-neutral-500">• {rev.fit}</span>

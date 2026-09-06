@@ -86,10 +86,17 @@ const PromoBanner = () => {
           </div>
           
           <h2 
+<<<<<<< HEAD
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[1.08] mb-5 text-white break-words"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Summer <span className="text-outline-red ml-1">Blowout</span>
+=======
+            className="text-5xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-none mb-6 text-white"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Summer <span className="text-red-500">Blowout</span>
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
           </h2>
           
           <p className="text-white/70 text-base md:text-lg font-medium max-w-md mb-8 leading-relaxed mx-auto md:mx-0">

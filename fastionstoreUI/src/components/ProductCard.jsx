@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
+=======
+import React, { useState } from "react";
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 import { Link } from "react-router-dom";
 import { Badge, Card } from "./ui";
 import { useCart } from "../context/CartContext";
@@ -46,6 +50,7 @@ const ProductCard = ({ product, highlight: highlightProp = false }) => {
   const [selectedVariantId, setSelectedVariantId] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
 
+<<<<<<< HEAD
   // Sync / reset manual swatch selection when product or active display variant changes (e.g. filter by color)
   useEffect(() => {
     setSelectedVariantId(null);
@@ -56,6 +61,14 @@ const ProductCard = ({ product, highlight: highlightProp = false }) => {
   // Active variant resolution: manual swatch selection > filtered display variant > matched variant > first in-stock > first variant
   const activeVariant =
     (selectedVariantId && product.variants?.find((v) => v._id === selectedVariantId)) ||
+=======
+  const isFav = isInWishlist(product._id);
+
+  // Active variant resolution
+  const activeVariant =
+    (selectedVariantId && product.variants?.find((v) => v._id === selectedVariantId)) ||
+    product.matchedVariant ||
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
     product.displayVariant ||
     product.matchedVariant ||
     product.variants?.find((variant) => variant.stock > 0) ||

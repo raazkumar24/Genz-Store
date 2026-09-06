@@ -59,7 +59,11 @@ const SimilarProducts = ({ currentProduct, allProducts }) => {
               className="text-2xl sm:text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase break-words"
               style={{ fontFamily: "var(--font-heading)" }}
             >
+<<<<<<< HEAD
               Similar <span className="text-outline-primary ml-1">Drops</span>
+=======
+              Similar <span className="text-[var(--color-primary)]">Drops</span>
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             </h2>
           </div>
         </div>

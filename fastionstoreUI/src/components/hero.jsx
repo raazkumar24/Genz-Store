@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
+<<<<<<< HEAD
 import { ArrowRight, ChevronLeft, ChevronRight, Zap, Flame, ShieldCheck, RotateCcw, Layers } from "lucide-react";
+=======
+import { ArrowRight, ChevronLeft, ChevronRight, Zap, Flame, ShieldCheck, RotateCcw, Sparkles } from "lucide-react";
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 import { Button } from "./ui";
 
 const heroSlides = [
@@ -9,7 +13,10 @@ const heroSlides = [
     badge: "DROP 04 // 2026",
     tag: "OVERSIZED FIT",
     titleTop: "HEAVYWEIGHT",
+<<<<<<< HEAD
     titleHighlight: "STREETWEAR",
+=======
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
     titleBottom: "STREETWEAR",
     subtitle: "Boxy cuts and drop-shoulder silhouettes crafted from 280 GSM combed organic cotton. Engineered for everyday statement.",
     primaryCta: "Shop Oversized",
@@ -21,7 +28,10 @@ const heroSlides = [
     badge: "NEW SEASON",
     tag: "DROP SHOULDER",
     titleTop: "URBAN RELAXED",
+<<<<<<< HEAD
     titleHighlight: "HOODIES & TEES",
+=======
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
     titleBottom: "HOODIES & TEES",
     subtitle: "Ultra-comfortable fleece hoodies, heavyweight graphic tees, and tactical streetwear designed for modern culture.",
     primaryCta: "Explore Hoodies",
@@ -33,7 +43,10 @@ const heroSlides = [
     badge: "EXCLUSIVE DROP",
     tag: "STREET ESSENTIALS",
     titleTop: "PREMIUM ESSENTIALS",
+<<<<<<< HEAD
     titleHighlight: "DAILY ROTATION",
+=======
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
     titleBottom: "DAILY ROTATION",
     subtitle: "Clean aesthetics with architectural drape that never loses its shape. Upgrade your wardrobe with timeless fits.",
     primaryCta: "View New Drops",
@@ -99,6 +112,7 @@ const Hero = () => {
                   </span>
                 </div>
 
+<<<<<<< HEAD
                 {/* Main Heading - Clean, High Impact Outline Typography */}
                 <h1
                   className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-black uppercase tracking-tight text-neutral-900 leading-[1.05] break-words max-w-full"
@@ -110,6 +124,16 @@ const Hero = () => {
                     style={{ WebkitTextStroke: "2px var(--color-primary)" }}
                   >
                     {slide.titleHighlight || slide.titleBottom}
+=======
+                {/* Main Heading - Clean, High Impact */}
+                <h1
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.2rem] font-black uppercase tracking-tight text-neutral-900 leading-[1.02]"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  <span className="block">{slide.titleTop}</span>
+                  <span className="block text-[var(--color-primary)] mt-1">
+                    {slide.titleBottom}
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                   </span>
                 </h1>
 
@@ -183,7 +207,11 @@ const Hero = () => {
           </div>
 
           {/* RIGHT COLUMN: Model Showcase (5 Cols) */}
+<<<<<<< HEAD
           <div className="lg:col-span-5 h-[220px] sm:h-[360px] md:h-[400px] lg:h-[430px] relative flex items-end justify-center">
+=======
+          <div className="lg:col-span-5 h-[380px] sm:h-[460px] md:h-[500px] lg:h-[530px] relative flex items-end justify-center">
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             {/* Model Image with Smooth Crossfade */}
             <div className="relative z-10 h-full w-full flex items-end justify-center">
               <AnimatePresence mode="wait">
@@ -224,7 +252,11 @@ const Hero = () => {
 
           <div className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-neutral-50 transition-colors">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-900">
+<<<<<<< HEAD
               <Layers size={18} className="text-[var(--color-primary)]" />
+=======
+              <Sparkles size={18} className="text-[var(--color-primary)]" />
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             </div>
             <div className="min-w-0">
               <p className="text-xs font-black uppercase tracking-tight text-neutral-900 truncate">

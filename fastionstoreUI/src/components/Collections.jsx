@@ -73,8 +73,13 @@ const Collections = () => {
               </span>
               Curated For You
             </span>
+<<<<<<< HEAD
             <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase break-words" style={{ fontFamily: "var(--font-heading)" }}>
               Shop By <span className="text-outline-primary ml-1">Collection</span>
+=======
+            <h2 className="text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase" style={{ fontFamily: "var(--font-heading)" }}>
+              Shop By <span className="text-[var(--color-primary)]">Collection</span>
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             </h2>
           </div>
           
@@ -110,7 +115,11 @@ const Collections = () => {
                   )}
                   
                   {/* Title with solid typography */}
+<<<<<<< HEAD
                   <h3 className="text-2xl sm:text-3xl md:text-5xl font-black text-white uppercase mb-6 tracking-tight break-words" style={{ fontFamily: "var(--font-heading)" }}>
+=======
+                  <h3 className="text-3xl md:text-5xl font-black text-white uppercase mb-6 tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+>>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                     {item.name || item.title}
                   </h3>
                   
