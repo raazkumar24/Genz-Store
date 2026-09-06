@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Zap, Check } from "lucide-react";
 import { Input, Button, Card, BackButton } from "../components/ui";
 import axios from "axios";
+import { API_URL } from "../services/api";
 
 // Backend real login API endpoint
-const API_URL = `${import.meta.env.VITE_API_BASE_URL || "/api"}/auth/login`;
+const LOGIN_API_URL = `${API_URL}/auth/login`;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(API_URL, {
+      const response = await axios.post(LOGIN_API_URL, {
         email: formData.email.trim(),
         password: formData.password,
       });

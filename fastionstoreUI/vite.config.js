@@ -1,9 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite' //That is Tailwind CSS plugin for Vite. It allows you to use Tailwind CSS in your Vite project.
-
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss(),  react()],
+  plugins: [tailwindcss(), react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://genz-store-x36t.onrender.com',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })

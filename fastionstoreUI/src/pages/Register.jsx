@@ -3,8 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail, User, UserPlus, AlertCircle, Check, Flame } from "lucide-react";
 import { Input, Button, Card, BackButton } from "../components/ui";
 import axios from "axios";
+import { API_URL } from "../services/api";
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL || "/api"}/auth/register`;
+const REGISTER_API_URL = `${API_URL}/auth/register`;
 
 const initialFormData = {
   name: "",
@@ -80,7 +81,7 @@ const Register = () => {
 
     try {
       setLoading(true);
-      await axios.post(API_URL, {
+      await axios.post(REGISTER_API_URL, {
         name: formData.name.trim(),
         email: formData.email.trim(),
         password: formData.password,

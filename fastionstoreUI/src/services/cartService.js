@@ -1,7 +1,5 @@
 import axios from 'axios';
-
-// Environment variable se backend API ka base URL read karte hain, default to /api
-const API_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+import { API_URL } from './api';
 
 // Auth headers for cart operations
 const getAuthHeaders = () => ({
