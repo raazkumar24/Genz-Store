@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const PRIMARY_API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
-const LOCAL_API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
@@ -70,30 +69,10 @@ export const DEFAULT_COLLECTIONS = [
   }
 ];
 
-// Execute request on primary API URL, with automatic fallback to local backend if primary fails with 404/network error
-const executeWithFallback = async (requestFn) => {
-  try {
-    return await requestFn(PRIMARY_API_URL);
-  } catch (error) {
-    if (PRIMARY_API_URL !== LOCAL_API_URL) {
-      try {
-        console.warn(`Primary API (${PRIMARY_API_URL}) failed, attempting local backend fallback (${LOCAL_API_URL})...`);
-        return await requestFn(LOCAL_API_URL);
-      } catch (localError) {
-        console.error("Local backend fallback also failed:", localError);
-        throw error;
-      }
-    }
-    throw error;
-  }
-};
-
 export const fetchAllCollections = async () => {
   try {
-    return await executeWithFallback(async (baseUrl) => {
-      const response = await axios.get(`${baseUrl}/collections`);
-      return response.data;
-    });
+    const response = await axios.get(`${API_URL}/collections`);
+    return response.data;
   } catch (error) {
     console.warn("Failed to fetch collections from backend, using default collections fallback:", error.message);
     return DEFAULT_COLLECTIONS;
@@ -102,44 +81,36 @@ export const fetchAllCollections = async () => {
 
 export const createCollection = async (collectionData) => {
   const isFormData = collectionData instanceof FormData;
-  return await executeWithFallback(async (baseUrl) => {
-    const response = await axios.post(`${baseUrl}/collections/add`, collectionData, {
-      headers: {
-        ...getAuthHeaders(),
-        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-      },
-    });
-    return response.data;
+  const response = await axios.post(`${API_URL}/collections/add`, collectionData, {
+    headers: {
+      ...getAuthHeaders(),
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    },
   });
+  return response.data;
 };
 
 export const updateCollection = async (id, collectionData) => {
   const isFormData = collectionData instanceof FormData;
-  return await executeWithFallback(async (baseUrl) => {
-    const response = await axios.put(`${baseUrl}/collections/${id}`, collectionData, {
-      headers: {
-        ...getAuthHeaders(),
-        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-      },
-    });
-    return response.data;
+  const response = await axios.put(`${API_URL}/collections/${id}`, collectionData, {
+    headers: {
+      ...getAuthHeaders(),
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    },
   });
+  return response.data;
 };
 
 export const deleteCollection = async (id) => {
-  return await executeWithFallback(async (baseUrl) => {
-    const response = await axios.delete(`${baseUrl}/collections/${id}`, {
-      headers: getAuthHeaders(),
-    });
-    return response.data;
+  const response = await axios.delete(`${API_URL}/collections/${id}`, {
+    headers: getAuthHeaders(),
   });
+  return response.data;
 };
 
 export const resetDefaultCollections = async () => {
-  return await executeWithFallback(async (baseUrl) => {
-    const response = await axios.post(`${baseUrl}/collections/reset`, {}, {
-      headers: getAuthHeaders(),
-    });
-    return response.data;
+  const response = await axios.post(`${API_URL}/collections/reset`, {}, {
+    headers: getAuthHeaders(),
   });
+  return response.data;
 };

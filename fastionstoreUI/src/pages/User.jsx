@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { Mail, Shield, User as UserIcon, LogOut, Settings, Package } from 'lucide-react';
 import { getStoredUser, getUserRole, isLoggedIn, clearAuth } from '../utils/auth';
-import { Card, Badge, Button, BackButton } from '../components/ui';
+import { Card, Badge, BackButton } from '../components/ui';
 
 /**
  * User Profile Page
@@ -54,10 +54,10 @@ const User = () => {
                         My Account
                     </Badge>
                     <h1
-                        className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight"
+                        className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 tracking-tight break-words"
                         style={{ fontFamily: 'var(--font-heading)' }}
                     >
-                        Profile
+                        User <span className="text-outline-primary ml-1">Profile</span>
                     </h1>
                     <p className="mt-2 text-sm text-gray-500">
                         Your account information and settings.

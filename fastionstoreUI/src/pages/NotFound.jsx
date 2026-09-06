@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Badge, Button, BackButton } from "../components/ui";
 
 const NotFound = () => {
@@ -16,8 +15,8 @@ const NotFound = () => {
                     System Error
                 </Badge>
                 
-                <h1 className="mt-4 text-6xl md:text-8xl font-black uppercase tracking-tight text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
-                    DROP<br/>NOT<br/>FOUND
+                <h1 className="mt-4 text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-gray-900 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
+                    DROP<br/><span className="text-outline-primary">NOT</span><br/>FOUND
                 </h1>
                 
                 <p className="mt-6 text-sm font-medium text-gray-500 max-w-md mx-auto">

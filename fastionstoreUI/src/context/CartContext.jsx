@@ -137,9 +137,14 @@ export const CartProvider = ({ children }) => {
             ];
         });
 
-        // Trigger custom notification
+        // Trigger success notification
         const productName = product?.name || 'Item';
-        addToast(`Added "${productName.length > 25 ? productName.slice(0, 25) + '...' : productName}" to Bag`, 'success', 'bag');
+        addToast(
+            `"${productName.length > 28 ? productName.slice(0, 28) + '...' : productName}" added to cart successfully!`,
+            'success',
+            'bag',
+            2800
+        );
 
         // Sync with backend
         addToCartAPI({

@@ -11,8 +11,8 @@ const Footer = () => {
           
           {/* Brand & Description */}
           <div className="space-y-6">
-            <h2 className="text-3xl font-black uppercase tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
-              FASHIONSTORE
+            <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+              GENZ<span className="text-[var(--color-primary)]">STORE</span>
             </h2>
             <p className="text-gray-400 text-sm leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
               Elevate your style with our premium collection of apparel. Designed for the modern trendsetter, crafted with uncompromising quality.

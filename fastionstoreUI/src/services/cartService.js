@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Environment variable se backend API ka base URL read karte hain.
-const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+// Environment variable se backend API ka base URL read karte hain, default to /api
+const API_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
 // Auth headers for cart operations
 const getAuthHeaders = () => ({
@@ -34,7 +34,7 @@ export const removeFromCartAPI = async (cartItem) => {
   
   const response = await axios.delete(`${API_URL}/cart/remove`, {
     headers: getAuthHeaders(),
-    data: cartItem, // axios delete requires payload in data
+    data: cartItem,
   });
   return response.data;
 };

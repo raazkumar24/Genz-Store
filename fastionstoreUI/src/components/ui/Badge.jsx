@@ -7,43 +7,42 @@ const Badge = ({
   variant = "primary", 
   className = '' 
 }) => {
-  // If children are provided, use the generic wrapper behavior (used heavily by AI generated pages)
   if (children) {
     const variants = {
-      primary: "bg-[var(--color-primary)] text-white",
-      success: "bg-green-100 text-green-800 border border-green-200",
-      error: "bg-red-100 text-red-800 border border-red-200",
-      neutral: "bg-gray-100 text-gray-800 border border-gray-200",
-      dark: "bg-gray-900 text-white"
+      primary: "bg-[var(--color-primary)] text-white shadow-xs shadow-[var(--color-primary)]/20",
+      secondary: "bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)]",
+      success: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+      error: "bg-red-50 text-red-700 border border-red-200",
+      neutral: "bg-neutral-100 text-neutral-800 border border-neutral-200",
+      dark: "bg-[#0D0D11] text-white shadow-xs",
+      outline: "bg-transparent text-[var(--color-text)] border border-[var(--color-border)]",
     };
 
     return (
-      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${variants[variant] || variants.primary} ${className}`}>
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${variants[variant] || variants.primary} ${className}`}>
         {children}
       </span>
     );
   }
 
-  // Otherwise use the user's original detailed badge behavior
-  const baseClass = "inline-flex items-center gap-2 rounded-full border px-3 py-1 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md";
+  const baseClass = "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-wider transition-all duration-300 shadow-xs";
   const variants = {
-    primary: "border-[var(--color-primary)]/20 bg-[var(--color-surface)]/80 text-[var(--color-text-muted)]",
-    secondary: "border-[var(--color-border)] bg-white/80 text-[var(--color-text)]",
+    primary: "border-[var(--color-primary)]/20 bg-[var(--color-primary-light)]/60 text-[var(--color-primary)]",
+    secondary: "border-[var(--color-border)] bg-white/90 text-[var(--color-text)]",
+    dark: "border-neutral-800 bg-neutral-900 text-white",
   };
 
   return (
-    <div className={`${baseClass} ${variants[variant]} ${className}`}>
+    <div className={`${baseClass} ${variants[variant] || variants.primary} ${className}`}>
       {highlightText && (
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-primary)] opacity-40" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--color-primary)]" />
         </span>
       )}
-      <p className="text-[10px] font-bold uppercase tracking-[0.15em]">
-        {text}
-      </p>
+      <span>{text}</span>
       {highlightText && (
-        <span className="rounded-full bg-[var(--color-primary)] px-2 py-0.5 text-[9px] font-bold text-white shadow-[0_2px_10px_rgba(239,108,87,0.3)]">
+        <span className="rounded-full bg-[var(--color-primary)] px-2 py-0.5 text-[9px] font-bold text-white shadow-xs">
           {highlightText}
         </span>
       )}

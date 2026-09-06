@@ -45,8 +45,8 @@ const FeaturedProducts = ({ products, loading }) => {
               </span>
               Hot Right Now
             </span>
-            <h2 className="text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase" style={{ fontFamily: "var(--font-heading)" }}>
-              Featured <span className="text-transparent" style={{ WebkitTextStroke: '1px var(--color-text)' }}>Drops</span>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase break-words" style={{ fontFamily: "var(--font-heading)" }}>
+              Featured <span className="text-outline-primary ml-1">Drops</span>
             </h2>
           </div>
 

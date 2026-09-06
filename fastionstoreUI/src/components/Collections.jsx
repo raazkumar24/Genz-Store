@@ -73,8 +73,8 @@ const Collections = () => {
               </span>
               Curated For You
             </span>
-            <h2 className="text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase" style={{ fontFamily: "var(--font-heading)" }}>
-              Shop By <span className="text-transparent" style={{ WebkitTextStroke: '1px var(--color-text)' }}>Collection</span>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-[var(--color-text)] tracking-tight uppercase break-words" style={{ fontFamily: "var(--font-heading)" }}>
+              Shop By <span className="text-outline-primary ml-1">Collection</span>
             </h2>
           </div>
           
@@ -109,8 +109,8 @@ const Collections = () => {
                     </p>
                   )}
                   
-                  {/* Title with stroke effect on hover */}
-                  <h3 className="text-4xl md:text-6xl font-black text-white uppercase mb-6 transition-all duration-500 group-hover:text-transparent" style={{ fontFamily: "var(--font-heading)", WebkitTextStroke: '1px white' }}>
+                  {/* Title with solid typography */}
+                  <h3 className="text-2xl sm:text-3xl md:text-5xl font-black text-white uppercase mb-6 tracking-tight break-words" style={{ fontFamily: "var(--font-heading)" }}>
                     {item.name || item.title}
                   </h3>
                   

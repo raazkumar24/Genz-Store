@@ -6,6 +6,8 @@ export const getStoredUser = () => {
     }
 };
 
+export const getUser = getStoredUser;
+
 export const getUserRole = () => {
     const user = getStoredUser();
     return localStorage.getItem('role') || user?.role || '';
