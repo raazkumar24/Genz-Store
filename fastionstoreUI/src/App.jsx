@@ -16,10 +16,10 @@ import Dashboard from "./admin/Dashboard";
 import AdminLayout from "./admin/AdminLayout";
 import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
-import { ProductProvider } from "./context/ProductContext";
-import { CartProvider } from "./context/CartContext";
-import { WishlistProvider } from "./context/WishlistContext";
-import { ToastProvider } from "./context/ToastContext";
+import { ProductProvider } from "./context/ProductProvider";
+import { CartProvider } from "./context/CartProvider";
+import { WishlistProvider } from "./context/WishlistProvider";
+import { ToastProvider } from "./context/ToastProvider";
 import "./App.css";
 
 import NewArrivals from "./pages/NewArrivals";
