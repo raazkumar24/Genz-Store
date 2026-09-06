@@ -30,11 +30,7 @@
   --color-white: #FFFFFF;
 
   /* Typography */
-<<<<<<< HEAD
   --font-heading: 'Poppins', sans-serif;
-=======
-  --font-heading: 'Syne', 'Plus Jakarta Sans', sans-serif;
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Space Grotesk', monospace;
 }
@@ -137,7 +133,6 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-<<<<<<< HEAD
 /* Text outline / hollow stroked typography utilities (matches crisp LOOKS & DROPS streetwear reference) */
 .text-outline-primary,
 .text-outline-red,
@@ -157,17 +152,10 @@ body {
   paint-order: stroke fill;
   max-width: 100%;
   word-break: break-word;
-=======
-/* Text outline utility */
-.text-outline-dark {
-  -webkit-text-stroke: 1.5px var(--color-text);
-  color: transparent;
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 }
 
 .text-outline-primary {
   -webkit-text-stroke: 1.5px var(--color-primary);
-<<<<<<< HEAD
 }
 
 .text-outline-red {
@@ -177,14 +165,10 @@ body {
 .text-outline-dark,
 .text-outline-black {
   -webkit-text-stroke: 1.5px #0D0D11;
-=======
-  color: transparent;
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 }
 
 .text-outline-white {
   -webkit-text-stroke: 1.5px #FFFFFF;
-<<<<<<< HEAD
 }
 
 @media (min-width: 640px) {
@@ -219,7 +203,3 @@ body {
   }
 }
 
-=======
-  color: transparent;
-}
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8

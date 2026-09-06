@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-<<<<<<< HEAD
 import { Search, X, TrendingUp, ArrowRight, Clock, Trash2, ArrowUpRight } from 'lucide-react';
-=======
-import { Search, X, TrendingUp, Sparkles, ArrowRight, Clock, Trash2, ArrowUpRight } from 'lucide-react';
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 import { useProducts } from '../context/ProductContext';
 
 const POPULAR_SEARCHES = [
@@ -316,11 +312,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                       onClick={() => handleSelectSearch(tag)}
                       className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-neutral-200 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white text-xs font-bold text-neutral-800 transition-all shadow-2xs cursor-pointer"
                     >
-<<<<<<< HEAD
                       <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]"></span>
-=======
-                      <Sparkles size={11} className="text-amber-500" />
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                       {tag}
                     </button>
                   ))}

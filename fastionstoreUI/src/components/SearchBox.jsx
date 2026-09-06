@@ -1,9 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-<<<<<<< HEAD
 import { Search, X, ArrowRight } from 'lucide-react';
-=======
-import { Search, X, ArrowRight, Sparkles } from 'lucide-react';
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useProducts } from '../context/ProductContext';
 
@@ -150,11 +146,7 @@ const SearchBox = ({ className = '', placeholder = 'Search products...', onSearc
                 onClick={() => submitSearch(query)}
                 className="w-full text-center py-2 mt-1 border-t border-neutral-100 text-xs font-black uppercase text-[var(--color-primary)] hover:underline flex items-center justify-center gap-1 cursor-pointer"
               >
-<<<<<<< HEAD
                 View all results for "{query}" <ArrowRight size={13} />
-=======
-                View all results for "{query}" <Sparkles size={12} />
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
               </button>
             </div>
           )}

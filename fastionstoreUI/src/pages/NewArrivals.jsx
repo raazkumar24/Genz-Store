@@ -2,11 +2,7 @@ import React, { useMemo, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { useProducts } from "../context/ProductContext";
 import { Badge, Card, BackButton } from "../components/ui";
-<<<<<<< HEAD
 import { SlidersHorizontal } from "lucide-react";
-=======
-import { Sparkles } from "lucide-react";
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 import { Link } from "react-router-dom";
 import ProductFilters, { applyProductFilters } from "../components/ProductFilters";
 
@@ -29,11 +25,8 @@ const initialFilters = {
   category: "all",
   gender: "all",
   priceRange: "all",
-<<<<<<< HEAD
   minPrice: 0,
   maxPrice: Infinity,
-=======
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
   size: "all",
   color: "all",
   inStockOnly: false,
@@ -94,17 +87,10 @@ const NewArrivals = () => {
           </Badge>
 
           <h2
-<<<<<<< HEAD
             className="mt-4 text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-neutral-900 break-words max-w-full"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             New <span className="text-outline-primary ml-1">Arrivals</span>
-=======
-            className="mt-4 text-3xl font-black uppercase tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            New <span className="text-[var(--color-primary)]">Arrivals</span>
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
           </h2>
 
           <p className="mt-3 max-w-xl text-xs sm:text-sm font-medium text-neutral-600 md:text-base">
@@ -126,20 +112,6 @@ const NewArrivals = () => {
               Sale %
             </Link>
           </div>
-<<<<<<< HEAD
-=======
-        </div>
-
-        {/* Filter Toolbar */}
-        <div className="mb-6">
-          <ProductFilters
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onResetFilters={handleResetFilters}
-            totalResults={filteredProducts.length}
-            showCategoryTabs={true}
-          />
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
         </div>
 
         {/* Filter Toolbar */}
@@ -156,11 +128,7 @@ const NewArrivals = () => {
 
         {/* Full-width Products Grid */}
         {loading ? (
-<<<<<<< HEAD
           <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
-=======
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -177,24 +145,15 @@ const NewArrivals = () => {
               Try adjusting your active filters or clear them to see all fresh drops.
             </p>
             <button
-<<<<<<< HEAD
               type="button"
               onClick={handleResetFilters}
               className="mt-4 px-5 py-2.5 rounded-full bg-neutral-900 text-white text-xs font-black uppercase tracking-wider hover:bg-[var(--color-primary)] transition-colors cursor-pointer"
-=======
-              onClick={handleResetFilters}
-              className="mt-4 px-5 py-2.5 rounded-full bg-neutral-900 text-white text-xs font-black uppercase tracking-wider hover:bg-[var(--color-primary)] transition-colors"
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             >
               Reset Filters
             </button>
           </Card>
         ) : (
-<<<<<<< HEAD
           <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
-=======
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             {filteredProducts.map((product) => (
               <div key={product._id} className="transition-transform duration-300 hover:-translate-y-1">
                 <ProductCard product={product} />

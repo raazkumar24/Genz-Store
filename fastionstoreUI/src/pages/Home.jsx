@@ -7,11 +7,7 @@ import PromoBanner from "../components/PromoBanner";
 import { useProducts } from "../context/ProductContext";
 import Marquee from "../components/Marquee";
 import CategoryScroll from "../components/CategoryScroll";
-<<<<<<< HEAD
 import { SlidersHorizontal, ArrowLeft, RefreshCw } from "lucide-react";
-=======
-import { Sparkles, SlidersHorizontal, ArrowLeft, RefreshCw } from "lucide-react";
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 import ProductFilters, { applyProductFilters } from "../components/ProductFilters";
 
 // Loading skeleton for products to show before data is fetched
@@ -34,22 +30,14 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-<<<<<<< HEAD
       staggerChildren: 0.04,
-=======
-      staggerChildren: 0.05,
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
     },
   },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-<<<<<<< HEAD
   visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
-=======
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 };
 
 const initialFiltersState = {
@@ -57,11 +45,8 @@ const initialFiltersState = {
   category: "all",
   gender: "all",
   priceRange: "all",
-<<<<<<< HEAD
   minPrice: 0,
   maxPrice: Infinity,
-=======
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
   size: "all",
   color: "all",
   inStockOnly: false,
@@ -71,11 +56,7 @@ const initialFiltersState = {
 
 const Home = () => {
   const { products, loading } = useProducts();
-<<<<<<< HEAD
   const [searchParams] = useSearchParams();
-=======
-  const [searchParams, setSearchParams] = useSearchParams();
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
   const navigate = useNavigate();
 
   const urlSearch = searchParams.get("search") || "";
@@ -140,14 +121,10 @@ const Home = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 border-b border-neutral-200/80 pb-5">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-2.5">
-<<<<<<< HEAD
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
               </span>
-=======
-              <Sparkles size={13} className="text-amber-400" />
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
               {urlSearch ? "Search Results" : "Curated Drops"}
             </div>
 
@@ -163,28 +140,16 @@ const Home = () => {
                 </button>
               )}
               <h2
-<<<<<<< HEAD
                 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight text-neutral-900 break-words"
-=======
-                className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-neutral-900"
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {urlSearch ? (
                   <>
-<<<<<<< HEAD
                     Drops For <span className="text-outline-primary ml-1">"{urlSearch}"</span>
                   </>
                 ) : (
                   <>
                     Streetwear <span className="text-outline-primary ml-1">Catalog</span>
-=======
-                    Drops For <span className="text-[var(--color-primary)]">"{urlSearch}"</span>
-                  </>
-                ) : (
-                  <>
-                    Streetwear <span className="text-[var(--color-primary)]">Catalog</span>
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                   </>
                 )}
               </h2>
@@ -197,30 +162,19 @@ const Home = () => {
           </div>
         </div>
 
-<<<<<<< HEAD
         {/* Top Filter Controls Component (Toolbar, Tabs & Sort) */}
-=======
-        {/* Filter Controls Component */}
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
         <div className="mb-6">
           <ProductFilters
             filters={filters}
             onFilterChange={handleFilterChange}
             onResetFilters={handleResetFilters}
-<<<<<<< HEAD
             products={products}
-=======
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             totalResults={filteredProducts.length}
             showCategoryTabs={!urlSearch}
           />
         </div>
 
-<<<<<<< HEAD
         {/* Full-width Products Grid */}
-=======
-        {/* Products Grid */}
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
         {loading ? (
           <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -236,16 +190,10 @@ const Home = () => {
               No Streetwear Drops Found
             </h3>
             <p className="mt-1 text-sm text-neutral-500 max-w-sm">
-<<<<<<< HEAD
               We couldn't find any products matching your selected filters or search query. Try clearing filters or selecting another category.
             </p>
             <button
               type="button"
-=======
-              We couldn't find any products matching your current filters or search query. Try clearing filters or searching for something else.
-            </p>
-            <button
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
               onClick={handleResetFilters}
               className="mt-5 flex items-center gap-2 rounded-full bg-neutral-900 px-6 py-2.5 text-xs font-black uppercase tracking-wider text-white hover:bg-[var(--color-primary)] transition-colors shadow-xs cursor-pointer"
             >

@@ -70,13 +70,8 @@ const Cart = () => {
         {/* Header */}
         <div className="mb-6 flex flex-row items-center justify-between gap-4 pb-4 border-b border-neutral-200/80">
           <div>
-<<<<<<< HEAD
             <h1 className="text-2xl sm:text-3xl font-black text-neutral-900 uppercase break-words" style={{ fontFamily: "var(--font-heading)" }}>
               Shopping <span className="text-outline-primary ml-1">Cart</span>
-=======
-            <h1 className="text-2xl sm:text-3xl font-black text-neutral-900 uppercase" style={{ fontFamily: "var(--font-heading)" }}>
-              Shopping <span className="text-[var(--color-primary)]">Cart</span>
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             </h1>
             <p className="mt-0.5 text-xs text-neutral-500 font-medium">
               {cartCount} {cartCount === 1 ? "item" : "items"} currently in your bag

@@ -6,15 +6,9 @@ import { useWishlist } from "../context/WishlistContext";
 import { useToast } from "../context/ToastContext";
 import { Button, Badge, BackButton } from "../components/ui";
 import { 
-<<<<<<< HEAD
   Heart, ShoppingBag, X, 
   ShieldCheck, RotateCcw, Ruler, Plus, Minus, Share2, 
   MapPin, CheckCircle2, Zap, Check, Flame, Layers
-=======
-  Heart, ShoppingBag, X, Star, 
-  ShieldCheck, RotateCcw, Ruler, Plus, Minus, Share2, 
-  MapPin, CheckCircle2, Zap, Check, Flame, Sparkles
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 } from "lucide-react";
 import ProductAccordion from "../components/ProductAccordion";
 import ProductGallery from "../components/ProductGallery";
@@ -383,11 +377,7 @@ const ProductDetails = () => {
 
               {/* Product Title */}
               <h1
-<<<<<<< HEAD
                 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase tracking-tight text-neutral-900 leading-tight mb-2.5 break-words"
-=======
-                className="text-2xl sm:text-3xl lg:text-[2rem] font-black uppercase tracking-tight text-neutral-900 leading-tight mb-2.5"
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {product.name}
@@ -397,19 +387,11 @@ const ProductDetails = () => {
               <div className="flex flex-wrap items-center gap-y-2 gap-x-4 mb-4 pb-4 border-b border-neutral-100">
                 <div className="flex items-center gap-1.5">
                   <div className="flex items-center text-amber-400">
-<<<<<<< HEAD
                     <StarSVG size={14} className="fill-amber-400 text-amber-400" />
                     <StarSVG size={14} className="fill-amber-400 text-amber-400" />
                     <StarSVG size={14} className="fill-amber-400 text-amber-400" />
                     <StarSVG size={14} className="fill-amber-400 text-amber-400" />
                     <StarSVG size={14} className="fill-amber-400 text-amber-400" />
-=======
-                    <Star size={14} className="fill-amber-400" />
-                    <Star size={14} className="fill-amber-400" />
-                    <Star size={14} className="fill-amber-400" />
-                    <Star size={14} className="fill-amber-400" />
-                    <Star size={14} className="fill-amber-400" />
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                   </div>
                   <span className="text-xs font-black text-neutral-900">4.9</span>
                   <span className="text-xs font-medium text-neutral-400">(142 Reviews)</span>
@@ -426,7 +408,6 @@ const ProductDetails = () => {
 
               {/* Price Module */}
               <div className="space-y-1.5 pb-5 border-b border-neutral-100">
-<<<<<<< HEAD
                 <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
                   {isSaleActive ? (
                     <>
@@ -434,15 +415,6 @@ const ProductDetails = () => {
                         ₹{currentPrice}
                       </span>
                       <span className="text-base sm:text-lg font-bold text-neutral-400 line-through">
-=======
-                <div className="flex items-baseline gap-3">
-                  {isSaleActive ? (
-                    <>
-                      <span className="text-3xl sm:text-4xl font-black text-red-500" style={{ fontFamily: "var(--font-heading)" }}>
-                        ₹{currentPrice}
-                      </span>
-                      <span className="text-lg font-bold text-neutral-400 line-through">
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                         ₹{originalPrice}
                       </span>
                       {discountPercent > 0 && (
@@ -452,19 +424,11 @@ const ProductDetails = () => {
                       )}
                     </>
                   ) : (
-<<<<<<< HEAD
                     <span className="text-2xl sm:text-4xl font-black text-neutral-900" style={{ fontFamily: "var(--font-heading)" }}>
                       ₹{currentPrice}
                     </span>
                   )}
                   <span className="text-[11px] font-semibold text-neutral-400 ml-auto hidden xs:inline">Inclusive of all taxes</span>
-=======
-                    <span className="text-3xl sm:text-4xl font-black text-neutral-900" style={{ fontFamily: "var(--font-heading)" }}>
-                      ₹{currentPrice}
-                    </span>
-                  )}
-                  <span className="text-[11px] font-semibold text-neutral-400 ml-auto">Inclusive of all taxes</span>
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                 </div>
 
                 {savingsAmount > 0 && (
@@ -575,11 +539,7 @@ const ProductDetails = () => {
                 </div>
                 
                 <p className="mt-2 text-[11px] font-medium text-neutral-500 flex items-center gap-1">
-<<<<<<< HEAD
                   <Flame size={12} className="text-[var(--color-primary)]" />
-=======
-                  <Sparkles size={12} className="text-amber-500" />
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                   <span><strong>Fit Advice:</strong> Relaxed boxy streetwear silhouette. Order true size for relaxed look.</span>
                 </p>
               </div>
@@ -696,11 +656,7 @@ const ProductDetails = () => {
                 </div>
 
                 <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
-<<<<<<< HEAD
                   <Layers size={16} className="text-[var(--color-primary)] shrink-0" />
-=======
-                  <Sparkles size={16} className="text-[var(--color-primary)] shrink-0" />
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                   <div className="min-w-0">
                     <p className="text-[11px] font-black uppercase text-neutral-900">280 GSM Cotton</p>
                     <p className="text-[10px] text-neutral-500">Heavyweight Pure Combed</p>

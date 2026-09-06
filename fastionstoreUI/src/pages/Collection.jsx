@@ -3,11 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
 import ProductCard from "../components/ProductCard";
 import { Badge, Card, Button, BackButton } from "../components/ui";
-<<<<<<< HEAD
 import { SlidersHorizontal } from "lucide-react";
-=======
-import { SlidersHorizontal, Sparkles } from "lucide-react";
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 import ProductFilters, { applyProductFilters } from "../components/ProductFilters";
 
 // Loading skeleton
@@ -49,11 +45,8 @@ const Collection = () => {
     category: collectionName || "all",
     gender: "all",
     priceRange: "all",
-<<<<<<< HEAD
     minPrice: 0,
     maxPrice: Infinity,
-=======
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
     size: "all",
     color: "all",
     inStockOnly: false,
@@ -119,10 +112,6 @@ const Collection = () => {
 
   // 2. Apply dynamic filters (price, size, color, stock, sort)
   const filteredProducts = useMemo(() => {
-<<<<<<< HEAD
-=======
-    // We already filtered by collection in baseCollectionProducts, so pass category: "all" to filter engine
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
     return applyProductFilters(baseCollectionProducts, { ...filters, category: "all" });
   }, [baseCollectionProducts, filters]);
 
@@ -158,29 +147,18 @@ const Collection = () => {
           </nav>
 
           <Badge variant="primary" className="mb-3 px-3 py-1 flex items-center gap-1.5 text-xs font-black uppercase tracking-wider">
-<<<<<<< HEAD
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
             </span>
-=======
-            <Sparkles size={13} className="text-white" />
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             Streetwear Drop
           </Badge>
 
           <h1
-<<<<<<< HEAD
             className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-neutral-900 break-words max-w-full"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             {displayTitle} <span className="text-outline-primary ml-1">Collection</span>
-=======
-            className="text-3xl font-black uppercase tracking-tight text-neutral-900 sm:text-5xl md:text-6xl"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            {displayTitle} <span className="text-[var(--color-primary)]">Collection</span>
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
           </h1>
           
           <p className="mt-3 max-w-xl text-xs sm:text-sm text-neutral-600 font-medium md:text-base">
@@ -210,25 +188,15 @@ const Collection = () => {
             filters={filters}
             onFilterChange={handleFilterChange}
             onResetFilters={handleResetFilters}
-<<<<<<< HEAD
             products={baseCollectionProducts}
             totalResults={filteredProducts.length}
             showCategoryTabs={false}
-=======
-            totalResults={filteredProducts.length}
-            showCategoryTabs={false}
-            hideCategoryInDrawer={true}
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
           />
         </div>
 
         {/* Full-width Products Grid */}
         {loading ? (
-<<<<<<< HEAD
           <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
-=======
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -248,11 +216,7 @@ const Collection = () => {
               <button
                 type="button"
                 onClick={handleResetFilters}
-<<<<<<< HEAD
                 className="px-5 py-2.5 rounded-full border border-neutral-300 text-xs font-black uppercase text-neutral-800 hover:bg-neutral-100 cursor-pointer"
-=======
-                className="px-5 py-2.5 rounded-full border border-neutral-300 text-xs font-black uppercase text-neutral-800 hover:bg-neutral-100"
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
               >
                 Reset Filters
               </button>
@@ -262,11 +226,7 @@ const Collection = () => {
             </div>
           </Card>
         ) : (
-<<<<<<< HEAD
           <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
-=======
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             {filteredProducts.map((product) => (
               <div key={product._id} className="transition-transform duration-300 hover:-translate-y-1">
                 <ProductCard product={product} />

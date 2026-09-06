@@ -31,19 +31,11 @@ const About = () => {
           </div>
 
           <h1
-<<<<<<< HEAD
             className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-tight break-words max-w-full"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Born on the streets. <br />
             <span className="text-outline-primary mt-2">Crafted for the culture.</span>
-=======
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black uppercase tracking-tight text-white leading-none"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Born on the streets. <br />
-            <span className="text-[var(--color-primary)]">Crafted for the culture.</span>
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
           </h1>
 
           <p className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-2xl mx-auto font-medium leading-relaxed pt-2">

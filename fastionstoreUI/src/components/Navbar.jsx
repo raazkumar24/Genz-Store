@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
 import { NavLink, useLocation } from 'react-router-dom';
-=======
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, 
@@ -16,10 +12,6 @@ import {
   LogOut, 
   Shield, 
   Flame, 
-<<<<<<< HEAD
-=======
-  Sparkles, 
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
   ChevronRight,
   Layers
 } from "lucide-react";
@@ -41,7 +33,6 @@ const Navbar = () => {
     const [isCollectionsOpenMobile, setIsCollectionsOpenMobile] = useState(true);
     
     const location = useLocation();
-    const navigate = useNavigate();
 
     const navLinks = [
         { label: 'Home', to: '/' },
@@ -224,11 +215,7 @@ const Navbar = () => {
                                     <div className="rounded-2xl border border-neutral-200/80 bg-white/95 backdrop-blur-xl p-2 shadow-xl">
                                         <div className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-neutral-400 border-b border-neutral-100 flex items-center justify-between">
                                             <span>Curated Drops</span>
-<<<<<<< HEAD
                                             <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]"></span>
-=======
-                                            <Sparkles size={11} className="text-amber-500" />
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                                         </div>
                                         {collectionLinks.map((link) => (
                                             <NavLink
@@ -315,12 +302,6 @@ const Navbar = () => {
                                 <Search size={15} strokeWidth={2.2} className="text-neutral-500" />
                                 <span className="hidden lg:inline">Search streetwear...</span>
                                 <span className="lg:hidden">Search</span>
-<<<<<<< HEAD
-=======
-                                <kbd className="hidden lg:inline-flex rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-mono text-neutral-400">
-                                    ⌘K
-                                </kbd>
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
                             </button>
 
                             {/* Wishlist */}

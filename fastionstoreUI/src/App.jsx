@@ -67,10 +67,7 @@ function AppContent() {
             <Route path="/" element={<AnimatedRouteWrapper><Home /></AnimatedRouteWrapper>} />
             <Route path="/new-arrivals" element={<AnimatedRouteWrapper><NewArrivals /></AnimatedRouteWrapper>} />
             <Route path="/sale" element={<AnimatedRouteWrapper><Sale /></AnimatedRouteWrapper>} />
-<<<<<<< HEAD
             <Route path="/summer-blowout" element={<AnimatedRouteWrapper><Sale /></AnimatedRouteWrapper>} />
-=======
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
             <Route path="/about" element={<AnimatedRouteWrapper><About /></AnimatedRouteWrapper>} />
             <Route path="/contact" element={<AnimatedRouteWrapper><Contact /></AnimatedRouteWrapper>} />
             <Route path="/products/:productId" element={<AnimatedRouteWrapper><ProductDetails /></AnimatedRouteWrapper>} />

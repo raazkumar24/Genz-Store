@@ -29,17 +29,10 @@ const Wishlist = () => {
                 Saved Fits
               </Badge>
               <h1
-<<<<<<< HEAD
                 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-neutral-900 uppercase break-words"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Saved <span className="text-outline-primary ml-1">Wishlist</span>
-=======
-                className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-neutral-900 uppercase"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Saved <span className="text-[var(--color-primary)]">Wishlist</span>
->>>>>>> 7081665a6d106e8c80164200e2652d9cda3ac5f8
               </h1>
             </div>
             <p className="text-xs sm:text-sm font-bold text-neutral-500 uppercase tracking-wider">
