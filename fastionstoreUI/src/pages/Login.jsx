@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Zap, Check } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  LogIn,
+  AlertCircle,
+  Zap,
+  Check,
+} from "lucide-react";
 import { Input, Button, Card, BackButton } from "../components/ui";
 import axios from "axios";
 import { API_URL } from "../services/api";
@@ -75,16 +84,6 @@ const Login = () => {
     }
   };
 
-  const handleQuickDemo = (role) => {
-    if (role === "admin") {
-      setFormData({ email: "admin@example.com", password: "password123" });
-    } else {
-      setFormData({ email: "user@example.com", password: "password123" });
-    }
-    setErrors({});
-    setApiError("");
-  };
-
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-[var(--color-bg)] p-4 sm:p-6 py-12 relative overflow-hidden">
       {/* Background Subtle Ambient Gradients */}
@@ -97,23 +96,28 @@ const Login = () => {
       </div>
 
       <Card className="relative z-10 w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 overflow-hidden p-0 rounded-3xl border border-neutral-200/80 shadow-lg bg-white">
-        
         {/* ============ LEFT — Login Form (7 Cols) ============ */}
         <div className="lg:col-span-7 p-6 sm:p-10 md:p-12 flex flex-col justify-between">
           <div>
             <div className="mb-6">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-3">
-                <LogIn size={12} strokeWidth={3} className="text-[var(--color-primary)]" />
+                <LogIn
+                  size={12}
+                  strokeWidth={3}
+                  className="text-[var(--color-primary)]"
+                />
                 Member Access
               </span>
               <h1
                 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-neutral-900 leading-tight"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Welcome <span className="text-[var(--color-primary)]">Back</span>
+                Welcome{" "}
+                <span className="text-[var(--color-primary)]">Back</span>
               </h1>
               <p className="mt-1.5 text-xs sm:text-sm text-neutral-500 font-medium">
-                Sign in to manage your drops, wishlist, and exclusive member perks.
+                Sign in to manage your drops, wishlist, and exclusive member
+                perks.
               </p>
             </div>
 
@@ -174,29 +178,6 @@ const Login = () => {
                 {loading ? "Authenticating..." : "Sign In"}
               </Button>
             </form>
-
-            {/* Quick Demo Credentials Autofill */}
-            <div className="mt-6 pt-4 border-t border-neutral-100">
-              <p className="text-[11px] font-black uppercase tracking-wider text-neutral-400 mb-2">
-                Quick Test Autofill
-              </p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemo("user")}
-                  className="px-3 py-1.5 rounded-xl border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-[11px] font-bold text-neutral-700 transition cursor-pointer"
-                >
-                  ⚡ User Account
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemo("admin")}
-                  className="px-3 py-1.5 rounded-xl border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-[11px] font-bold text-neutral-700 transition cursor-pointer"
-                >
-                  👑 Admin Account
-                </button>
-              </div>
-            </div>
           </div>
 
           <p className="mt-8 text-center text-xs font-medium text-neutral-500">
@@ -239,7 +220,9 @@ const Login = () => {
                 <Check size={14} className="text-emerald-400" />
                 Early Access Drops
               </p>
-              <p className="text-neutral-300 text-[11px]">Get 30-minute headstart on limited capsule releases.</p>
+              <p className="text-neutral-300 text-[11px]">
+                Get 30-minute headstart on limited capsule releases.
+              </p>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-xs space-y-1">
@@ -247,11 +230,12 @@ const Login = () => {
                 <Check size={14} className="text-emerald-400" />
                 1-Click Express Checkout
               </p>
-              <p className="text-neutral-300 text-[11px]">Save shipping & billing for fastest drops.</p>
+              <p className="text-neutral-300 text-[11px]">
+                Save shipping & billing for fastest drops.
+              </p>
             </div>
           </div>
         </div>
-
       </Card>
     </div>
   );
