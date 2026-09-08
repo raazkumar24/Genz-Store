@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Cart from '../models/Cart.js';
+import Product from '../models/Product.js';
 
 // In-memory cart fallback if MongoDB is unreachable
 const inMemoryCarts = new Map();
@@ -14,6 +15,104 @@ const getUserId = (req) => {
     req.query?.userId ||
     'guest_user'
   ).trim();
+};
+
+// Helper to find or merge all carts for a user (handles String vs ObjectId user format)
+const getUserCart = async (userId) => {
+  if (!userId || userId === 'guest_user') return null;
+
+  const isMongoId = mongoose.Types.ObjectId.isValid(userId);
+  const query = isMongoId
+    ? { $or: [{ user: userId }, { user: new mongoose.Types.ObjectId(userId) }] }
+    : { user: userId };
+
+  const carts = await Cart.find(query);
+  if (!carts || carts.length === 0) return null;
+
+  if (carts.length === 1) return carts[0];
+
+  // Merge multiple duplicate cart documents into the first one
+  const primaryCart = carts[0];
+  for (let i = 1; i < carts.length; i++) {
+    const extraCart = carts[i];
+    for (const extraItem of extraCart.items) {
+      const exists = primaryCart.items.find(pi =>
+        String(pi.productId) === String(extraItem.productId) &&
+        String(pi.variantId || '') === String(extraItem.variantId || '') &&
+        String(pi.size || '').toLowerCase() === String(extraItem.size || '').toLowerCase()
+      );
+      if (exists) {
+        exists.quantity = Math.max(exists.quantity, extraItem.quantity);
+        if (!exists.image && extraItem.image) exists.image = extraItem.image;
+        if (!exists.price && extraItem.price) exists.price = extraItem.price;
+        if ((!exists.name || exists.name === "Streetwear Drop") && extraItem.name) exists.name = extraItem.name;
+      } else {
+        primaryCart.items.push(extraItem);
+      }
+    }
+    await Cart.findByIdAndDelete(extraCart._id).catch(err =>
+      console.warn("Failed to delete duplicate cart:", err.message)
+    );
+  }
+  await primaryCart.save();
+  return primaryCart;
+};
+
+// Helper to enrich a cart item with real product details from DB
+const enrichCartItem = (item, productDoc = null) => {
+  const prod = productDoc || item.product || {};
+  let matchedVariant = null;
+
+  if (Array.isArray(prod.variants) && prod.variants.length > 0) {
+    const cleanVarId = String(item.variantId || "").trim();
+    if (cleanVarId) {
+      matchedVariant = prod.variants.find(v => String(v._id) === cleanVarId);
+    }
+    if (!matchedVariant && item.size) {
+      matchedVariant = prod.variants.find(v =>
+        String(v.size || "").toLowerCase().trim() === String(item.size).toLowerCase().trim()
+      );
+    }
+    if (!matchedVariant) {
+      matchedVariant = prod.variants[0];
+    }
+  }
+
+  const variantImg = matchedVariant?.images?.[0] || "";
+  const variantPrice = matchedVariant
+    ? (matchedVariant.isSale && matchedVariant.salePrice ? matchedVariant.salePrice : matchedVariant.price)
+    : 0;
+  const variantStock = matchedVariant?.stock;
+
+  const finalName = (item.name && item.name !== "Streetwear Drop")
+    ? item.name
+    : (prod.name || item.name || "Streetwear Drop");
+
+  const finalImage = (item.image && item.image.trim() !== "")
+    ? item.image
+    : (variantImg || (Array.isArray(prod.images) ? prod.images[0] : "") || "");
+
+  const finalPrice = (Number(item.price) > 0)
+    ? Number(item.price)
+    : (Number(variantPrice) || Number(prod.price) || 0);
+
+  const finalMaxStock = (Number(item.maxStock) > 0 && Number(item.maxStock) !== 99)
+    ? Number(item.maxStock)
+    : (Number(variantStock) || Number(prod.stock) || 99);
+
+  return {
+    _id: String(item.productId || prod._id || item._id),
+    productId: String(item.productId || prod._id || ""),
+    variantId: String(item.variantId || matchedVariant?._id || ""),
+    name: finalName,
+    image: finalImage,
+    price: finalPrice,
+    quantity: Math.max(1, Number(item.quantity) || 1),
+    size: String(item.size || matchedVariant?.size || ""),
+    color: String(item.color || matchedVariant?.color || ""),
+    maxStock: finalMaxStock,
+    product: prod._id ? prod._id : (mongoose.Types.ObjectId.isValid(String(item.productId)) ? item.productId : undefined)
+  };
 };
 
 // 1. ADD TO CART
@@ -33,21 +132,48 @@ export const addToCart = async (req, res) => {
     const cleanSize = String(size || '').trim();
     const isMongoId = mongoose.Types.ObjectId.isValid(cleanProductId);
 
+    // Auto-enrich item data from Product in DB if frontend didn't pass name/image/price
+    let finalName = (name && name !== "Streetwear Drop") ? name : "";
+    let finalImage = (image && image.trim() !== "") ? image : "";
+    let finalPrice = Number(price) || 0;
+    let finalMaxStock = Number(maxStock) || 0;
+
+    if (isMongoId && (!finalImage || !finalPrice || !finalName)) {
+      try {
+        const prod = await Product.findById(cleanProductId).lean();
+        if (prod) {
+          if (!finalName) finalName = prod.name;
+          const v = prod.variants?.find(v => String(v._id) === cleanVariantId) || prod.variants?.[0];
+          if (v) {
+            if (!finalImage) finalImage = v.images?.[0] || "";
+            if (!finalPrice) finalPrice = v.isSale && v.salePrice ? v.salePrice : v.price;
+            if (!finalMaxStock) finalMaxStock = v.stock;
+          }
+        }
+      } catch (e) {
+        console.warn("Product lookup failed in addToCart:", e.message);
+      }
+    }
+
+    finalName = finalName || "Streetwear Drop";
+    finalPrice = Math.max(0, finalPrice);
+    finalMaxStock = Math.max(1, finalMaxStock || 99);
+
     const itemPayload = {
       product: isMongoId ? cleanProductId : undefined,
       productId: cleanProductId,
       variantId: cleanVariantId,
-      name: name || "Streetwear Drop",
-      image: image || "",
-      price: Math.max(0, Number(price) || 0),
+      name: finalName,
+      image: finalImage,
+      price: finalPrice,
       color: cleanColor,
       size: cleanSize,
       quantity: qty,
-      maxStock: Math.max(1, Number(maxStock) || 99)
+      maxStock: finalMaxStock
     };
 
     try {
-      let cart = await Cart.findOne({ user: userId });
+      let cart = await getUserCart(userId);
 
       if (!cart) {
         cart = new Cart({
@@ -66,9 +192,9 @@ export const addToCart = async (req, res) => {
           const updatedQty = cart.items[itemIndex].quantity + qty;
           const limitStock = Number(cart.items[itemIndex].maxStock) || itemPayload.maxStock;
           cart.items[itemIndex].quantity = limitStock ? Math.min(updatedQty, limitStock) : updatedQty;
-          if (itemPayload.price) cart.items[itemIndex].price = itemPayload.price;
-          if (itemPayload.image) cart.items[itemIndex].image = itemPayload.image;
-          if (itemPayload.name) cart.items[itemIndex].name = itemPayload.name;
+          if (finalPrice > 0) cart.items[itemIndex].price = finalPrice;
+          if (finalImage) cart.items[itemIndex].image = finalImage;
+          if (finalName && finalName !== "Streetwear Drop") cart.items[itemIndex].name = finalName;
         } else {
           cart.items.push(itemPayload);
         }
@@ -107,28 +233,50 @@ export const getCart = async (req, res) => {
     const userId = String(req.params.userId || getUserId(req)).trim();
 
     try {
-      const cart = await Cart.findOne({ user: userId }).populate({
-        path: 'items.product',
-        select: 'name price images variants stock isSale salePrice'
-      }).lean();
+      const cart = await getUserCart(userId);
 
-      if (cart) {
+      if (cart && cart.items && cart.items.length > 0) {
+        // Collect product IDs to batch-fetch full product & variant data
+        const productIds = cart.items
+          .map(item => item.product?._id || item.product || item.productId)
+          .filter(id => id && mongoose.Types.ObjectId.isValid(String(id)));
+
+        let productMap = new Map();
+        if (productIds.length > 0) {
+          const products = await Product.find({ _id: { $in: productIds } }).lean();
+          products.forEach(p => productMap.set(String(p._id), p));
+        }
+
+        let needsSave = false;
         const formattedItems = cart.items.map(item => {
-          const prod = item.product || {};
-          const fallbackImg = Array.isArray(prod.images) ? prod.images[0] : "";
-          return {
-            _id: String(item.productId || prod._id || item._id),
-            productId: String(item.productId || prod._id || ""),
-            variantId: String(item.variantId || ""),
-            name: item.name || prod.name || "Streetwear Drop",
-            image: item.image || fallbackImg || "",
-            price: Number(item.price) || Number(prod.price) || 0,
-            quantity: Number(item.quantity) || 1,
-            size: String(item.size || ""),
-            color: String(item.color || ""),
-            maxStock: Number(item.maxStock) || Number(prod.stock) || 99
-          };
+          const prodKey = String(item.product?._id || item.product || item.productId);
+          const prodDoc = productMap.get(prodKey) || null;
+          const enriched = enrichCartItem(item, prodDoc);
+
+          // Update MongoDB item if image, price or name was missing
+          if (!item.image && enriched.image) {
+            item.image = enriched.image;
+            needsSave = true;
+          }
+          if ((!item.price || item.price === 0) && enriched.price > 0) {
+            item.price = enriched.price;
+            needsSave = true;
+          }
+          if ((!item.name || item.name === "Streetwear Drop") && enriched.name !== "Streetwear Drop") {
+            item.name = enriched.name;
+            needsSave = true;
+          }
+          if (!item.product && enriched.product) {
+            item.product = enriched.product;
+            needsSave = true;
+          }
+
+          return enriched;
         });
+
+        if (needsSave) {
+          cart.save().catch(e => console.warn("Background cart enrichment save failed:", e.message));
+        }
 
         return res.status(200).json({ user: userId, items: formattedItems });
       }
@@ -161,7 +309,7 @@ export const updateCart = async (req, res) => {
     const cleanColor = String(color || '').trim().toLowerCase();
 
     try {
-      const cart = await Cart.findOne({ user: userId });
+      const cart = await getUserCart(userId);
       if (cart) {
         const itemIndex = cart.items.findIndex(item => {
           const matchProd = String(item.productId) === cleanProductId;
@@ -213,7 +361,7 @@ export const removeFromCart = async (req, res) => {
     const cleanColor = String(color || '').trim().toLowerCase();
 
     try {
-      const cart = await Cart.findOne({ user: userId });
+      const cart = await getUserCart(userId);
       if (cart) {
         const initialLen = cart.items.length;
         cart.items = cart.items.filter(item => {
@@ -252,7 +400,7 @@ export const clearCart = async (req, res) => {
   try {
     const userId = getUserId(req);
     try {
-      let cart = await Cart.findOne({ user: userId });
+      let cart = await getUserCart(userId);
       if (cart) {
         cart.items = [];
         await cart.save();
@@ -278,9 +426,20 @@ export const syncCart = async (req, res) => {
     }
 
     try {
-      let cart = await Cart.findOne({ user: userId });
+      let cart = await getUserCart(userId);
       if (!cart) {
         cart = new Cart({ user: userId, items: [] });
+      }
+
+      // Collect product IDs to batch-fetch details
+      const missingProdIds = items
+        .map(i => String(i.productId || i._id || i.product || '').trim())
+        .filter(id => id && mongoose.Types.ObjectId.isValid(id));
+
+      let productMap = new Map();
+      if (missingProdIds.length > 0) {
+        const prods = await Product.find({ _id: { $in: missingProdIds } }).lean();
+        prods.forEach(p => productMap.set(String(p._id), p));
       }
 
       for (const item of items) {
@@ -288,9 +447,12 @@ export const syncCart = async (req, res) => {
         if (!productId) continue;
 
         const isMongoId = mongoose.Types.ObjectId.isValid(productId);
-        const variantId = String(item.variantId || "").trim();
-        const size = String(item.size || "").trim();
-        const color = String(item.color || "").trim();
+        const prodDoc = productMap.get(productId);
+        const enriched = enrichCartItem(item, prodDoc);
+
+        const variantId = enriched.variantId;
+        const size = enriched.size;
+        const color = enriched.color;
 
         const existingIdx = cart.items.findIndex(ci =>
           String(ci.productId) === productId &&
@@ -301,18 +463,21 @@ export const syncCart = async (req, res) => {
 
         if (existingIdx > -1) {
           cart.items[existingIdx].quantity = Math.max(cart.items[existingIdx].quantity, item.quantity || 1);
+          if (enriched.image) cart.items[existingIdx].image = enriched.image;
+          if (enriched.price > 0) cart.items[existingIdx].price = enriched.price;
+          if (enriched.name !== "Streetwear Drop") cart.items[existingIdx].name = enriched.name;
         } else {
           cart.items.push({
             product: isMongoId ? productId : undefined,
             productId,
             variantId,
-            name: item.name || "Streetwear Drop",
-            image: item.image || "",
-            price: Number(item.price) || 0,
+            name: enriched.name,
+            image: enriched.image,
+            price: enriched.price,
             color,
             size,
             quantity: Math.max(1, parseInt(item.quantity, 10) || 1),
-            maxStock: Number(item.maxStock) || 99
+            maxStock: enriched.maxStock
           });
         }
       }

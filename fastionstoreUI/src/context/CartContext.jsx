@@ -10,6 +10,8 @@ import {
   updateCartAPI,
   removeFromCartAPI,
   fetchCartAPI,
+  clearCartAPI,
+  syncCartAPI,
 } from "../services/cartService";
 import { useToast } from "./ToastContext";
 
@@ -63,34 +65,80 @@ export const CartProvider = ({ children }) => {
 
       try {
         const userRaw = localStorage.getItem("user");
-        const userId = userRaw ? JSON.parse(userRaw)?.id : null;
-        // Use userId from stored user, not a hardcoded string
+        const user = userRaw ? JSON.parse(userRaw) : null;
+        const userId = user?.id || user?._id || null;
+
         const response = await fetchCartAPI(userId);
-        if (response && Array.isArray(response.items) && response.items.length > 0) {
+        if (response && Array.isArray(response.items)) {
           const fetchedItems = response.items
             .map((item) => {
               const product = item.product || {};
               const variant =
-                product.variants?.find((v) => v._id === item.variantId) || {};
+                product.variants?.find((v) => String(v._id) === String(item.variantId)) ||
+                product.variants?.[0] || {};
+              const fallbackImg = variant.images?.[0] || (Array.isArray(product.images) ? product.images[0] : "") || "";
+              const fallbackPrice =
+                variant.isSale && variant.salePrice
+                  ? variant.salePrice
+                  : variant.price;
+
+              const cleanImage = (item.image && typeof item.image === "string" && item.image.trim() !== "")
+                ? item.image
+                : fallbackImg;
+
+              const cleanPrice = Number(item.price) > 0
+                ? Number(item.price)
+                : (Number(fallbackPrice) || Number(product.price) || 0);
+
+              const cleanName = (item.name && item.name !== "Streetwear Drop")
+                ? item.name
+                : (product.name || item.name || "Streetwear Drop");
+
               return {
-                productId: String(item.productId || product._id || ""),
-                variantId: String(item.variantId || ""),
-                name: item.name || product.name || "Streetwear Drop",
-                color: item.color || "",
-                size: item.size || "",
-                price:
-                  item.price ||
-                  (variant.isSale && variant.salePrice
-                    ? variant.salePrice
-                    : variant.price) ||
-                  0,
-                image: item.image || variant.images?.[0] || "",
-                quantity: Math.max(1, item.quantity || 1),
-                maxStock: item.maxStock || variant.stock || 99,
+                productId: String(item.productId || product._id || item._id || ""),
+                variantId: String(item.variantId || variant._id || ""),
+                name: cleanName,
+                color: item.color || variant.color || "",
+                size: item.size || variant.size || "",
+                price: cleanPrice,
+                image: cleanImage,
+                quantity: Math.max(1, Number(item.quantity) || 1),
+                maxStock: Number(item.maxStock) > 0 ? Number(item.maxStock) : (Number(variant.stock) || 99),
               };
             })
             .filter((item) => item.productId);
-          setCartItems(fetchedItems);
+
+          // Merge with any guest items that were stored before login
+          const localItems = loadCartFromStorage();
+          if (localItems.length > 0) {
+            const merged = [...fetchedItems];
+            let hasNewLocal = false;
+
+            for (const localItem of localItems) {
+              const exists = merged.some(
+                (mi) =>
+                  mi.productId === localItem.productId &&
+                  mi.variantId === localItem.variantId &&
+                  String(mi.size).toLowerCase() === String(localItem.size).toLowerCase()
+              );
+              if (!exists) {
+                merged.push(localItem);
+                hasNewLocal = true;
+              }
+            }
+
+            setCartItems(merged);
+            saveCartToStorage(merged);
+
+            if (hasNewLocal) {
+              syncCartAPI(merged).catch((e) =>
+                console.warn("Cart sync after login warning:", e.message)
+              );
+            }
+          } else {
+            setCartItems(fetchedItems);
+            saveCartToStorage(fetchedItems);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch cart from backend", error);
@@ -128,12 +176,20 @@ export const CartProvider = ({ children }) => {
   // Item add karo — agar same variant aur size pehle se hai to quantity badhao
   const addToCart = useCallback(
     (product, variant, quantity = 1, selectedSize = "", selectedColor = "") => {
+      const itemPrice = Number(
+        variant.isSale && variant.salePrice ? variant.salePrice : variant.price
+      ) || 0;
+      const itemImage = variant.images?.[0] || (Array.isArray(product.images) ? product.images[0] : "") || "";
+      const itemMaxStock = Number(variant.stock) || 10;
+      const itemColor = selectedColor || variant.color || "";
+      const itemSize = selectedSize || variant.size || "";
+
       setCartItems((prev) => {
         const existingIndex = prev.findIndex(
           (item) =>
             item.productId === product._id &&
             item.variantId === variant._id &&
-            item.size === selectedSize,
+            item.size === itemSize,
         );
 
         if (existingIndex > -1) {
@@ -153,15 +209,12 @@ export const CartProvider = ({ children }) => {
             productId: product._id,
             variantId: variant._id,
             name: product.name,
-            color: selectedColor || variant.color || "",
-            size: selectedSize || variant.size || "",
-            price:
-              variant.isSale && variant.salePrice
-                ? variant.salePrice
-                : variant.price,
-            image: variant.images?.[0] || "",
+            color: itemColor,
+            size: itemSize,
+            price: itemPrice,
+            image: itemImage,
             quantity,
-            maxStock: variant.stock || 10,
+            maxStock: itemMaxStock,
           },
         ];
       });
@@ -175,13 +228,17 @@ export const CartProvider = ({ children }) => {
         2800,
       );
 
-      // Sync with backend
+      // Sync with backend with full details
       addToCartAPI({
         productId: product._id,
         variantId: variant._id,
-        color: selectedColor || variant.color || "",
-        size: selectedSize || variant.size || "",
+        name: product.name,
+        image: itemImage,
+        price: itemPrice,
+        color: itemColor,
+        size: itemSize,
         quantity,
+        maxStock: itemMaxStock,
       }).catch((err) => console.error("Failed to save to backend cart", err));
     },
     [addToast],
@@ -240,7 +297,11 @@ export const CartProvider = ({ children }) => {
   // Cart saaf karo
   const clearCart = useCallback(() => {
     setCartItems([]);
+    saveCartToStorage([]);
     addToast("Cart cleared", "info");
+    clearCartAPI().catch((err) =>
+      console.error("Failed to clear backend cart", err)
+    );
   }, [addToast]);
 
   // Total items count (for badge)

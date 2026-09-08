@@ -6,6 +6,7 @@ import {
   updateCartAPI,
   removeFromCartAPI,
   fetchCartAPI,
+  clearCartAPI,
   syncCartAPI,
   getGuestId,
 } from "../services/cartService";
@@ -17,17 +18,33 @@ const normalizeCartItem = (item) => {
   if (!productId) return null;
 
   const variantId = String(item.variantId || "").trim();
-  const name = item.name || "Streetwear Drop";
-  const image =
-    item.image ||
-    (Array.isArray(item.images) ? item.images[0] : "") ||
-    item.product?.images?.[0] ||
+  const product = item.product || {};
+  const variant =
+    product.variants?.find((v) => String(v._id) === variantId) ||
+    product.variants?.[0] || {};
+
+  const fallbackImg =
+    variant.images?.[0] ||
+    (Array.isArray(product.images) ? product.images[0] : "") ||
     "";
-  const price = Math.max(0, Number(item.price) || 0);
+  const fallbackPrice =
+    variant.isSale && variant.salePrice
+      ? Number(variant.salePrice)
+      : Number(variant.price || product.price || 0);
+
+  const name = (item.name && item.name !== "Streetwear Drop")
+    ? item.name
+    : (product.name || item.name || "Streetwear Drop");
+
+  const image = (item.image && typeof item.image === "string" && item.image.trim() !== "")
+    ? item.image
+    : (fallbackImg || (Array.isArray(item.images) ? item.images[0] : "") || "");
+
+  const price = Number(item.price) > 0 ? Number(item.price) : (Number(fallbackPrice) || 0);
   const quantity = Math.max(1, parseInt(item.quantity, 10) || 1);
-  const size = String(item.size || item.selectedSize || "").trim();
-  const color = String(item.color || item.selectedColor || "").trim();
-  const maxStock = Math.max(1, Number(item.maxStock) || 99);
+  const size = String(item.size || item.selectedSize || variant.size || "").trim();
+  const color = String(item.color || item.selectedColor || variant.color || "").trim();
+  const maxStock = Math.max(1, Number(item.maxStock) || Number(variant.stock) || 99);
 
   return {
     _id: productId, // backwards compatibility
@@ -85,41 +102,59 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartItems]);
 
-  // ─── On mount: fetch from backend and merge ─────────────────────────────────
-  useEffect(() => {
-    const syncFromBackend = async () => {
-      try {
-        const userId = localStorage.getItem("user")
-          ? JSON.parse(localStorage.getItem("user"))?.id
-          : getGuestId();
+  const syncFromBackend = useCallback(async () => {
+    try {
+      const userRaw = localStorage.getItem("user");
+      const user = userRaw ? JSON.parse(userRaw) : null;
+      const userId = user?.id || user?._id || getGuestId();
 
-        const data = await fetchCartAPI(userId);
-        if (data && Array.isArray(data.items) && data.items.length > 0) {
-          const backendItems = data.items.map(normalizeCartItem).filter(Boolean);
-          // Merge backend items with local items (backend wins on duplicates)
-          setCartItems((prev) => {
-            const merged = [...backendItems];
-            prev.forEach((localItem) => {
-              const localProdId = String(localItem.productId || localItem._id || "").trim();
-              const exists = merged.some(
-                (bi) => String(bi.productId || bi._id || "").trim() === localProdId &&
-                  String(bi.variantId || "") === String(localItem.variantId || "") &&
-                  String(bi.size || "").toLowerCase() === String(localItem.size || "").toLowerCase() &&
-                  String(bi.color || "").toLowerCase() === String(localItem.color || "").toLowerCase()
-              );
-              if (!exists) merged.push(localItem);
-            });
-            return merged;
+      const data = await fetchCartAPI(userId);
+      if (data && Array.isArray(data.items)) {
+        const backendItems = data.items.map(normalizeCartItem).filter(Boolean);
+        // Merge backend items with local items (backend wins on duplicates)
+        setCartItems((prev) => {
+          const merged = [...backendItems];
+          prev.forEach((localItem) => {
+            const localProdId = String(localItem.productId || localItem._id || "").trim();
+            const exists = merged.some(
+              (bi) => String(bi.productId || bi._id || "").trim() === localProdId &&
+                String(bi.variantId || "") === String(localItem.variantId || "") &&
+                String(bi.size || "").toLowerCase() === String(localItem.size || "").toLowerCase() &&
+                String(bi.color || "").toLowerCase() === String(localItem.color || "").toLowerCase()
+            );
+            if (!exists) merged.push(localItem);
           });
+          return merged;
+        });
+      }
+    } catch (e) {
+      console.warn("Backend cart fetch failed, using localStorage.", e.message);
+    }
+  }, []);
+
+  // ─── On mount and on auth change: fetch from backend and merge ───────────────
+  useEffect(() => {
+    syncFromBackend();
+
+    const handleAuthChange = () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        syncFromBackend();
+      } else {
+        // User logged out — clear cart
+        setCartItems([]);
+        try {
+          localStorage.removeItem("genz_cart");
+          localStorage.removeItem("fashionstore_cart");
+        } catch (e) {
+          console.error(e);
         }
-      } catch (e) {
-        // Backend offline — just use localStorage
-        console.warn("Backend cart fetch failed, using localStorage.", e.message);
       }
     };
 
-    syncFromBackend();
-  }, []);
+    window.addEventListener("authChange", handleAuthChange);
+    return () => window.removeEventListener("authChange", handleAuthChange);
+  }, [syncFromBackend]);
 
   // ─── Sync across tabs / windows ─────────────────────────────────────────────
   useEffect(() => {
@@ -344,6 +379,7 @@ export const CartProvider = ({ children }) => {
     } catch (e) {
       console.error(e);
     }
+    clearCartAPI().catch(() => {});
   };
 
   // ─── isInCart ────────────────────────────────────────────────────────────────
