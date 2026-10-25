@@ -8,7 +8,9 @@ import { useProducts } from "../context/ProductContext";
 import Marquee from "../components/Marquee";
 import CategoryScroll from "../components/CategoryScroll";
 import { SlidersHorizontal, ArrowLeft, RefreshCw } from "lucide-react";
-import ProductFilters, { applyProductFilters } from "../components/ProductFilters";
+import ProductFilters, {
+  applyProductFilters,
+} from "../components/ProductFilters";
 
 // Loading skeleton for products to show before data is fetched
 const ProductSkeleton = () => (
@@ -37,7 +39,11 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: "easeOut" },
+  },
 };
 
 const initialFiltersState = {
@@ -102,8 +108,10 @@ const Home = () => {
     if (filters.color && filters.color !== "all") {
       const c = filters.color.toLowerCase().trim();
       return list.map((p) => {
-        const matched = p.variants?.find(
-          (v) => String(v.color || "").toLowerCase().includes(c)
+        const matched = p.variants?.find((v) =>
+          String(v.color || "")
+            .toLowerCase()
+            .includes(c),
         );
         return matched ? { ...p, matchedVariant: matched } : p;
       });
@@ -137,7 +145,10 @@ const Home = () => {
       )}
 
       {/* Main Product Section with id=catalog for smooth scrolling */}
-      <section id="catalog" className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-14 w-full scroll-mt-20">
+      <section
+        id="catalog"
+        className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-14 w-full scroll-mt-20"
+      >
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 border-b border-neutral-200/80 pb-5">
           <div>
@@ -146,11 +157,17 @@ const Home = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
               </span>
-              {urlSearch ? "Search Results" : filters.color !== "all" ? `Filtered by ${filters.color}` : "Curated Drops"}
+              {urlSearch
+                ? "Search Results"
+                : filters.color !== "all"
+                  ? `Filtered by ${filters.color}`
+                  : "Curated Drops"}
             </div>
 
             <div className="flex items-center gap-3">
-              {(urlSearch || filters.color !== "all" || filters.category !== "all") && (
+              {(urlSearch ||
+                filters.color !== "all" ||
+                filters.category !== "all") && (
                 <button
                   type="button"
                   onClick={handleResetFilters}
@@ -166,32 +183,41 @@ const Home = () => {
               >
                 {urlSearch ? (
                   <>
-                    Drops For <span className="text-outline-primary ml-1">"{urlSearch}"</span>
+                    Drops For{" "}
+                    <span className="text-outline-primary ml-1">
+                      "{urlSearch}"
+                    </span>
                   </>
                 ) : filters.color !== "all" ? (
                   <>
-                    {filters.color} <span className="text-outline-primary ml-1">Silhouettes</span>
+                    {filters.color}{" "}
+                    <span className="text-outline-primary ml-1">
+                      Silhouettes
+                    </span>
                   </>
                 ) : (
                   <>
-                    Streetwear <span className="text-outline-primary ml-1">Catalog</span>
+                    Streetwear{" "}
+                    <span className="text-outline-primary ml-1">Catalog</span>
                   </>
                 )}
               </h2>
             </div>
-            
+
             <p className="mt-1 text-xs sm:text-sm font-medium text-neutral-500 max-w-md">
               {urlSearch
                 ? `Found ${filteredProducts.length} items matching "${urlSearch}".`
                 : filters.color !== "all"
-                ? `Showing ${filteredProducts.length} drops available in ${filters.color}.`
-                : "Heavyweight 280+ GSM combed cotton, drop-shoulder silhouettes, and boxy fits."}
+                  ? `Showing ${filteredProducts.length} drops available in ${filters.color}.`
+                  : "Heavyweight 280+ GSM combed cotton, drop-shoulder silhouettes, and boxy fits."}
             </p>
 
             {/* Active Color Filter Pill */}
             {filters.color !== "all" && (
               <div className="flex items-center gap-2 mt-3">
-                <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Active:</span>
+                <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
+                  Active:
+                </span>
                 <button
                   type="button"
                   onClick={() => {
@@ -232,11 +258,15 @@ const Home = () => {
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-400">
               <SlidersHorizontal size={28} />
             </div>
-            <h3 className="text-xl font-bold text-neutral-900" style={{ fontFamily: "var(--font-heading)" }}>
+            <h3
+              className="text-xl font-bold text-neutral-900"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               No Streetwear Drops Found
             </h3>
             <p className="mt-1 text-sm text-neutral-500 max-w-sm">
-              We couldn't find any products matching your selected filters or search query. Try clearing filters or selecting another category.
+              We couldn't find any products matching your selected filters or
+              search query. Try clearing filters or selecting another category.
             </p>
             <button
               type="button"

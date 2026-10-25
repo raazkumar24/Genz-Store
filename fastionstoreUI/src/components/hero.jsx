@@ -89,8 +89,11 @@ const Hero = () => {
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const activeColorFilter = searchParams.get("color")?.toLowerCase() || "";
 
-  const [spotlightConfig, setSpotlightConfig] = useState(getHeroSpotlightConfig);
+  const [spotlightConfig, setSpotlightConfig] = useState(
+    getHeroSpotlightConfig,
+  );
 
   // Listen for live spotlight updates from Admin panel
   useEffect(() => {
@@ -98,7 +101,8 @@ const Hero = () => {
       setSpotlightConfig(e.detail || getHeroSpotlightConfig());
     };
     window.addEventListener("heroSpotlightUpdated", handleUpdate);
-    return () => window.removeEventListener("heroSpotlightUpdated", handleUpdate);
+    return () =>
+      window.removeEventListener("heroSpotlightUpdated", handleUpdate);
   }, []);
 
   // Fetch dynamic popular colors from backend on mount
@@ -173,37 +177,61 @@ const Hero = () => {
     // 2. If admin picked targetCategory "tee":
     if (spotlightConfig.targetCategory === "tee") {
       const tee = products.find((p) => {
-        const text = [p.name, ...(p.category || []), ...(p.collection || [])].join(" ").toLowerCase();
-        return text.includes("tee") || text.includes("t-shirt") || text.includes("tshirt");
+        const text = [p.name, ...(p.category || []), ...(p.collection || [])]
+          .join(" ")
+          .toLowerCase();
+        return (
+          text.includes("tee") ||
+          text.includes("t-shirt") ||
+          text.includes("tshirt")
+        );
       });
       if (tee) return tee;
     }
     // 3. If admin picked targetCategory "cargo":
     if (spotlightConfig.targetCategory === "cargo") {
       const cargo = products.find((p) => {
-        const text = [p.name, ...(p.category || []), ...(p.collection || [])].join(" ").toLowerCase();
-        return text.includes("cargo") || text.includes("pant") || text.includes("baggy");
+        const text = [p.name, ...(p.category || []), ...(p.collection || [])]
+          .join(" ")
+          .toLowerCase();
+        return (
+          text.includes("cargo") ||
+          text.includes("pant") ||
+          text.includes("baggy")
+        );
       });
       if (cargo) return cargo;
     }
     // 4. Default: hoodie / technical fleece
     return (
       products.find((p) => {
-        const text = [p.name, ...(p.category || []), ...(p.collection || [])].join(" ").toLowerCase();
-        return text.includes("hoodie") || text.includes("sweatshirt") || text.includes("fleece");
+        const text = [p.name, ...(p.category || []), ...(p.collection || [])]
+          .join(" ")
+          .toLowerCase();
+        return (
+          text.includes("hoodie") ||
+          text.includes("sweatshirt") ||
+          text.includes("fleece")
+        );
       }) || products[0]
     );
   }, [products, spotlightConfig]);
 
   const spotlightImg =
     spotlightConfig.customImage ||
-    featuredSpotlightProduct?.variants?.find((v) => v.images && v.images.length > 0)?.images?.[0] ||
+    featuredSpotlightProduct?.variants?.find(
+      (v) => v.images && v.images.length > 0,
+    )?.images?.[0] ||
     featuredSpotlightProduct?.variants?.[0]?.images?.[0] ||
     featuredSpotlightProduct?.image ||
-    (spotlightConfig.targetCategory === "tee" ? "/models/model1.png" : "/models/model3.png");
+    (spotlightConfig.targetCategory === "tee"
+      ? "/models/model1.png"
+      : "/models/model3.png");
 
   const spotlightName =
-    spotlightConfig.title || featuredSpotlightProduct?.name || "Signature Drop Showcase";
+    spotlightConfig.title ||
+    featuredSpotlightProduct?.name ||
+    "Signature Drop Showcase";
 
   const spotlightPrice =
     spotlightConfig.customPrice ||
@@ -225,8 +253,8 @@ const Hero = () => {
   const spotlightLink = featuredSpotlightProduct
     ? `/products/${featuredSpotlightProduct._id}`
     : spotlightConfig.targetCategory === "tee"
-    ? "/collections/oversized-tees"
-    : "/collections/hoodies";
+      ? "/collections/oversized-tees"
+      : "/collections/hoodies";
 
   // Dynamically extract first 3 product images for archived catalog
   const archivedCatalogPreviews = useMemo(() => {
