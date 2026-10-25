@@ -15,6 +15,7 @@ export const DEFAULT_HERO_SPOTLIGHT = {
   tagPill: "Signature Fit",
   customPrice: "", // If empty, uses product's price
   customImage: "", // If empty, uses product's primary variant image
+  cardTheme: "dark", // "dark" | "light"
 };
 
 /**

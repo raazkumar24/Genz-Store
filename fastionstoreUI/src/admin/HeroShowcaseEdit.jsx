@@ -463,6 +463,46 @@ const HeroShowcaseEdit = () => {
                 />
               </div>
             </div>
+
+            {/* Card Surface Theme (Light with CSS mix-blend-mode BG remove vs Dark Obsidian) */}
+            <div className="pt-2 border-t border-gray-100">
+              <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-2">
+                Card Theme & BG Blend Mode
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setConfig({ ...config, cardTheme: "dark" })}
+                  className={`flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    config.cardTheme !== "light"
+                      ? "bg-gray-900 text-white border-gray-900 shadow-sm"
+                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="h-4 w-4 rounded-full bg-black border border-white/20 shrink-0" />
+                  <div>
+                    <p className="text-xs font-black uppercase">Obsidian Dark</p>
+                    <p className="text-[10px] opacity-70">Studio White Podium</p>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setConfig({ ...config, cardTheme: "light" })}
+                  className={`flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    config.cardTheme === "light"
+                      ? "bg-amber-50 text-amber-900 border-amber-400 shadow-sm ring-1 ring-amber-400"
+                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="h-4 w-4 rounded-full bg-white border border-gray-300 shrink-0" />
+                  <div>
+                    <p className="text-xs font-black uppercase">Studio Light (Rec.)</p>
+                    <p className="text-[10px] opacity-70">100% Seamless BG Remove</p>
+                  </div>
+                </button>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -481,54 +521,110 @@ const HeroShowcaseEdit = () => {
             </div>
 
             <p className="text-xs text-gray-500 mb-4 font-medium">
-              This is the exact dark bento card customers will see in the hero section:
+              This is the exact bento card customers will see in the hero section:
             </p>
 
             {/* Exact Bento Card 3 Replica */}
-            <div className="relative bg-[#0E0F12] text-white rounded-[28px] border border-neutral-800 p-5 shadow-xl flex items-center justify-between gap-4 overflow-hidden">
-              {/* Subtle background glow */}
-              <div className="pointer-events-none absolute -right-6 -bottom-6 h-36 w-36 rounded-full bg-red-600/15 filter blur-2xl" />
-
-              <div className="flex flex-col justify-between h-full space-y-2 min-w-0 flex-1 z-10">
-                <div>
-                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-white/10 text-neutral-300 text-[10px] font-black uppercase tracking-wider mb-1.5">
-                    {config.badgeText || "HEAVYWEIGHT 380 GSM"}
-                  </span>
-                  <h2 className="text-sm sm:text-base font-black uppercase tracking-tight text-white group-hover:text-amber-400 transition-colors truncate">
-                    {previewTitle}
-                  </h2>
-                  <p className="text-xs text-neutral-400 font-medium line-clamp-1 mt-0.5">
-                    {config.subtitle || "Drop shoulder & ribbed hem"}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 pt-1">
-                  <span className="text-sm font-black text-amber-400">
-                    ₹{previewPrice}
-                  </span>
-                  <span className="text-[10px] uppercase font-bold text-neutral-400 bg-white/5 px-2 py-0.5 rounded-md">
-                    {config.tagPill || "Signature Fit"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Preview Thumbnail + Arrow Badge */}
-              <div className="flex items-center gap-3 shrink-0 z-10">
-                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-neutral-900 border border-neutral-700/80 overflow-hidden p-1 flex items-center justify-center">
-                  <img
-                    src={previewImage}
-                    alt={previewTitle}
-                    className="h-full w-full object-contain"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/models/model1.png";
-                    }}
+            {(() => {
+              const isLightCard = config.cardTheme === "light";
+              return (
+                <div
+                  className={`relative rounded-[28px] border p-5 shadow-xl flex items-center justify-between gap-4 overflow-hidden transition-all ${
+                    isLightCard
+                      ? "bg-white text-neutral-900 border-neutral-200/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.06)]"
+                      : "bg-[#0E0F12] text-white border-neutral-800"
+                  }`}
+                >
+                  {/* Subtle background glow */}
+                  <div
+                    className={`pointer-events-none absolute -right-6 -bottom-6 h-36 w-36 rounded-full filter blur-2xl ${
+                      isLightCard
+                        ? "bg-[var(--color-primary)]/10"
+                        : "bg-red-600/15"
+                    }`}
                   />
+
+                  <div className="flex flex-col justify-between h-full space-y-2.5 min-w-0 flex-1 z-10">
+                    <div>
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-1.5 ${
+                          isLightCard
+                            ? "bg-neutral-100 text-neutral-800 border border-neutral-200/80"
+                            : "bg-white/10 text-neutral-300"
+                        }`}
+                      >
+                        {config.badgeText || "HEAVYWEIGHT 380 GSM"}
+                      </span>
+                      <h2
+                        className={`text-sm sm:text-base font-black uppercase tracking-tight transition-colors truncate ${
+                          isLightCard
+                            ? "text-neutral-900"
+                            : "text-white"
+                        }`}
+                      >
+                        {previewTitle}
+                      </h2>
+                      <p
+                        className={`text-xs font-medium line-clamp-1 mt-0.5 ${
+                          isLightCard ? "text-neutral-500" : "text-neutral-400"
+                        }`}
+                      >
+                        {config.subtitle || "Drop shoulder & ribbed hem"}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-1">
+                      <span
+                        className={`text-sm sm:text-base font-black ${
+                          isLightCard ? "text-neutral-900" : "text-amber-400"
+                        }`}
+                      >
+                        ₹{previewPrice}
+                      </span>
+                      <span
+                        className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-md ${
+                          isLightCard
+                            ? "bg-neutral-100 text-neutral-700"
+                            : "bg-white/5 text-neutral-400"
+                        }`}
+                      >
+                        {config.tagPill || "Signature Fit"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Preview Showcase (Enlarged with CSS mix-blend-multiply BG removal) */}
+                  <div className="flex items-center gap-3 shrink-0 z-10">
+                    <div
+                      className={`relative flex items-center justify-center ${
+                        isLightCard
+                          ? "h-24 w-24 sm:h-28 sm:w-28"
+                          : "h-22 w-22 sm:h-26 sm:w-26 rounded-2xl bg-white p-2 shadow-md border border-white/20"
+                      }`}
+                    >
+                      <img
+                        src={previewImage}
+                        alt={previewTitle}
+                        className="h-full w-full object-contain mix-blend-multiply"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/models/model1.png";
+                        }}
+                      />
+                    </div>
+                    <div
+                      className={`flex h-9 w-9 items-center justify-center rounded-full shadow-sm shrink-0 ${
+                        isLightCard
+                          ? "bg-neutral-900 text-white"
+                          : "bg-white text-neutral-900"
+                      }`}
+                    >
+                      <ArrowUpRight size={16} strokeWidth={2.5} />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-neutral-900 shadow-sm">
-                  <ArrowUpRight size={16} strokeWidth={2.5} />
-                </div>
-              </div>
-            </div>
+              );
+            })()}
 
             {/* Linked Product Metadata */}
             {selectedProduct && (

@@ -67,15 +67,69 @@ const heroSlides = [
   },
 ];
 
+// Comprehensive Streetwear Hex Map for client-side resolution
+const STREET_COLOR_MAP = {
+  black: "#111111",
+  white: "#FFFFFF",
+  gray: "#6B7280",
+  grey: "#6B7280",
+  charcoal: "#374151",
+  slate: "#475569",
+  beige: "#D4B996",
+  khaki: "#C3B091",
+  cream: "#FFFDD0",
+  sand: "#E5D3B3",
+  olive: "#4D7C0F",
+  green: "#22C55E",
+  sage: "#8A9A86",
+  blue: "#2563EB",
+  navy: "#1E3A8A",
+  cobalt: "#1D4ED8",
+  red: "#EF4444",
+  crimson: "#DC2626",
+  maroon: "#881337",
+  orange: "#F97316",
+  rust: "#C2410C",
+  yellow: "#EAB308",
+  mustard: "#D97706",
+  amber: "#F59E0B",
+  lime: "#84CC16",
+  pink: "#EC4899",
+  purple: "#A855F7",
+  brown: "#92400E",
+  tan: "#D2B48C",
+  mocha: "#78350F",
+};
+
+const resolveColorHex = (colorString) => {
+  if (!colorString) return "#111111";
+  const str = String(colorString).trim().toLowerCase();
+  if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(str)) return str;
+  if (STREET_COLOR_MAP[str]) return STREET_COLOR_MAP[str];
+  for (const [key, hex] of Object.entries(STREET_COLOR_MAP)) {
+    if (str.includes(key)) return hex;
+  }
+  // Curated diverse hues fallback instead of generic grey
+  const hues = ["#2563EB", "#F97316", "#84CC16", "#EF4444", "#4D7C0F", "#A855F7", "#D4B996"];
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+  }
+  return hues[Math.abs(hash) % hues.length];
+};
+
 /**
  * Fallback curated palette swatches for the Bento "Popular Colors" widget
  */
 const defaultPopularColors = [
+  { name: "Pitch Black", hex: "#111111", filter: "black", count: 14 },
   { name: "Cobalt Blue", hex: "#2563EB", filter: "blue", count: 8 },
   { name: "Sunset Orange", hex: "#F97316", filter: "orange", count: 6 },
   { name: "Acid Lime", hex: "#84CC16", filter: "lime", count: 5 },
   { name: "Signal Crimson", hex: "#EF4444", filter: "red", count: 7 },
-  { name: "Pitch Black", hex: "#111111", filter: "black", count: 14 },
+  { name: "Military Olive", hex: "#4D7C0F", filter: "olive", count: 5 },
+  { name: "Off White", hex: "#FFFFFF", filter: "white", count: 9 },
+  { name: "Desert Beige", hex: "#D4B996", filter: "beige", count: 4 },
 ];
 
 /**
@@ -105,18 +159,51 @@ const Hero = () => {
       window.removeEventListener("heroSpotlightUpdated", handleUpdate);
   }, []);
 
-  // Fetch dynamic popular colors from backend on mount
+  const { products } = useProducts();
+
+  // Fetch dynamic popular colors from backend and sanitize hex values
   useEffect(() => {
     let isMounted = true;
     fetchPopularColors().then((data) => {
       if (isMounted && Array.isArray(data) && data.length > 0) {
-        setColorsList(data);
+        // Ensure every item has a rich streetwear hex code
+        const sanitized = data.map((item) => ({
+          ...item,
+          hex: item.hex && item.hex !== "#888888" && item.hex !== "#888" 
+            ? item.hex 
+            : resolveColorHex(item.filter || item.color || item.name),
+        }));
+        setColorsList(sanitized);
+      } else if (isMounted && products && products.length > 0) {
+        // Extract live colors from products context
+        const counts = {};
+        products.forEach((p) => {
+          (p.variants || []).forEach((v) => {
+            if (v.color) {
+              const clean = String(v.color).trim().toLowerCase();
+              counts[clean] = (counts[clean] || 0) + 1;
+            }
+          });
+        });
+        const derived = Object.entries(counts)
+          .map(([color, count]) => ({
+            name: color.charAt(0).toUpperCase() + color.slice(1),
+            filter: color,
+            hex: resolveColorHex(color),
+            count,
+          }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 8);
+
+        if (derived.length > 0) {
+          setColorsList(derived);
+        }
       }
     });
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [products]);
 
   const handleColorClick = (colorFilter) => {
     const isCurrentlyActive = activeColorFilter === colorFilter.toLowerCase();
@@ -135,8 +222,6 @@ const Hero = () => {
       }
     }, 120);
   };
-
-  const { products } = useProducts();
 
   // Dynamically resolve real tactical cargo item from backend products
   const cargoItem = useMemo(() => {
@@ -494,7 +579,11 @@ const Hero = () => {
                       onClick={() => handleColorClick(color.filter)}
                       onMouseEnter={() => setHoveredColor(color)}
                       onMouseLeave={() => setHoveredColor(null)}
-                      className={`relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full transition-all duration-200 hover:scale-120 cursor-pointer shadow-xs ${
+                      className={`relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full transition-all duration-200 hover:scale-120 cursor-pointer shadow-xs border ${
+                        color.hex?.toLowerCase() === "#ffffff" || color.hex?.toLowerCase() === "#fffdd0"
+                          ? "border-neutral-300"
+                          : "border-black/10"
+                      } ${
                         isActive
                           ? "ring-2 ring-neutral-900 ring-offset-2 scale-110 shadow-md"
                           : "hover:ring-2 hover:ring-neutral-400 hover:ring-offset-1"
@@ -504,7 +593,11 @@ const Hero = () => {
                       aria-label={`Filter by ${color.name}`}
                     >
                       {isActive && (
-                        <span className="h-2 w-2 rounded-full bg-white shadow-xs" />
+                        <span className={`h-2 w-2 rounded-full shadow-xs ${
+                          color.hex?.toLowerCase() === "#ffffff" || color.hex?.toLowerCase() === "#fffdd0"
+                            ? "bg-neutral-900"
+                            : "bg-white"
+                        }`} />
                       )}
                     </button>
                   );
@@ -531,71 +624,127 @@ const Hero = () => {
 
               {/* Thumbnail + Arrow Badge */}
               <div className="flex items-center gap-3 shrink-0">
-                <div className="h-16 w-16 rounded-2xl bg-neutral-100 overflow-hidden border border-neutral-200/70 p-1 flex items-center justify-center">
+                <div className="h-20 w-20 sm:h-22 sm:w-22 rounded-2xl bg-neutral-50 overflow-hidden border border-neutral-200/80 p-1.5 flex items-center justify-center">
                   <img
                     src={cargoImg}
                     alt={cargoName}
-                    className="h-full w-full object-contain group-hover:scale-110 transition-transform duration-300"
+                    className="h-full w-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-300"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = "/collections/baggy_pants.png";
                     }}
                   />
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:bg-[var(--color-primary)] group-hover:scale-110 transition-all duration-200">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:bg-[var(--color-primary)] group-hover:scale-110 transition-all duration-200 shadow-2xs">
                   <ArrowUpRight size={16} strokeWidth={2.5} />
                 </div>
               </div>
             </Link>
 
             {/* Card 3: Featured Technical Outerwear Showcase (Configurable from Admin Panel) */}
-            <Link
-              to={spotlightLink}
-              className="group relative bg-[#0E0F12] text-white rounded-[28px] border border-neutral-800 p-5 shadow-lg flex-1 min-h-[160px] flex items-center justify-between gap-4 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
-            >
-              {/* Subtle background glow */}
-              <div className="pointer-events-none absolute -right-6 -bottom-6 h-36 w-36 rounded-full bg-[var(--color-primary)]/15 filter blur-2xl" />
-
-              <div className="flex flex-col justify-between h-full space-y-2 min-w-0 flex-1 z-10">
-                <div>
-                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-white/10 text-neutral-300 text-[10px] font-black uppercase tracking-wider mb-1.5">
-                    {spotlightBadge}
-                  </span>
-                  <h2 className="text-sm sm:text-base font-black uppercase tracking-tight text-white group-hover:text-amber-400 transition-colors truncate">
-                    {spotlightName}
-                  </h2>
-                  <p className="text-xs text-neutral-400 font-medium line-clamp-1 mt-0.5">
-                    {spotlightSubtitle}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 pt-1">
-                  <span className="text-sm font-black text-amber-400">
-                    ₹{spotlightPrice}
-                  </span>
-                  <span className="text-[10px] uppercase font-bold text-neutral-400 bg-white/5 px-2 py-0.5 rounded-md">
-                    {spotlightTag}
-                  </span>
-                </div>
-              </div>
-
-              {/* Product Image Preview + Arrow Button */}
-              <div className="flex items-center gap-3 shrink-0 z-10">
-                <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-neutral-900 border border-neutral-700/80 overflow-hidden p-1 flex items-center justify-center">
-                  <img
-                    src={spotlightImg}
-                    alt={spotlightName}
-                    className="h-full w-full object-contain group-hover:scale-110 transition-transform duration-300"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/models/model1.png";
-                    }}
+            {(() => {
+              const isLightCard = spotlightConfig.cardTheme === "light";
+              return (
+                <Link
+                  to={spotlightLink}
+                  className={`group relative rounded-[28px] border p-5 sm:p-6 shadow-lg flex-1 min-h-[168px] flex items-center justify-between gap-4 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${
+                    isLightCard
+                      ? "bg-white text-neutral-900 border-neutral-200/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)]"
+                      : "bg-[#0E0F12] text-white border-neutral-800"
+                  }`}
+                >
+                  {/* Subtle background glow */}
+                  <div
+                    className={`pointer-events-none absolute -right-6 -bottom-6 h-40 w-40 rounded-full filter blur-2xl transition-opacity ${
+                      isLightCard
+                        ? "bg-[var(--color-primary)]/10 opacity-70"
+                        : "bg-[var(--color-primary)]/20"
+                    }`}
                   />
-                </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white group-hover:scale-110 transition-all duration-200">
-                  <ArrowUpRight size={16} strokeWidth={2.5} />
-                </div>
-              </div>
-            </Link>
+
+                  <div className="flex flex-col justify-between h-full space-y-2.5 min-w-0 flex-1 z-10">
+                    <div>
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-1.5 ${
+                          isLightCard
+                            ? "bg-neutral-100 text-neutral-800 border border-neutral-200/80"
+                            : "bg-white/10 text-neutral-300"
+                        }`}
+                      >
+                        {spotlightBadge}
+                      </span>
+                      <h2
+                        className={`text-sm sm:text-base font-black uppercase tracking-tight transition-colors truncate ${
+                          isLightCard
+                            ? "text-neutral-900 group-hover:text-[var(--color-primary)]"
+                            : "text-white group-hover:text-amber-400"
+                        }`}
+                      >
+                        {spotlightName}
+                      </h2>
+                      <p
+                        className={`text-xs font-medium line-clamp-1 mt-0.5 ${
+                          isLightCard ? "text-neutral-500" : "text-neutral-400"
+                        }`}
+                      >
+                        {spotlightSubtitle}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-1">
+                      <span
+                        className={`text-sm sm:text-base font-black ${
+                          isLightCard ? "text-neutral-900" : "text-amber-400"
+                        }`}
+                      >
+                        ₹{spotlightPrice}
+                      </span>
+                      <span
+                        className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-md ${
+                          isLightCard
+                            ? "bg-neutral-100 text-neutral-700"
+                            : "bg-white/5 text-neutral-400"
+                        }`}
+                      >
+                        {spotlightTag}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Product Image Showcase + Arrow Button (Enlarged with CSS mix-blend-multiply BG removal) */}
+                  <div className="flex items-center gap-3 shrink-0 z-10">
+                    <div
+                      className={`relative flex items-center justify-center transition-transform duration-300 group-hover:scale-105 ${
+                        isLightCard
+                          ? "h-28 w-28 sm:h-32 sm:w-32 md:h-36 md:w-36"
+                          : "h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-2xl bg-white p-2 shadow-md border border-white/20"
+                      }`}
+                    >
+                      <img
+                        src={spotlightImg}
+                        alt={spotlightName}
+                        className={`h-full w-full object-contain mix-blend-multiply ${
+                          isLightCard ? "drop-shadow-sm" : ""
+                        }`}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/models/model1.png";
+                        }}
+                      />
+                    </div>
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 shrink-0 ${
+                        isLightCard
+                          ? "bg-neutral-900 text-white group-hover:bg-[var(--color-primary)] group-hover:scale-110 shadow-sm"
+                          : "bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white group-hover:scale-110 shadow-sm"
+                      }`}
+                    >
+                      <ArrowUpRight size={18} strokeWidth={2.5} />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })()}
           </div>
         </div>
 

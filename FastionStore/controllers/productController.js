@@ -52,29 +52,75 @@ function parseArrayField(input) {
 }
 
 // Standard Streetwear Color Hex mapping
+// Comprehensive Streetwear Color Hex Palette with synonyms & fuzzy matching
 const COLOR_HEX_MAP = {
   black: "#111111",
   white: "#FFFFFF",
   gray: "#6B7280",
   grey: "#6B7280",
-  beige: "#F5F5DC",
+  charcoal: "#374151",
+  slate: "#475569",
+  beige: "#D4B996",
+  khaki: "#C3B091",
+  sand: "#E5D3B3",
   cream: "#FFFDD0",
   olive: "#4D7C0F",
   green: "#22C55E",
+  sage: "#8A9A86",
+  forest: "#166534",
   blue: "#2563EB",
   navy: "#1E3A8A",
+  cobalt: "#1D4ED8",
+  cyan: "#06B6D4",
+  teal: "#14B8A6",
   red: "#EF4444",
   crimson: "#DC2626",
+  maroon: "#881337",
   orange: "#F97316",
+  rust: "#C2410C",
   yellow: "#EAB308",
+  mustard: "#D97706",
   amber: "#F59E0B",
   lime: "#84CC16",
   pink: "#EC4899",
+  rose: "#F43F5E",
   purple: "#A855F7",
+  lavender: "#C084FC",
   brown: "#92400E",
-  cyan: "#06B6D4",
-  teal: "#14B8A6",
+  tan: "#D2B48C",
+  mocha: "#78350F",
 };
+
+// Smart Hex Resolver: supports exact match, hex strings, and substring keywords
+function resolveColorHex(colorInput) {
+  if (!colorInput) return "#111111";
+  const str = String(colorInput).trim().toLowerCase();
+
+  // 1. If color string is already a hex code (e.g. #2563eb)
+  if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(str)) {
+    return str;
+  }
+
+  // 2. Direct exact match
+  if (COLOR_HEX_MAP[str]) {
+    return COLOR_HEX_MAP[str];
+  }
+
+  // 3. Substring matching (e.g. "dark olive green" -> "olive" -> "#4D7C0F")
+  for (const [key, hex] of Object.entries(COLOR_HEX_MAP)) {
+    if (str.includes(key)) {
+      return hex;
+    }
+  }
+
+  // 4. Curated distinct street hues fallback instead of generic grey
+  const fallbackHues = ["#2563EB", "#F97316", "#84CC16", "#EF4444", "#4D7C0F", "#A855F7", "#06B6D4"];
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+  }
+  return fallbackHues[Math.abs(hash) % fallbackHues.length];
+}
 
 /**
  * Controller: Get dynamic popular color palette from live products
@@ -113,7 +159,7 @@ export const getPopularColors = async (req, res) => {
     const sorted = Object.entries(colorCounts)
       .map(([color, count]) => {
         const name = color.charAt(0).toUpperCase() + color.slice(1);
-        const hex = COLOR_HEX_MAP[color] || "#888888";
+        const hex = resolveColorHex(color);
         return {
           name,
           color,
@@ -127,11 +173,12 @@ export const getPopularColors = async (req, res) => {
     if (sorted.length === 0) {
       // Curated default streetwear palette fallback
       return res.json([
-        { name: "Pitch Black", color: "black", filter: "black", hex: "#111111", count: 12 },
+        { name: "Pitch Black", color: "black", filter: "black", hex: "#111111", count: 14 },
         { name: "Cobalt Blue", color: "blue", filter: "blue", hex: "#2563EB", count: 8 },
         { name: "Sunset Orange", color: "orange", filter: "orange", hex: "#F97316", count: 6 },
         { name: "Acid Lime", color: "lime", filter: "lime", hex: "#84CC16", count: 5 },
-        { name: "Signal Crimson", color: "red", filter: "red", hex: "#EF4444", count: 4 },
+        { name: "Signal Crimson", color: "red", filter: "red", hex: "#EF4444", count: 7 },
+        { name: "Military Olive", color: "olive", filter: "olive", hex: "#4D7C0F", count: 4 },
       ]);
     }
 
