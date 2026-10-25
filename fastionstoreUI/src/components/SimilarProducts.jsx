@@ -43,10 +43,10 @@ const SimilarProducts = ({ currentProduct, allProducts }) => {
   if (displayProducts.length === 0) return null;
 
   return (
-    <div className="w-full bg-[var(--color-bg)] py-16 md:py-24 border-t border-[var(--color-border)]">
-      <div className="mx-auto max-w-7xl px-3 md:px-8">
+    <div className="w-full bg-[#F3F4F0] py-10 md:py-16 border-t border-neutral-200/80">
+      <div className="mx-auto max-w-[1440px] xl:max-w-[1536px] px-3 sm:px-6 lg:px-8">
         {/* Header Area */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-text)]/10 bg-[var(--color-surface)] px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-[var(--color-text)] mb-4">
               <span className="relative flex h-2 w-2">

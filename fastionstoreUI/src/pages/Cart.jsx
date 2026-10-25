@@ -55,65 +55,79 @@ const Cart = () => {
   // Empty cart state
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center justify-center px-4 py-16 text-center">
-        <div className="w-full max-w-md flex justify-start mb-6">
+      <div className="min-h-screen bg-[#F3F4F0] flex flex-col items-center justify-center px-4 py-16 text-center relative overflow-hidden">
+        {/* Background Subtle Grid Accent */}
+        <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
+          <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-md flex justify-start mb-6">
           <BackButton size="sm" />
         </div>
-        <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-neutral-100 text-neutral-400 mb-5 shadow-2xs">
-          <ShoppingBag size={38} />
+
+        <div className="relative z-10 bg-white rounded-[32px] border border-neutral-200/90 p-8 sm:p-12 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-col items-center max-w-md w-full">
+          <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-[#F5F6F1] border border-neutral-200/80 text-neutral-800 mb-5 shadow-xs">
+            <ShoppingBag size={34} />
+          </div>
+          <h1
+            className="text-2xl sm:text-3xl font-black text-neutral-900 uppercase tracking-tight"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            Your Cart is Empty
+          </h1>
+          <p className="mt-2 text-xs sm:text-sm text-neutral-500 font-medium max-w-sm leading-relaxed">
+            You haven't added any streetwear drops to your bag yet. Check our new arrivals and drop-shoulder silhouettes!
+          </p>
+          <Link
+            to="/new-arrivals"
+            className="mt-6 group inline-flex items-center gap-3 rounded-full bg-neutral-900 hover:bg-black text-white pl-6 pr-2.5 py-2.5 text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
+          >
+            <span>Explore Drops</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors">
+              <ArrowRight size={14} strokeWidth={2.5} />
+            </span>
+          </Link>
         </div>
-        <h1
-          className="text-3xl font-black text-neutral-900 uppercase"
-          style={{ fontFamily: "var(--font-heading)" }}
-        >
-          Your Cart is Empty
-        </h1>
-        <p className="mt-2 text-xs sm:text-sm text-neutral-500 font-medium max-w-sm">
-          You haven't added any streetwear drops to your bag yet. Flex your fit
-          and start exploring!
-        </p>
-        <Button
-          to="/"
-          variant="primary"
-          size="lg"
-          className="mt-6 flex items-center gap-2 rounded-2xl"
-          icon={<ArrowRight size={16} />}
-          iconPosition="right"
-        >
-          Explore Drops
-        </Button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] px-3 py-6 sm:px-6 lg:px-8 pb-24 md:pb-16">
-      <div className="mx-auto max-w-6xl">
+    <div className="min-h-screen bg-[#F3F4F0] px-3 py-6 sm:px-6 lg:px-8 pb-24 md:pb-16 relative overflow-hidden">
+      {/* Background Subtle Grid Accent */}
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
+        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
+      </div>
+
+      <div className="mx-auto max-w-6xl relative z-10">
         {/* Back Button */}
-        <div className="mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <BackButton size="sm" />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">
+            CHECKOUT // BAG
+          </span>
         </div>
 
-        {/* Header */}
-        <div className="mb-6 flex flex-row items-center justify-between gap-4 pb-4 border-b border-neutral-200/80">
+        {/* Bento Header */}
+        <div className="bg-white rounded-[28px] border border-neutral-200/90 p-6 md:p-8 mb-6 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-row items-center justify-between gap-4">
           <div>
             <h1
-              className="text-2xl sm:text-3xl font-black text-neutral-900 uppercase break-words"
+              className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-900 uppercase break-words"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Shopping <span className="text-outline-primary ml-1">Cart</span>
+              Shopping <span className="text-outline-primary ml-1">Bag</span>
             </h1>
-            <p className="mt-0.5 text-xs text-neutral-500 font-medium">
-              {cartCount} {cartCount === 1 ? "item" : "items"} currently in your
-              bag
+            <p className="mt-1 text-xs sm:text-sm text-neutral-500 font-medium">
+              {cartCount} {cartCount === 1 ? "drop" : "drops"} reserved in your rotation
             </p>
           </div>
 
           <button
             onClick={clearCart}
-            className="text-xs font-bold text-red-500 hover:text-red-700 hover:underline transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 hover:text-red-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
           >
-            Clear Bag
+            <Trash2 size={13} />
+            <span>Clear</span>
           </button>
         </div>
 
@@ -150,7 +164,7 @@ const Cart = () => {
                           className="h-full w-full object-cover object-center"
                           onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&q=80";
+                            e.target.src = "/models/model1.png";
                           }}
                         />
                       ) : (

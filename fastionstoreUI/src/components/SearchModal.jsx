@@ -121,7 +121,7 @@ const SearchModal = ({ isOpen, onClose }) => {
 
         if (haystack.includes(trimmed)) {
           const activeVar = matchedVariant || product.variants?.[0];
-          const img = activeVar?.images?.[0] || 'https://placeholder.com/400x500';
+          const img = activeVar?.images?.[0] || product.image || '/models/model1.png';
           const price = activeVar?.salePrice && activeVar.isSale ? activeVar.salePrice : (activeVar?.price || product.price || 0);
           const origPrice = activeVar?.price || product.price || 0;
 
@@ -241,7 +241,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                               alt={product.name}
                               className="h-full w-full object-cover group-hover:scale-105 transition-transform"
                               onError={(e) => {
-                                e.target.src = 'https://placeholder.com/400x500';
+                                e.target.src = '/models/model1.png';
                               }}
                             />
                           </div>

@@ -10,6 +10,7 @@ import AdminRoute from "./components/AdminRoute";
 import ProductList from "./admin/Productlist";
 import ProductEdit from "./admin/ProductEdit";
 import CollectionsEdit from "./admin/CollectionsEdit";
+import HeroShowcaseEdit from "./admin/HeroShowcaseEdit";
 import NotFound from "./pages/NotFound";
 import Collection from "./pages/Collection";
 import Dashboard from "./admin/Dashboard";
@@ -92,6 +93,7 @@ function AppContent() {
               <Route path="products/new" element={<ProductEdit />} />
               <Route path="products/edit/:productId" element={<ProductEdit />} />
               <Route path="collections" element={<CollectionsEdit />} />
+              <Route path="hero-showcase" element={<HeroShowcaseEdit />} />
               <Route path="*" element={<Dashboard />} />
             </Route>
 

@@ -199,8 +199,42 @@ body {
   .text-outline-black {
     -webkit-text-stroke: 2.25px #0D0D11;
   }
-  .text-outline-white {
-    -webkit-text-stroke: 2.25px #FFFFFF;
-  }
+}
+
+/* Bento Grid & Technical Streetwear UI Tokens (Crafted for tactile editorial feel) */
+.bento-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(228, 229, 224, 0.9);
+  border-radius: 28px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card:hover {
+  box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.06), 0 6px 16px -2px rgba(0, 0, 0, 0.03);
+}
+
+.bento-card-subtle {
+  background: #F4F5F0;
+  border: 1px solid rgba(224, 226, 218, 0.85);
+  border-radius: 28px;
+}
+
+/* Diagonal action icon badge (similar to Dribbble exploration) */
+.bento-arrow-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background-color: #0E0F12;
+  color: #FFFFFF;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.bento-arrow-badge:hover {
+  transform: scale(1.08) rotate(5deg);
+  background-color: var(--color-primary);
 }
 

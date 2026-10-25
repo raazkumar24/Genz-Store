@@ -12,6 +12,7 @@ import {
   Plus,
   Edit,
   ExternalLink,
+  Flame,
 } from "lucide-react";
 import { Card, Badge, Button } from "../components/ui";
 
@@ -160,6 +161,13 @@ const Dashboard = () => {
             >
               <Plus size={16} strokeWidth={3} />
               Add New Drop
+            </Link>
+            <Link
+              to="/admin/hero-showcase"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-amber-400 hover:bg-amber-500 text-neutral-900 px-4 py-3 text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
+            >
+              <Flame size={15} className="fill-neutral-900" />
+              Hero Spotlight
             </Link>
             <Link
               to="/admin/products"

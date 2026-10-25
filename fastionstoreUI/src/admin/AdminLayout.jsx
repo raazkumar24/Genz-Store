@@ -11,6 +11,7 @@ import {
   ExternalLink,
   ShieldCheck,
   AlertTriangle,
+  Flame,
 } from "lucide-react";
 import { clearAuth, getUser } from "../utils/auth";
 import { useProducts } from "../context/ProductContext";
@@ -48,6 +49,7 @@ const AdminLayout = () => {
     if (p.includes("/admin/products/edit")) return "Edit Product Details";
     if (p.includes("/admin/products")) return "Product Inventory";
     if (p.includes("/admin/collections")) return "Collections & Banners";
+    if (p.includes("/admin/hero-showcase")) return "Hero Spotlight Drop";
     return "Store Overview";
   };
 
@@ -182,6 +184,21 @@ const AdminLayout = () => {
               <Layers size={19} strokeWidth={2.2} />
               <span>Collections</span>
             </div>
+          </NavLink>
+
+          <NavLink
+            to="/admin/hero-showcase"
+            onClick={() => setIsSidebarOpen(false)}
+            className={getLinkClass}
+            end
+          >
+            <div className="flex items-center gap-3">
+              <Flame size={19} strokeWidth={2.2} className="text-amber-500" />
+              <span>Hero Spotlight</span>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-200">
+              Live
+            </span>
           </NavLink>
         </div>
 

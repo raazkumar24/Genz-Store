@@ -41,6 +41,12 @@ const Button = ({
       "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-500/20 focus:ring-emerald-500",
     white:
       "bg-white text-[var(--color-text)] hover:bg-neutral-100 border border-[var(--color-border)] shadow-xs focus:ring-neutral-300",
+    bentoLime:
+      "bg-[#D8F535] text-[#0E0F12] hover:bg-[#C9E728] shadow-md shadow-lime-500/10 focus:ring-lime-400 font-extrabold tracking-tight",
+    bentoDark:
+      "bg-[#0E0F12] text-white hover:bg-neutral-800 shadow-md shadow-black/15 focus:ring-neutral-900 font-extrabold tracking-tight",
+    bentoWhite:
+      "bg-white text-[#0E0F12] hover:bg-neutral-50 border border-neutral-200/80 shadow-xs focus:ring-neutral-300 font-extrabold tracking-tight",
   };
 
   const sizes = {

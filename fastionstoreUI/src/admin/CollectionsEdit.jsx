@@ -370,8 +370,7 @@ const CollectionsEdit = () => {
                     className="h-full w-full object-cover rounded-2xl shadow-sm transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src =
-                        "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80";
+                      e.target.src = "/models/model1.png";
                     }}
                   />
                   <div className="absolute top-3 left-3 flex items-center gap-1.5">

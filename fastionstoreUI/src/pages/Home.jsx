@@ -60,19 +60,31 @@ const Home = () => {
   const navigate = useNavigate();
 
   const urlSearch = searchParams.get("search") || "";
+  const urlColor = searchParams.get("color") || "all";
+  const urlCategory = searchParams.get("category") || "all";
+  const urlGender = searchParams.get("gender") || "all";
+  const urlSale = searchParams.get("sale") === "true";
 
   const [filters, setFilters] = useState({
     ...initialFiltersState,
     searchQuery: urlSearch,
+    color: urlColor,
+    category: urlCategory,
+    gender: urlGender,
+    onSaleOnly: urlSale,
   });
 
-  // Sync URL search query with filter state
+  // Sync URL search query and filter parameters with filter state
   useEffect(() => {
     setFilters((prev) => ({
       ...prev,
       searchQuery: urlSearch,
+      color: urlColor,
+      category: urlCategory,
+      gender: urlGender,
+      onSaleOnly: urlSale,
     }));
-  }, [urlSearch]);
+  }, [urlSearch, urlColor, urlCategory, urlGender, urlSale]);
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
@@ -80,20 +92,29 @@ const Home = () => {
 
   const handleResetFilters = () => {
     setFilters(initialFiltersState);
-    if (urlSearch) {
-      navigate("/");
-    }
+    navigate("/");
   };
 
-  // Compute filtered and sorted products
+  // Compute filtered and sorted products with active variant resolution
   const filteredProducts = useMemo(() => {
-    return applyProductFilters(products, filters);
+    const list = applyProductFilters(products, filters);
+    // If color filter is active, attach matched variant so the card renders that exact color lookbook!
+    if (filters.color && filters.color !== "all") {
+      const c = filters.color.toLowerCase().trim();
+      return list.map((p) => {
+        const matched = p.variants?.find(
+          (v) => String(v.color || "").toLowerCase().includes(c)
+        );
+        return matched ? { ...p, matchedVariant: matched } : p;
+      });
+    }
+    return list;
   }, [products, filters]);
 
   return (
-    <div className="relative w-full min-h-screen bg-[#FBFBFA] flex flex-col">
+    <div className="relative w-full min-h-screen bg-[#F3F4F0] flex flex-col">
       {/* Subtle Grid Background Accent */}
-      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.03]">
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
       </div>
 
@@ -115,8 +136,8 @@ const Home = () => {
         </>
       )}
 
-      {/* Main Product Section */}
-      <section className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-14 w-full">
+      {/* Main Product Section with id=catalog for smooth scrolling */}
+      <section id="catalog" className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-14 w-full scroll-mt-20">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 border-b border-neutral-200/80 pb-5">
           <div>
@@ -125,16 +146,16 @@ const Home = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
               </span>
-              {urlSearch ? "Search Results" : "Curated Drops"}
+              {urlSearch ? "Search Results" : filters.color !== "all" ? `Filtered by ${filters.color}` : "Curated Drops"}
             </div>
 
             <div className="flex items-center gap-3">
-              {urlSearch && (
+              {(urlSearch || filters.color !== "all" || filters.category !== "all") && (
                 <button
                   type="button"
-                  onClick={() => navigate("/")}
+                  onClick={handleResetFilters}
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-200/80 hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer"
-                  title="Back to All Drops"
+                  title="Clear All Filters"
                 >
                   <ArrowLeft size={16} />
                 </button>
@@ -147,6 +168,10 @@ const Home = () => {
                   <>
                     Drops For <span className="text-outline-primary ml-1">"{urlSearch}"</span>
                   </>
+                ) : filters.color !== "all" ? (
+                  <>
+                    {filters.color} <span className="text-outline-primary ml-1">Silhouettes</span>
+                  </>
                 ) : (
                   <>
                     Streetwear <span className="text-outline-primary ml-1">Catalog</span>
@@ -154,11 +179,32 @@ const Home = () => {
                 )}
               </h2>
             </div>
+            
             <p className="mt-1 text-xs sm:text-sm font-medium text-neutral-500 max-w-md">
               {urlSearch
                 ? `Found ${filteredProducts.length} items matching "${urlSearch}".`
+                : filters.color !== "all"
+                ? `Showing ${filteredProducts.length} drops available in ${filters.color}.`
                 : "Heavyweight 280+ GSM combed cotton, drop-shoulder silhouettes, and boxy fits."}
             </p>
+
+            {/* Active Color Filter Pill */}
+            {filters.color !== "all" && (
+              <div className="flex items-center gap-2 mt-3">
+                <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">Active:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilters((prev) => ({ ...prev, color: "all" }));
+                    navigate("/");
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-900 text-white text-xs font-black uppercase tracking-wider hover:bg-[var(--color-primary)] transition-colors cursor-pointer shadow-xs"
+                >
+                  <span>Color: {filters.color}</span>
+                  <span className="text-neutral-400 hover:text-white">✕</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

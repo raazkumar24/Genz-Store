@@ -11,6 +11,16 @@ export const fetchAllProducts = async () => {
   return response.data;
 };
 
+export const fetchPopularColors = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/products/popular-colors`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch popular colors:", error);
+    return null;
+  }
+};
+
 export const getProductByIdAPI = async (productId) => {
   const response = await axios.get(`${API_URL}/products/${productId}`);
   return response.data;

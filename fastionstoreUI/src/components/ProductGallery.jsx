@@ -31,36 +31,48 @@ const ProductGallery = ({
   };
 
   return (
-    <section className="flex flex-col gap-3 md:grid md:grid-cols-[80px_1fr] lg:grid-cols-[96px_1fr] lg:gap-5 w-full min-w-0">
+    <section className="flex flex-col gap-3 md:grid md:grid-cols-[90px_1fr] lg:grid-cols-[104px_1fr] lg:gap-4 w-full min-w-0">
       
       {/* Thumbnails: Left vertical strip on Desktop, Horizontal scroll on Mobile */}
-      <div className="order-2 md:order-1 flex gap-2 overflow-x-auto snap-x snap-mandatory hide-scrollbar py-1 px-0.5 md:flex-col md:overflow-y-auto md:max-h-[600px] w-full min-w-0">
+      <div className="order-2 md:order-1 flex gap-2.5 overflow-x-auto snap-x snap-mandatory hide-scrollbar py-1 px-0.5 md:flex-col md:overflow-y-auto md:max-h-[680px] w-full min-w-0">
         {displayImages.map((image, idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => setActiveImage(image)}
-            className={`relative h-14 w-14 sm:h-16 sm:w-16 md:h-22 md:w-full shrink-0 snap-center overflow-hidden rounded-xl sm:rounded-2xl bg-neutral-100 border-2 transition-all duration-200 cursor-pointer ${
+            className={`relative h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-full shrink-0 snap-center overflow-hidden rounded-2xl bg-neutral-100 border-2 transition-all duration-200 cursor-pointer ${
               activeImage === image
-                ? "border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/25 shadow-xs scale-[1.02]"
-                : "border-transparent opacity-70 hover:opacity-100 hover:border-neutral-300"
+                ? "border-neutral-900 ring-2 ring-neutral-900/20 shadow-xs scale-[1.02]"
+                : "border-transparent opacity-75 hover:opacity-100 hover:border-neutral-300"
             }`}
             aria-label={`Select image ${idx + 1}`}
           >
-            <img src={image} alt="" className="h-full w-full object-cover object-center" />
+            <img 
+              src={image} 
+              alt="" 
+              className="h-full w-full object-cover object-top" 
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/models/model1.png";
+              }}
+            />
           </button>
         ))}
       </div>
 
-      {/* Main Image Stage */}
-      <div className="order-1 md:order-2 relative overflow-hidden rounded-2xl sm:rounded-3xl bg-[#f8f8f7] border border-neutral-200/80 shadow-xs group w-full min-h-[340px] sm:min-h-[440px] md:h-[600px] flex items-center justify-center">
+      {/* Main Image Stage - Editorial Lookbook Framing */}
+      <div className="order-1 md:order-2 relative overflow-hidden rounded-[28px] sm:rounded-[34px] bg-[#1a1a1c] border border-neutral-200/90 shadow-md group w-full aspect-[4/5] sm:aspect-[3/4] md:min-h-[580px] lg:min-h-[680px] flex items-center justify-center">
         
         {/* Main Photo */}
         <img
           src={activeImage || displayImages[0]}
           alt={productName || "Product"}
           onClick={onOpenLightbox}
-          className="h-full w-full max-h-[580px] object-contain object-center transition-transform duration-500 group-hover:scale-105 cursor-zoom-in p-3 sm:p-6"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/models/model1.png";
+          }}
+          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105 cursor-zoom-in"
         />
 
         {/* Top-Left Wishlist Heart Button on Image */}

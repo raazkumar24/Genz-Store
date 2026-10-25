@@ -117,7 +117,7 @@ const SearchBox = ({ className = '', placeholder = 'Search products...', onSearc
           ) : (
             <div className="space-y-1">
               {liveSuggestions.map((item) => {
-                const img = item.variants?.[0]?.images?.[0] || 'https://placeholder.com/400x500';
+                const img = item.variants?.[0]?.images?.[0] || item.image || '/models/model1.png';
                 const price = item.variants?.[0]?.salePrice && item.variants?.[0]?.isSale
                   ? item.variants[0].salePrice
                   : item.variants?.[0]?.price || item.price || 0;

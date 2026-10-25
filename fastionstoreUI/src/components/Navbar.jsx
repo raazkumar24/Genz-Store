@@ -92,6 +92,18 @@ const Navbar = () => {
         setIsMobileMenuOpen(false);
     }, [location.pathname]);
 
+    // Global Cmd+K / Ctrl+K shortcut to toggle search modal
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                setIsSearchModalOpen((prev) => !prev);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
     const handleLogout = () => {
         clearAuth();
         setIsLoggedIn(false);
@@ -290,27 +302,37 @@ const Navbar = () => {
                             </NavLink>
                         </div>
 
-                        {/* Right: Actions */}
-                        <div className="flex items-center gap-3">
-                            {/* Search Modal Trigger Button */}
+                        {/* Right: Actions (Search pill, Wishlist, Cart, Profile pill) */}
+                        <div className="flex items-center gap-2.5">
+                            {/* Dribbble-style Sleek Pill Search Trigger */}
                             <button
                                 type="button"
                                 aria-label="Open Search"
                                 onClick={() => setIsSearchModalOpen(true)}
-                                className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white/80 px-3.5 py-1.5 text-xs font-bold text-neutral-500 hover:border-neutral-900 hover:text-neutral-900 transition-all shadow-2xs cursor-pointer"
+                                className="group flex items-center justify-between gap-3 rounded-full border border-neutral-200/90 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-400 hover:border-neutral-400 hover:text-neutral-700 transition-all shadow-xs cursor-pointer min-w-[170px] lg:min-w-[220px]"
                             >
-                                <Search size={15} strokeWidth={2.2} className="text-neutral-500" />
-                                <span className="hidden lg:inline">Search streetwear...</span>
-                                <span className="lg:hidden">Search</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs text-neutral-500 font-medium truncate">
+                                        Search products...
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <kbd className="hidden xl:inline-block rounded border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 text-[10px] font-mono font-bold text-neutral-400">
+                                        ⌘K
+                                    </kbd>
+                                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:bg-[var(--color-primary)] transition-colors">
+                                        <Search size={13} strokeWidth={2.5} />
+                                    </span>
+                                </div>
                             </button>
 
-                            {/* Wishlist */}
+                            {/* Wishlist Button */}
                             <NavLink
                                 to="/wishlist"
                                 aria-label="Wishlist"
-                                className={actionIconButtonClass}
+                                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200/80 bg-white text-neutral-800 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all duration-200 cursor-pointer shadow-xs"
                             >
-                                <Heart size={19} strokeWidth={2} />
+                                <Heart size={18} strokeWidth={2} />
                                 {wishlistCount > 0 && (
                                     <motion.span
                                         initial={{ scale: 0.6 }}
@@ -322,13 +344,13 @@ const Navbar = () => {
                                 )}
                             </NavLink>
 
-                            {/* Cart */}
+                            {/* Cart Button */}
                             <NavLink
                                 to="/cart"
                                 aria-label="Cart"
-                                className={actionIconButtonClass}
+                                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200/80 bg-white text-neutral-800 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all duration-200 cursor-pointer shadow-xs"
                             >
-                                <ShoppingBag size={19} strokeWidth={2} />
+                                <ShoppingBag size={18} strokeWidth={2} />
                                 {cartCount > 0 && (
                                     <motion.span
                                         initial={{ scale: 0.6 }}
@@ -340,61 +362,77 @@ const Navbar = () => {
                                 )}
                             </NavLink>
 
-                            <div className="w-[1px] h-5 bg-neutral-300 mx-1"></div>
-
                             {/* Admin Link if Admin */}
                             {showAdminLink && (
                                 <NavLink
                                     to="/admin"
                                     aria-label="Admin Panel"
-                                    className={`${actionIconButtonClass} text-neutral-700 hover:text-[var(--color-primary)]`}
+                                    className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200/80 bg-white text-neutral-800 hover:text-[var(--color-primary)] hover:border-neutral-900 transition-all cursor-pointer shadow-xs"
                                     title="Admin Dashboard"
                                 >
-                                    <Shield size={19} strokeWidth={2} />
+                                    <Shield size={18} strokeWidth={2} />
                                 </NavLink>
                             )}
 
-                            {/* User Profile / Auth */}
+                            {/* User Profile Pill (Direct match to Dribbble user badge) */}
                             {isLoggedIn ? (
-                                <div className="relative group py-2">
-                                    <NavLink to="/profile" className={actionIconButtonClass}>
-                                        <User size={19} strokeWidth={2} />
+                                <div className="relative group py-1">
+                                    <NavLink 
+                                        to="/profile" 
+                                        className="flex items-center gap-2 pl-3 pr-1 py-1 rounded-full border border-neutral-200/90 bg-white hover:border-neutral-400 transition-all shadow-xs"
+                                    >
+                                        <span className="text-xs font-bold uppercase tracking-wider text-neutral-800 max-w-[90px] truncate">
+                                            {currentUser?.name?.split(" ")[0] || "Account"}
+                                        </span>
+                                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900 text-white text-[11px] font-black uppercase">
+                                            {currentUser?.name ? currentUser.name[0] : <User size={13} />}
+                                        </div>
                                     </NavLink>
-                                    <div className="absolute right-0 top-[100%] w-48 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
-                                        <div className="rounded-2xl border border-neutral-200/80 bg-white/95 backdrop-blur-xl p-2 shadow-xl">
-                                            <div className="px-3 py-1.5 border-b border-neutral-100 mb-1">
-                                                <p className="text-[10px] font-black uppercase text-neutral-400">Signed In</p>
+                                    
+                                    {/* Dropdown Menu */}
+                                    <div className="absolute right-0 top-[100%] w-52 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
+                                        <div className="rounded-2xl border border-neutral-200/80 bg-white/95 backdrop-blur-xl p-2 shadow-xl mt-1">
+                                            <div className="px-3 py-2 border-b border-neutral-100 mb-1">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Streetwear Member</p>
                                                 <p className="text-xs font-bold text-neutral-900 truncate">
-                                                    {currentUser?.name || currentUser?.email || 'Streetwear Member'}
+                                                    {currentUser?.name || currentUser?.email || 'Member'}
                                                 </p>
                                             </div>
                                             <NavLink
                                                 to="/profile"
                                                 className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-100 rounded-xl"
                                             >
-                                                <User size={15} /> My Profile & Orders
+                                                <User size={14} /> My Profile & Orders
                                             </NavLink>
                                             {showAdminLink && (
                                                 <NavLink
                                                     to="/admin"
                                                     className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 rounded-xl"
                                                 >
-                                                    <Shield size={15} /> Admin Portal
+                                                    <Shield size={14} /> Admin Portal
                                                 </NavLink>
                                             )}
                                             <button
                                                 onClick={handleLogout}
                                                 className="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
                                             >
-                                                <LogOut size={15} strokeWidth={2} /> Logout
+                                                <LogOut size={14} strokeWidth={2} /> Logout
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
-                                <Button to="/login" variant="primary" size="sm" className="px-5 text-xs font-extrabold">
-                                    Sign In
-                                </Button>
+                                <NavLink
+                                    to="/login"
+                                    className="flex items-center gap-2 pl-3 pr-1 py-1 rounded-full border border-neutral-200/90 bg-neutral-900 text-white hover:bg-black transition-all shadow-xs"
+                                >
+                                    <span className="text-xs font-bold uppercase tracking-wider pl-1">
+                                        Sign In
+                                    </span>
+                                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-white text-[11px]">
+                                        <User size={13} />
+                                    </div>
+                                </NavLink>
                             )}
                         </div>
                     </nav>

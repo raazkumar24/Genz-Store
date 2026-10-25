@@ -51,16 +51,171 @@ function parseArrayField(input) {
   return [...new Set(result)];
 }
 
+// Standard Streetwear Color Hex mapping
+const COLOR_HEX_MAP = {
+  black: "#111111",
+  white: "#FFFFFF",
+  gray: "#6B7280",
+  grey: "#6B7280",
+  beige: "#F5F5DC",
+  cream: "#FFFDD0",
+  olive: "#4D7C0F",
+  green: "#22C55E",
+  blue: "#2563EB",
+  navy: "#1E3A8A",
+  red: "#EF4444",
+  crimson: "#DC2626",
+  orange: "#F97316",
+  yellow: "#EAB308",
+  amber: "#F59E0B",
+  lime: "#84CC16",
+  pink: "#EC4899",
+  purple: "#A855F7",
+  brown: "#92400E",
+  cyan: "#06B6D4",
+  teal: "#14B8A6",
+};
+
+/**
+ * Controller: Get dynamic popular color palette from live products
+ * Returns the most frequent colors with hex codes, product counts, and clean labels
+ */
+export const getPopularColors = async (req, res) => {
+  try {
+    let products = [];
+    try {
+      products = await Product.find({}).lean();
+    } catch (e) {
+      // Fallback to in-memory if DB offline
+    }
+    if (!products || products.length === 0) {
+      products = inMemoryProducts;
+    }
+
+    // Count product occurrences per color
+    const colorCounts = {};
+    for (const product of products) {
+      if (Array.isArray(product.variants)) {
+        const productColors = new Set();
+        for (const variant of product.variants) {
+          if (variant.color) {
+            const cleanColor = String(variant.color).trim().toLowerCase();
+            productColors.add(cleanColor);
+          }
+        }
+        for (const color of productColors) {
+          colorCounts[color] = (colorCounts[color] || 0) + 1;
+        }
+      }
+    }
+
+    // Format into structured array sorted by count
+    const sorted = Object.entries(colorCounts)
+      .map(([color, count]) => {
+        const name = color.charAt(0).toUpperCase() + color.slice(1);
+        const hex = COLOR_HEX_MAP[color] || "#888888";
+        return {
+          name,
+          color,
+          filter: color,
+          hex,
+          count,
+        };
+      })
+      .sort((a, b) => b.count - a.count);
+
+    if (sorted.length === 0) {
+      // Curated default streetwear palette fallback
+      return res.json([
+        { name: "Pitch Black", color: "black", filter: "black", hex: "#111111", count: 12 },
+        { name: "Cobalt Blue", color: "blue", filter: "blue", hex: "#2563EB", count: 8 },
+        { name: "Sunset Orange", color: "orange", filter: "orange", hex: "#F97316", count: 6 },
+        { name: "Acid Lime", color: "lime", filter: "lime", hex: "#84CC16", count: 5 },
+        { name: "Signal Crimson", color: "red", filter: "red", hex: "#EF4444", count: 4 },
+      ]);
+    }
+
+    return res.json(sorted.slice(0, 8));
+  } catch (error) {
+    console.error("Error in getPopularColors:", error);
+    res.status(500).json({ message: "Failed to fetch popular colors" });
+  }
+};
+
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find({}).lean();
-    if (products && products.length > 0) {
-      return res.json(products);
+    const { color, category, gender, search, onSale } = req.query;
+
+    let products = [];
+    try {
+      products = await Product.find({}).lean();
+    } catch (error) {
+      // Database offline or query error, fall through to inMemoryProducts
     }
+
+    if (!products || products.length === 0) {
+      products = inMemoryProducts;
+    }
+
+    let filtered = products;
+
+    // 1. Color filter
+    if (color && color !== "all") {
+      const c = color.toLowerCase().trim();
+      filtered = filtered.filter((p) =>
+        p.variants && p.variants.some((v) => String(v.color || "").toLowerCase().includes(c))
+      );
+    }
+
+    // 2. Category filter
+    if (category && category !== "all") {
+      const cat = category.toLowerCase().trim();
+      filtered = filtered.filter((p) => {
+        const collections = Array.isArray(p.collection)
+          ? p.collection.join(" ").toLowerCase()
+          : String(p.collection || "").toLowerCase();
+        const cats = Array.isArray(p.category)
+          ? p.category.join(" ").toLowerCase()
+          : String(p.category || "").toLowerCase();
+        const name = String(p.name || "").toLowerCase();
+        return collections.includes(cat) || cats.includes(cat) || name.includes(cat);
+      });
+    }
+
+    // 3. Gender filter
+    if (gender && gender !== "all") {
+      const g = gender.toLowerCase().trim();
+      filtered = filtered.filter((p) => {
+        const pg = String(p.gender || "").toLowerCase();
+        return pg === g || pg === "unisex";
+      });
+    }
+
+    // 4. On-Sale filter
+    if (onSale === "true") {
+      filtered = filtered.filter(
+        (p) => p.isSale || (p.variants && p.variants.some((v) => v.isSale || (v.salePrice && v.salePrice > 0)))
+      );
+    }
+
+    // 5. Search query filter
+    if (search && search.trim()) {
+      const s = search.toLowerCase().trim();
+      filtered = filtered.filter((p) => {
+        const text = [p.name, p.description, p.brand].join(" ").toLowerCase();
+        const varText = (p.variants || [])
+          .map((v) => [v.color, v.size, ...(v.keywords || [])].join(" "))
+          .join(" ")
+          .toLowerCase();
+        return text.includes(s) || varText.includes(s);
+      });
+    }
+
+    return res.json(filtered);
   } catch (error) {
-    // Database offline or query error, fall through to inMemoryProducts
+    console.error("Error in getAllProducts:", error);
+    res.status(500).json({ message: "Failed to fetch products" });
   }
-  res.json(inMemoryProducts);
 };
 
 export const getProductById = async (req, res) => {

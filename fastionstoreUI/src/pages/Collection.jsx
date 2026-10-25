@@ -116,66 +116,69 @@ const Collection = () => {
   }, [baseCollectionProducts, filters]);
 
   return (
-    <div className="relative w-full min-h-screen bg-[#FBFBFA] flex flex-col">
+    <div className="relative w-full min-h-screen bg-[#F3F4F0] flex flex-col overflow-hidden">
       {/* Background Pattern */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
-        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,var(--color-text)_1px,transparent_0)] bg-[length:32px_32px]" />
+        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
       </div>
 
       {/* Collection Hero Section */}
-      <section className="relative z-10 border-b border-neutral-200/80 bg-neutral-100/60 pt-6 pb-8 md:pt-12 md:pb-14 overflow-hidden">
-        {/* Subtle Background Watermark Text */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none whitespace-nowrap select-none">
-          <span className="text-[14vw] font-black uppercase tracking-tighter" style={{ fontFamily: "var(--font-heading)" }}>
-            {displayTitle}
-          </span>
-        </div>
-
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center text-center">
+      <section className="relative z-10 pt-6 pb-4 sm:pt-8 md:pt-10">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
           {/* Back Button */}
-          <div className="self-start mb-4">
+          <div className="mb-4">
             <BackButton size="sm" />
           </div>
 
-          {/* Breadcrumb */}
-          <nav className="mb-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-400">
-            <Link to="/" className="hover:text-[var(--color-primary)] transition-colors">Home</Link>
-            <span className="opacity-50">/</span>
-            <span className="text-neutral-700">Collections</span>
-            <span className="opacity-50">/</span>
-            <span className="text-[var(--color-primary)]">{displayTitle}</span>
-          </nav>
+          {/* Bento Header Card */}
+          <div className="relative overflow-hidden rounded-[28px] bg-white border border-neutral-200/90 p-6 sm:p-10 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] text-center flex flex-col items-center">
+            {/* Subtle Watermark */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none whitespace-nowrap select-none">
+              <span className="text-[14vw] font-black uppercase tracking-tighter" style={{ fontFamily: "var(--font-heading)" }}>
+                {displayTitle}
+              </span>
+            </div>
 
-          <Badge variant="primary" className="mb-3 px-3 py-1 flex items-center gap-1.5 text-xs font-black uppercase tracking-wider">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-            </span>
-            Streetwear Drop
-          </Badge>
+            {/* Breadcrumb */}
+            <nav className="mb-3 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-400">
+              <Link to="/" className="hover:text-neutral-900 transition-colors">Home</Link>
+              <span className="opacity-50">/</span>
+              <span className="text-neutral-600">Collections</span>
+              <span className="opacity-50">/</span>
+              <span className="text-[var(--color-primary)]">{displayTitle}</span>
+            </nav>
 
-          <h1
-            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-neutral-900 break-words max-w-full"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            {displayTitle} <span className="text-outline-primary ml-1">Collection</span>
-          </h1>
-          
-          <p className="mt-3 max-w-xl text-xs sm:text-sm text-neutral-600 font-medium md:text-base">
-            Heavyweight pure combed cotton, boxy drop-shoulder silhouettes, and signature {displayTitle.toLowerCase()} aesthetics.
-          </p>
+            <Badge variant="primary" className="mb-3 px-3 py-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider rounded-full">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+              </span>
+              Streetwear Drop
+            </Badge>
 
-          {/* Quick Collection Navigation Pills */}
-          <div className="mt-5 flex flex-wrap justify-center gap-2 max-w-2xl">
-            {collectionPills.map((pill, idx) => (
-              <Link
-                key={idx}
-                to={pill.path}
-                className="px-3.5 py-1.5 rounded-full bg-white border border-neutral-200/90 text-xs font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-colors shadow-2xs"
-              >
-                {pill.label}
-              </Link>
-            ))}
+            <h1
+              className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-neutral-900 break-words max-w-full"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              {displayTitle} <span className="text-outline-primary ml-1">Collection</span>
+            </h1>
+            
+            <p className="mt-2.5 max-w-xl text-xs sm:text-sm text-neutral-500 font-medium md:text-base leading-relaxed">
+              Heavyweight pure combed cotton, boxy drop-shoulder silhouettes, and signature {displayTitle.toLowerCase()} aesthetics.
+            </p>
+
+            {/* Quick Collection Navigation Pills */}
+            <div className="mt-6 flex flex-wrap justify-center gap-2 max-w-2xl">
+              {collectionPills.map((pill, idx) => (
+                <Link
+                  key={idx}
+                  to={pill.path}
+                  className="px-3.5 py-1.5 rounded-full bg-[#f8f8f7] border border-neutral-200/90 text-[11px] font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-colors shadow-2xs"
+                >
+                  {pill.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>

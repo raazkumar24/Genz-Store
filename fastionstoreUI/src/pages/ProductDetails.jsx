@@ -260,9 +260,9 @@ const ProductDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-[80vh] items-center justify-center bg-[var(--color-bg)] text-[var(--color-text-muted)]">
-        <div className="flex items-center gap-3 font-semibold text-lg">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--color-primary)] border-t-transparent"></div>
+      <div className="flex min-h-[80vh] items-center justify-center bg-[#F3F4F0] text-neutral-600">
+        <div className="flex items-center gap-3 font-black text-sm uppercase tracking-wider">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-900 border-t-transparent"></div>
           <span>Loading drop details...</span>
         </div>
       </div>
@@ -271,12 +271,12 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="min-h-[80vh] bg-[var(--color-bg)] flex flex-col items-center justify-center px-6 py-16 text-center">
-        <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
+      <div className="min-h-[80vh] bg-[#F3F4F0] flex flex-col items-center justify-center px-6 py-16 text-center">
+        <h1 className="text-3xl font-black text-neutral-900 uppercase" style={{ fontFamily: "var(--font-heading)" }}>
           Product Not Found
         </h1>
-        <p className="mt-2 text-gray-500 max-w-md">The product you are looking for does not exist or has been removed.</p>
-        <Button to="/" variant="primary" className="mt-6">
+        <p className="mt-2 text-sm text-neutral-500 max-w-md">The product you are looking for does not exist or has been archived.</p>
+        <Button to="/" variant="primary" className="mt-6 rounded-full px-6 py-2.5 font-black uppercase text-xs">
           Back to Home
         </Button>
       </div>
@@ -298,11 +298,16 @@ const ProductDetails = () => {
   const savingsAmount = isSaleActive && originalPrice > currentPrice ? originalPrice - currentPrice : 0;
 
   return (
-    <div className="bg-[var(--color-bg)] min-h-screen">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5 md:py-8 pb-36 md:pb-20">
+    <div className="bg-[#F3F4F0] min-h-screen relative overflow-hidden">
+      {/* Background Subtle Grid Accent */}
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
+        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
+      </div>
+
+      <div className="mx-auto max-w-[1440px] xl:max-w-[1536px] px-3 sm:px-6 lg:px-8 py-4 md:py-6 pb-28 md:pb-16 relative z-10">
         
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center justify-between gap-4 mb-4 md:mb-6">
+        <nav className="flex items-center justify-between gap-4 mb-3 md:mb-5">
           <div className="flex items-center gap-2 text-xs md:text-sm text-neutral-500 overflow-hidden font-medium">
             <BackButton size="sm" fallbackPath="/" />
             <span className="text-neutral-300">/</span>
@@ -325,7 +330,7 @@ const ProductDetails = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={handleShare}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 hover:text-[var(--color-primary)] hover:border-neutral-300 transition-colors cursor-pointer shadow-2xs"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 hover:text-neutral-900 hover:border-neutral-300 transition-colors cursor-pointer shadow-xs"
               title="Share Product"
             >
               <Share2 size={15} />
@@ -334,10 +339,10 @@ const ProductDetails = () => {
         </nav>
 
         {/* Main Product Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start">
 
-          {/* Left Column: Interactive Product Gallery (Sticky on desktop) */}
-          <div className="lg:col-span-7 lg:sticky lg:top-24">
+          {/* Left Column: Interactive Product Gallery */}
+          <div className="lg:col-span-7 xl:col-span-7">
             <ProductGallery
               displayImages={displayImages}
               activeImage={activeImage}
@@ -349,9 +354,9 @@ const ProductDetails = () => {
             />
           </div>
 
-          {/* Right Column: Buying Options & Streetwear Details */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-7 border border-neutral-200/80 shadow-xs">
+          {/* Right Column: Buying Options & Streetwear Details (Sticky on desktop) */}
+          <div className="lg:col-span-5 xl:col-span-5 space-y-4 lg:sticky lg:top-20">
+            <div className="rounded-[28px] bg-white p-5 sm:p-7 border border-neutral-200/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)]">
               
               {/* Header Badges: Brand, Drop & Stock Status */}
               <div className="flex items-center justify-between gap-2 mb-3">
@@ -613,7 +618,7 @@ const ProductDetails = () => {
               </div>
 
               {/* Delivery Pincode Checker */}
-              <div className="mt-6 pt-5 border-t border-neutral-100">
+              <div className="mt-5 pt-4 border-t border-neutral-100">
                 <p className="text-xs font-black uppercase tracking-wider text-neutral-900 mb-2 flex items-center gap-1.5">
                   <MapPin size={14} className="text-[var(--color-primary)]" />
                   Check Delivery Speed & Cash on Delivery
@@ -639,7 +644,7 @@ const ProductDetails = () => {
                 </form>
 
                 {pincodeChecked && (
-                  <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-emerald-50 p-2.5 text-xs text-emerald-800 font-semibold border border-emerald-200">
+                  <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-emerald-50 p-2 text-xs text-emerald-800 font-semibold border border-emerald-200">
                     <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
                     <span>Free Express Delivery by <strong>Tomorrow / 48 hrs</strong> to {pincode}</span>
                   </div>
@@ -647,36 +652,36 @@ const ProductDetails = () => {
               </div>
 
               {/* 4 Pillars of Trust (Aligned to Site Streetwear Brand) */}
-              <div className="mt-6 grid grid-cols-2 gap-2.5 border-t pt-5 border-neutral-100">
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
-                  <Zap size={16} className="text-[var(--color-primary)] shrink-0" />
+              <div className="mt-4 grid grid-cols-2 gap-2 border-t pt-4 border-neutral-100">
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-50 border border-neutral-100">
+                  <Zap size={14} className="text-[var(--color-primary)] shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[11px] font-black uppercase text-neutral-900">Fast Dispatch</p>
-                    <p className="text-[10px] text-neutral-500">Ships within 24-48 Hours</p>
+                    <p className="text-[11px] font-black uppercase text-neutral-900 leading-tight">Fast Dispatch</p>
+                    <p className="text-[10px] text-neutral-500 leading-tight">Within 24-48 Hours</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
-                  <Layers size={16} className="text-[var(--color-primary)] shrink-0" />
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-50 border border-neutral-100">
+                  <Layers size={14} className="text-[var(--color-primary)] shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[11px] font-black uppercase text-neutral-900">280 GSM Cotton</p>
-                    <p className="text-[10px] text-neutral-500">Heavyweight Pure Combed</p>
+                    <p className="text-[11px] font-black uppercase text-neutral-900 leading-tight">280 GSM Cotton</p>
+                    <p className="text-[10px] text-neutral-500 leading-tight">Heavy Combed</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
-                  <RotateCcw size={16} className="text-[var(--color-primary)] shrink-0" />
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-50 border border-neutral-100">
+                  <RotateCcw size={14} className="text-[var(--color-primary)] shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[11px] font-black uppercase text-neutral-900">14-Day Exchanges</p>
-                    <p className="text-[10px] text-neutral-500">Hassle-Free Doorstep Return</p>
+                    <p className="text-[11px] font-black uppercase text-neutral-900 leading-tight">14-Day Exchanges</p>
+                    <p className="text-[10px] text-neutral-500 leading-tight">Doorstep Return</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
-                  <ShieldCheck size={16} className="text-[var(--color-primary)] shrink-0" />
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-50 border border-neutral-100">
+                  <ShieldCheck size={14} className="text-[var(--color-primary)] shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[11px] font-black uppercase text-neutral-900">100% Authentic</p>
-                    <p className="text-[10px] text-neutral-500">Original Genz Streetwear</p>
+                    <p className="text-[11px] font-black uppercase text-neutral-900 leading-tight">100% Authentic</p>
+                    <p className="text-[10px] text-neutral-500 leading-tight">Genz Streetwear</p>
                   </div>
                 </div>
               </div>
@@ -687,7 +692,7 @@ const ProductDetails = () => {
         </div>
 
         {/* Full Width Product Specifications & Details Card */}
-        <div className="mt-8 md:mt-12 rounded-3xl bg-white p-5 sm:p-8 border border-neutral-200/80 shadow-xs">
+        <div className="mt-8 md:mt-12 rounded-[28px] bg-white p-5 sm:p-8 border border-neutral-200/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)]">
           <ProductAccordion product={product} />
         </div>
 
@@ -710,6 +715,10 @@ const ProductDetails = () => {
             <img
               src={activeImage || displayImages[0]}
               alt={product.name}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/models/model1.png";
+              }}
               className="max-h-[75vh] w-auto max-w-full object-contain rounded-2xl shadow-2xl"
             />
             {displayImages.length > 1 && (
@@ -722,7 +731,15 @@ const ProductDetails = () => {
                       activeImage === img ? "border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]" : "border-transparent opacity-60"
                     }`}
                   >
-                    <img src={img} alt="" className="h-full w-full object-cover" />
+                    <img 
+                      src={img} 
+                      alt="" 
+                      className="h-full w-full object-cover" 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/models/model1.png";
+                      }}
+                    />
                   </button>
                 ))}
               </div>
