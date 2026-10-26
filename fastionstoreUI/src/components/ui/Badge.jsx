@@ -19,13 +19,13 @@ const Badge = ({
     };
 
     return (
-      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${variants[variant] || variants.primary} ${className}`}>
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-none text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${variants[variant] || variants.primary} ${className}`}>
         {children}
       </span>
     );
   }
 
-  const baseClass = "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-wider transition-all duration-300 shadow-xs";
+  const baseClass = "inline-flex items-center gap-2 rounded-none border px-3 py-1 text-[11px] font-bold uppercase tracking-wider transition-all duration-300 shadow-xs";
   const variants = {
     primary: "border-[var(--color-primary)]/20 bg-[var(--color-primary-light)]/60 text-[var(--color-primary)]",
     secondary: "border-[var(--color-border)] bg-white/90 text-[var(--color-text)]",
@@ -42,7 +42,7 @@ const Badge = ({
       )}
       <span>{text}</span>
       {highlightText && (
-        <span className="rounded-full bg-[var(--color-primary)] px-2 py-0.5 text-[9px] font-bold text-white shadow-xs">
+        <span className="rounded-none bg-[var(--color-primary)] px-2 py-0.5 text-[9px] font-bold text-white shadow-xs">
           {highlightText}
         </span>
       )}

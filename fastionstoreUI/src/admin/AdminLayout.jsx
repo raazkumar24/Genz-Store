@@ -238,7 +238,7 @@ const AdminLayout = () => {
         </div>
 
         {/* Topbar */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white/90 backdrop-blur-md px-3.5 sm:px-6 md:px-10 z-10 shadow-xs">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white/95 backdrop-blur-md px-3.5 sm:px-6 md:px-10 relative z-50 shadow-xs">
           <div className="flex items-center gap-3 sm:gap-4">
             {/* Hamburger Menu for Mobile */}
             <button
@@ -292,7 +292,7 @@ const AdminLayout = () => {
               >
                 <Bell size={16} />
                 {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-primary)] px-1 text-[9px] font-black text-white ring-2 ring-white shadow-xs">
+                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center badge-count rounded-full bg-[var(--color-primary)] px-1 text-[9px] font-black text-white ring-2 ring-white shadow-xs">
                     {notifications.length > 9 ? "9+" : notifications.length}
                   </span>
                 )}
@@ -301,11 +301,11 @@ const AdminLayout = () => {
               {isNotifOpen && (
                 <>
                   <div
-                    className="fixed inset-0 z-30"
+                    className="fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px]"
                     onClick={() => setIsNotifOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 z-40 w-[calc(100vw-2rem)] max-w-sm sm:w-96 rounded-2xl bg-white border border-gray-200 shadow-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                  <div className="fixed inset-x-3 top-16 z-50 max-h-[80vh] flex flex-col sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-96 rounded-2xl bg-white border border-gray-200 shadow-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="flex items-center justify-between pb-3 border-b border-gray-100 shrink-0">
                       <div className="flex items-center gap-2">
                         <span className="p-1 rounded-lg bg-blue-50 text-[var(--color-primary)]">
                           <Bell size={14} />
@@ -314,19 +314,29 @@ const AdminLayout = () => {
                           Activity & Alerts
                         </h4>
                       </div>
-                      {notifications.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        {notifications.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={clearNotifications}
+                            className="text-[11px] font-bold text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex items-center gap-1 px-1.5 py-1 rounded"
+                          >
+                            <Trash2 size={12} />
+                            <span>Clear</span>
+                          </button>
+                        )}
                         <button
                           type="button"
-                          onClick={clearNotifications}
-                          className="text-[11px] font-bold text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex items-center gap-1"
+                          onClick={() => setIsNotifOpen(false)}
+                          className="sm:hidden p-1 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                          aria-label="Close notifications"
                         >
-                          <Trash2 size={12} />
-                          <span>Clear</span>
+                          <X size={16} />
                         </button>
-                      )}
+                      </div>
                     </div>
 
-                    <div className="max-h-72 overflow-y-auto space-y-2 pt-3 divide-y divide-gray-50">
+                    <div className="max-h-[60vh] sm:max-h-72 overflow-y-auto space-y-2 pt-3 divide-y divide-gray-50 flex-1">
                       {notifications.length === 0 ? (
                         <div className="text-center py-6 text-gray-400 space-y-1">
                           <CheckCircle2 size={24} className="mx-auto text-gray-300 mb-1" />
@@ -366,16 +376,17 @@ const AdminLayout = () => {
 
             <NavLink
               to="/"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-gray-900 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-gray-800 shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gray-900 px-3 sm:px-4 py-2 text-xs font-bold text-white transition-all hover:bg-gray-800 shadow-sm shrink-0"
             >
               <ShieldCheck size={14} />
-              <span>Storefront</span>
+              <span className="hidden sm:inline">Storefront</span>
+              <span className="sm:hidden">Store</span>
             </NavLink>
           </div>
         </header>
 
         {/* Scrollable Page Content */}
-        <div className="flex-1 overflow-auto p-4 sm:p-6 md:p-8 lg:p-10 relative z-10">
+        <div className="flex-1 overflow-auto p-4 sm:p-6 md:p-8 lg:p-10 relative z-0">
           <div className="mx-auto max-w-7xl">
             <Outlet />
           </div>

@@ -74,7 +74,7 @@ const SearchBox = ({ className = '', placeholder = 'Search products...', onSearc
     <div ref={containerRef} className={`relative ${className}`}>
       <form
         onSubmit={handleSubmit}
-        className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3.5 py-2 shadow-xs transition-all focus-within:border-neutral-900 focus-within:shadow-md"
+        className="flex items-center gap-2 rounded-none border border-neutral-200 bg-white px-3.5 py-2 shadow-xs transition-all focus-within:border-neutral-900 focus-within:shadow-md"
       >
         <Search className="text-neutral-400 shrink-0" size={17} strokeWidth={2.2} />
         <input
@@ -95,7 +95,7 @@ const SearchBox = ({ className = '', placeholder = 'Search products...', onSearc
             type="button"
             onClick={clearSearch}
             aria-label="Clear search"
-            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-900 hover:text-white"
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-none bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-900 hover:text-white"
           >
             <X size={13} strokeWidth={2.5} />
           </button>
@@ -104,7 +104,7 @@ const SearchBox = ({ className = '', placeholder = 'Search products...', onSearc
 
       {/* Instant Dropdown Preview when focused and typing */}
       {isFocused && query.trim().length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1.5 rounded-2xl bg-white p-2 shadow-xl border border-neutral-200 z-50 overflow-hidden">
+        <div className="absolute top-full left-0 right-0 mt-1.5 rounded-none bg-white p-2 shadow-xl border border-neutral-200 z-50 overflow-hidden">
           <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-neutral-400 flex items-center justify-between">
             <span>Live Drops</span>
             <span>{liveSuggestions.length} found</span>
@@ -130,9 +130,9 @@ const SearchBox = ({ className = '', placeholder = 'Search products...', onSearc
                       onSearch?.();
                       navigate(`/products/${item._id}`);
                     }}
-                    className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-neutral-100 transition-colors cursor-pointer"
+                    className="flex items-center gap-2.5 p-1.5 rounded-none hover:bg-neutral-100 transition-colors cursor-pointer"
                   >
-                    <img src={img} alt={item.name} className="h-9 w-8 object-cover rounded-lg bg-neutral-100 shrink-0" />
+                    <img src={img} alt={item.name} className="h-9 w-8 object-cover rounded-none bg-neutral-100 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-neutral-900 uppercase truncate">{item.name}</p>
                       <p className="text-[11px] font-extrabold text-[var(--color-primary)]">₹{price}</p>

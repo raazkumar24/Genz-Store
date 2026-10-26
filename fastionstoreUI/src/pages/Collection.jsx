@@ -8,14 +8,14 @@ import ProductFilters, { applyProductFilters } from "../components/ProductFilter
 
 // Loading skeleton
 const ProductSkeleton = () => (
-  <Card className="animate-pulse p-4 rounded-2xl md:rounded-[28px] bg-white border border-neutral-100">
-    <div className="aspect-square md:aspect-[4/5] w-full rounded-xl md:rounded-[20px] bg-neutral-200" />
+  <Card className="animate-pulse p-4 rounded-none bg-white border border-neutral-100">
+    <div className="aspect-square md:aspect-[4/5] w-full rounded-none bg-neutral-200" />
     <div className="mt-4 space-y-3">
-      <div className="h-4 w-3/4 rounded bg-neutral-200" />
-      <div className="h-3 w-1/2 rounded bg-neutral-200" />
+      <div className="h-4 w-3/4 rounded-none bg-neutral-200" />
+      <div className="h-3 w-1/2 rounded-none bg-neutral-200" />
       <div className="flex items-center justify-between pt-2">
-        <div className="h-5 w-20 rounded bg-neutral-200" />
-        <div className="h-8 w-24 rounded-full bg-neutral-200" />
+        <div className="h-5 w-20 rounded-none bg-neutral-200" />
+        <div className="h-8 w-24 rounded-none bg-neutral-200" />
       </div>
     </div>
   </Card>
@@ -131,7 +131,7 @@ const Collection = () => {
           </div>
 
           {/* Bento Header Card */}
-          <div className="relative overflow-hidden rounded-[28px] bg-white border border-neutral-200/90 p-6 sm:p-10 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] text-center flex flex-col items-center">
+          <div className="relative overflow-hidden rounded-none bg-white border border-neutral-200/90 p-6 sm:p-10 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] text-center flex flex-col items-center">
             {/* Subtle Watermark */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none whitespace-nowrap select-none">
               <span className="text-[14vw] font-black uppercase tracking-tighter" style={{ fontFamily: "var(--font-heading)" }}>
@@ -148,7 +148,7 @@ const Collection = () => {
               <span className="text-[var(--color-primary)]">{displayTitle}</span>
             </nav>
 
-            <Badge variant="primary" className="mb-3 px-3 py-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider rounded-full">
+            <Badge variant="primary" className="mb-3 px-3 py-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider rounded-none">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
@@ -173,7 +173,7 @@ const Collection = () => {
                 <Link
                   key={idx}
                   to={pill.path}
-                  className="px-3.5 py-1.5 rounded-full bg-[#f8f8f7] border border-neutral-200/90 text-[11px] font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-colors shadow-2xs"
+                  className="px-3.5 py-1.5 rounded-none bg-[#f8f8f7] border border-neutral-200/90 text-[11px] font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-colors shadow-2xs"
                 >
                   {pill.label}
                 </Link>
@@ -205,8 +205,8 @@ const Collection = () => {
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <Card className="flex flex-col items-center justify-center py-16 text-center rounded-3xl bg-white border border-neutral-200 p-8 shadow-xs">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-400">
+          <Card className="flex flex-col items-center justify-center py-16 text-center rounded-none bg-white border border-neutral-200 p-8 shadow-xs">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-none bg-neutral-100 text-neutral-400">
               <SlidersHorizontal size={28} />
             </div>
             <h3 className="text-xl font-black text-neutral-900 uppercase" style={{ fontFamily: "var(--font-heading)" }}>
@@ -219,7 +219,7 @@ const Collection = () => {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="px-5 py-2.5 rounded-full border border-neutral-300 text-xs font-black uppercase text-neutral-800 hover:bg-neutral-100 cursor-pointer"
+                className="px-5 py-2.5 rounded-none border border-neutral-300 text-xs font-black uppercase text-neutral-800 hover:bg-neutral-100 cursor-pointer"
               >
                 Reset Filters
               </button>

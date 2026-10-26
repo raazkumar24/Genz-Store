@@ -14,13 +14,13 @@ export const DEFAULT_HERO_SLIDES = [
   {
     id: "slide-1",
     number: "01",
-    badge: "DROP 04 // 2026",
+    badge: "DROP 04 - 2026",
     tag: "OVERSIZED FIT",
     title: "Heavyweight Boxy Streetwear.",
     specHeadline: "Clear Silhouettes",
     specDetail:
       "280 GSM combed organic cotton with relaxed drop-shoulder cut and anti-fade reactive dye.",
-    primaryCta: "View All Products",
+    primaryCta: "Explore Drop 04",
     primaryLink: "/new-arrivals",
     accentBadge: "100% Supima Cotton",
     stats: "280 GSM • Heavy Combed",
@@ -60,68 +60,65 @@ export const DEFAULT_HERO_SLIDES = [
 
 export const DEFAULT_HERO_SPOTLIGHT = {
   productId: "",
-  targetCategory: "hoodie", // "hoodie" | "tee" | "cargo" | "custom"
+  targetCategory: "hoodie",
   badgeText: "HEAVYWEIGHT 380 GSM",
-  title: "",
+  title: "TAGAS HOODIE FOR MEN SWEATSHIRT",
   subtitle: "Drop shoulder & double-needle ribbed hem.",
-  tagPill: "Signature Fit",
-  customPrice: "",
+  tagPill: "SIGNATURE FIT",
+  customPrice: "549",
   customImage: "",
-  cardTheme: "dark", // "dark" | "light"
+  cardTheme: "dark",
 };
 
 export const DEFAULT_TACTICAL_DROP = {
-  tag: "Tactical Drop",
-  title: "Parachute Cargos",
-  subtitle: "Multi-Pocket Baggy Fit",
+  tag: "TRENDING BOTTOMWEAR",
+  title: "SAMFOR PARACHUTE CARGO",
+  subtitle: "Raw Ecru • Multi-Pocket Baggy Fit",
   image: "/collections/baggy_pants.png",
   link: "/collections/cargos",
+  price: "479",
+  originalPrice: "799",
 };
 
 export const DEFAULT_ARCHIVED_CATALOG = {
-  sectionTitle: "THIS SEASON'S WINTER DROPS",
-  seeAllText: "See All",
+  campaignTag: "02 - CURATED CAMPAIGN LOOKBOOK",
+  sectionTitle: "THIS SEASON'S",
+  sectionSubtitle: "winter drops",
+  seeAllText: "VIEW COMPLETE ARCHIVE (09)",
   seeAllLink: "/new-arrivals",
   cards: [
     {
       id: "card-1",
-      title: "SIMPLE CASUAL",
-      subtitle: "More than 100+ collection available for all gender",
+      badgeLeft: "LOOK 01 • MONOCHROME SET",
+      badgeRight: "2 ITEMS IN LOOK",
+      title: "SIMPLE CASUAL HEAVY FLEECE",
+      subtitle: "Hand-picked monochrome winter silhouettes for effortless studio layering.",
+      buttonText: "SHOP THIS LOOK",
       image:
-        "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
       link: "/collections/oversized-tees",
     },
     {
       id: "card-2",
-      title: "HANGOUT DRESS",
-      subtitle: "More than 100+ collection available for all gender",
+      badgeLeft: "LOOK 02 • FLUID DRAPE",
+      badgeRight: "3 ITEMS IN LOOK",
+      title: "WEEKEND HANGOUT EDIT",
+      subtitle: "Relaxed breathable silhouettes engineered for all-day movement.",
+      buttonText: "SHOP THIS LOOK",
       image:
-        "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85",
       link: "/new-arrivals",
     },
     {
       id: "card-3",
-      title: "COZY ANYWHERE",
-      subtitle: "More than 100+ collection available for all gender",
+      badgeLeft: "LOOK 03 • STUDIO",
+      badgeRight: "LIMITED DROP",
+      title: "COZY ANYWHERE PLEATS",
+      subtitle: "Tailored wide-leg architecture meets streetwear comfort.",
+      buttonText: "SHOP THIS LOOK",
       image:
-        "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1000&q=85",
       link: "/collections/hoodies",
-    },
-    {
-      id: "card-4",
-      title: "URBAN ROTATION",
-      subtitle: "More than 100+ collection available for all gender",
-      image:
-        "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80",
-      link: "/collections/cargos",
-    },
-    {
-      id: "card-5",
-      title: "TACTICAL STREET",
-      subtitle: "More than 100+ collection available for all gender",
-      image:
-        "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=800&q=80",
-      link: "/sale",
     },
   ],
 };

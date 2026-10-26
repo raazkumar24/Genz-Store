@@ -29,13 +29,13 @@ const heroSlides = [
   {
     number: "01",
     image: "/models/model1.png",
-    badge: "DROP 04 // 2026",
+    badge: "DROP 04 - 2026",
     tag: "OVERSIZED FIT",
     title: "Heavyweight Boxy Streetwear.",
     specHeadline: "Clear Silhouettes",
     specDetail:
       "280 GSM combed organic cotton with relaxed drop-shoulder cut and anti-fade reactive dye.",
-    primaryCta: "View All Products",
+    primaryCta: "Explore Drop 04",
     primaryLink: "/new-arrivals",
     accentBadge: "100% Supima Cotton",
     stats: "280 GSM • Heavy Combed",
@@ -45,7 +45,7 @@ const heroSlides = [
     image: "/models/model3.png",
     badge: "NEW SEASON",
     tag: "TECHNICAL FLEECE",
-    title: "Urban Relaxed Hoodies & Cargos.",
+    title: "Urban Relaxed T-shirt",
     specHeadline: "Weatherproof Weave",
     specDetail:
       "Architectural drape with double-needle ribbed hems and ultra-comfortable brushed interior fleece.",
@@ -113,7 +113,15 @@ const resolveColorHex = (colorString) => {
     if (str.includes(key)) return hex;
   }
   // Curated diverse hues fallback instead of generic grey
-  const hues = ["#2563EB", "#F97316", "#84CC16", "#EF4444", "#4D7C0F", "#A855F7", "#D4B996"];
+  const hues = [
+    "#2563EB",
+    "#F97316",
+    "#84CC16",
+    "#EF4444",
+    "#4D7C0F",
+    "#A855F7",
+    "#D4B996",
+  ];
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = (hash << 5) - hash + str.charCodeAt(i);
@@ -122,18 +130,96 @@ const resolveColorHex = (colorString) => {
 };
 
 const CANONICAL_PALETTES = [
-  { key: "black", name: "Black", hex: "#111111", keywords: ["black", "noir", "dark", "jet", "pitch"] },
-  { key: "white", name: "White", hex: "#FFFFFF", keywords: ["white", "ivory", "snow", "swanwhite"] },
-  { key: "blue", name: "Blue", hex: "#2563EB", keywords: ["blue", "navy", "cobalt", "cyan", "teal", "indigo", "sky", "denim"] },
-  { key: "red", name: "Red", hex: "#EF4444", keywords: ["red", "crimson", "wine", "maroon", "burgundy", "ruby", "scarlet", "cherry"] },
-  { key: "brown", name: "Brown", hex: "#78350F", keywords: ["brown", "coffee", "mocha", "chocolate", "espresso", "cocoa"] },
-  { key: "green", name: "Green", hex: "#4D7C0F", keywords: ["green", "olive", "sage", "forest", "emerald", "lime", "mint"] },
-  { key: "grey", name: "Grey", hex: "#6B7280", keywords: ["grey", "gray", "charcoal", "slate", "ash", "silver"] },
-  { key: "beige", name: "Beige", hex: "#D4B996", keywords: ["beige", "cream", "khaki", "sand", "tan", "nude", "wheat"] },
-  { key: "orange", name: "Orange", hex: "#F97316", keywords: ["orange", "rust", "tangerine", "peach", "coral"] },
-  { key: "purple", name: "Purple", hex: "#A855F7", keywords: ["purple", "lavender", "violet", "lilac", "plum"] },
-  { key: "yellow", name: "Yellow", hex: "#EAB308", keywords: ["yellow", "mustard", "amber", "gold"] },
-  { key: "pink", name: "Pink", hex: "#EC4899", keywords: ["pink", "rose", "fuchsia", "magenta"] },
+  {
+    key: "black",
+    name: "Black",
+    hex: "#111111",
+    keywords: ["black", "noir", "dark", "jet", "pitch"],
+  },
+  {
+    key: "white",
+    name: "White",
+    hex: "#FFFFFF",
+    keywords: ["white", "ivory", "snow", "swanwhite"],
+  },
+  {
+    key: "blue",
+    name: "Blue",
+    hex: "#2563EB",
+    keywords: [
+      "blue",
+      "navy",
+      "cobalt",
+      "cyan",
+      "teal",
+      "indigo",
+      "sky",
+      "denim",
+    ],
+  },
+  {
+    key: "red",
+    name: "Red",
+    hex: "#EF4444",
+    keywords: [
+      "red",
+      "crimson",
+      "wine",
+      "maroon",
+      "burgundy",
+      "ruby",
+      "scarlet",
+      "cherry",
+    ],
+  },
+  {
+    key: "brown",
+    name: "Brown",
+    hex: "#78350F",
+    keywords: ["brown", "coffee", "mocha", "chocolate", "espresso", "cocoa"],
+  },
+  {
+    key: "green",
+    name: "Green",
+    hex: "#4D7C0F",
+    keywords: ["green", "olive", "sage", "forest", "emerald", "lime", "mint"],
+  },
+  {
+    key: "grey",
+    name: "Grey",
+    hex: "#6B7280",
+    keywords: ["grey", "gray", "charcoal", "slate", "ash", "silver"],
+  },
+  {
+    key: "beige",
+    name: "Beige",
+    hex: "#D4B996",
+    keywords: ["beige", "cream", "khaki", "sand", "tan", "nude", "wheat"],
+  },
+  {
+    key: "orange",
+    name: "Orange",
+    hex: "#F97316",
+    keywords: ["orange", "rust", "tangerine", "peach", "coral"],
+  },
+  {
+    key: "purple",
+    name: "Purple",
+    hex: "#A855F7",
+    keywords: ["purple", "lavender", "violet", "lilac", "plum"],
+  },
+  {
+    key: "yellow",
+    name: "Yellow",
+    hex: "#EAB308",
+    keywords: ["yellow", "mustard", "amber", "gold"],
+  },
+  {
+    key: "pink",
+    name: "Pink",
+    hex: "#EC4899",
+    keywords: ["pink", "rose", "fuchsia", "magenta"],
+  },
 ];
 
 const canonicalizeColor = (colorString) => {
@@ -176,7 +262,7 @@ const Hero = () => {
 
   const [masterConfig, setMasterConfig] = useState(getHeroMasterConfig);
   const [spotlightConfig, setSpotlightConfig] = useState(
-    () => getHeroMasterConfig().spotlight || getHeroSpotlightConfig()
+    () => getHeroMasterConfig().spotlight || getHeroSpotlightConfig(),
   );
 
   // Listen for live master config & spotlight updates from Admin panel
@@ -220,11 +306,15 @@ const Hero = () => {
             if (!seenKeys.has(key)) {
               seenKeys.add(key);
               unique.push({
-                name: canonical?.name || item.name || (key.charAt(0).toUpperCase() + key.slice(1)),
+                name:
+                  canonical?.name ||
+                  item.name ||
+                  key.charAt(0).toUpperCase() + key.slice(1),
                 filter: key,
-                hex: item.hex && item.hex !== "#888888" && item.hex !== "#888" 
-                  ? item.hex 
-                  : (canonical?.hex || resolveColorHex(key)),
+                hex:
+                  item.hex && item.hex !== "#888888" && item.hex !== "#888"
+                    ? item.hex
+                    : canonical?.hex || resolveColorHex(key),
                 count: item.count || 0,
               });
             }
@@ -253,8 +343,9 @@ const Hero = () => {
             });
           });
 
-          const derived = CANONICAL_PALETTES
-            .filter((p) => (counts[p.key] || 0) > 0)
+          const derived = CANONICAL_PALETTES.filter(
+            (p) => (counts[p.key] || 0) > 0,
+          )
             .map((p) => ({
               name: p.name,
               filter: p.key,
@@ -447,7 +538,9 @@ const Hero = () => {
   }, [activeSlides.length]);
 
   const prevSlide = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
+    setCurrent(
+      (prev) => (prev - 1 + activeSlides.length) % activeSlides.length,
+    );
   }, [activeSlides.length]);
 
   // Automatic slide rotation
@@ -459,15 +552,8 @@ const Hero = () => {
   const slide = activeSlides[current % activeSlides.length] || activeSlides[0];
 
   return (
-    <section className="relative w-full bg-[#F6F7F9] pt-4 md:pt-6 pb-6 md:pb-10 overflow-hidden">
-      {/* Background Subtle Gradient & Micro Texture */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-amber-200/20 blur-3xl" />
-        <div className="absolute top-1/2 -right-40 h-96 w-96 rounded-full bg-[var(--color-primary)]/10 blur-3xl" />
-        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px] opacity-[0.025]" />
-      </div>
-
-      <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 relative z-10">
+    <section className="relative w-full bg-[#FAF9F6] pt-4 md:pt-6 pb-6 md:pb-10 overflow-hidden">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ========================================================= */}
         {/* UPPER BENTO GRID: Main Stage (8 cols) + Side Stack (4 cols) */}
         {/* ========================================================= */}
@@ -475,31 +561,31 @@ const Hero = () => {
           {/* ------------------------------------------------------- */}
           {/* MAIN HERO BENTO CARD (Left 8 Cols)                      */}
           {/* ------------------------------------------------------- */}
-          <div className="lg:col-span-8 bg-white rounded-[32px] md:rounded-[36px] border border-neutral-200/90 hover:border-neutral-300/90 p-5 sm:p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_16px_40px_rgb(0,0,0,0.07)] transition-all duration-300 relative overflow-hidden flex flex-col justify-between h-[560px] sm:h-[580px] md:h-[580px] lg:h-[600px] xl:h-[610px]">
+          <div className="lg:col-span-8 bg-white rounded-none border border-neutral-200/90 p-5 sm:p-8 md:p-10 shadow-xs relative overflow-hidden flex flex-col justify-between h-[560px] sm:h-[580px] md:h-[580px] lg:h-[600px] xl:h-[610px]">
             {/* Top Row: Pill Badges & Slide Number indicator */}
             <div className="flex items-center justify-between gap-3 z-20 flex-wrap">
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-neutral-100/90 text-neutral-800 text-[10px] sm:text-[11px] font-black uppercase tracking-wider border border-neutral-200/80 shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none bg-neutral-100 text-neutral-900 text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider border border-neutral-200">
                   {slide.badge}
                 </span>
 
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-neutral-950 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-sm">
-                  <Flame size={12} className="text-amber-400 fill-amber-400" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none bg-black text-white text-[9px] sm:text-[10px] font-mono font-black uppercase tracking-wider">
+                  <Flame size={12} className="text-[#FF3B00] fill-[#FF3B00]" />
                   {slide.tag}
                 </span>
               </div>
 
               {/* Slider Dots */}
-              <div className="flex items-center gap-1.5 bg-neutral-100/70 p-1 rounded-full border border-neutral-200/60">
+              <div className="flex items-center gap-1">
                 {activeSlides.map((_, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setCurrent(idx)}
                     aria-label={`Jump to slide ${idx + 1}`}
-                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                    className={`h-1.5 rounded-none transition-all duration-300 cursor-pointer ${
                       idx === current
-                        ? "w-6 bg-neutral-950"
+                        ? "w-6 bg-black"
                         : "w-2 bg-neutral-300 hover:bg-neutral-400"
                     }`}
                   />
@@ -510,7 +596,7 @@ const Hero = () => {
             {/* Middle Stage: Editorial Copy + Floating Product Cutout */}
             <div className="flex flex-col md:grid md:grid-cols-12 gap-3 sm:gap-6 items-center flex-1 min-h-0 pt-2 pb-1 sm:pt-4 sm:pb-2 z-10 overflow-hidden">
               {/* Left Copy Column (7 cols on md) */}
-              <div className="w-full md:col-span-7 flex flex-col justify-center space-y-3 sm:space-y-4 md:space-y-6 shrink-0">
+              <div className="w-full md:col-span-7 flex flex-col justify-center space-y-3 sm:space-y-4 md:space-y-5 shrink-0">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={current}
@@ -530,40 +616,34 @@ const Hero = () => {
 
                     {/* Spec Label with 01 —— Detail Line */}
                     <div className="flex items-start gap-3 sm:gap-4 pt-0.5 sm:pt-1">
-                      <span className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-200 tracking-tighter shrink-0 select-none">
+                      <span className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-200 tracking-tighter shrink-0 select-none font-mono">
                         {slide.number}
                       </span>
-                      <div className="border-l-2 border-neutral-200 pl-3 sm:pl-4 space-y-0.5 sm:space-y-1">
-                        <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-neutral-950">
+                      <div className="border-l-2 border-neutral-300 pl-3 sm:pl-4 space-y-0.5 sm:space-y-1">
+                        <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-neutral-950 font-mono">
                           {slide.specHeadline}
                         </p>
-                        <p className="text-[11px] sm:text-xs md:text-sm text-neutral-500 font-medium leading-relaxed max-w-sm line-clamp-2 md:line-clamp-none">
+                        <p className="text-[11px] sm:text-xs md:text-sm text-neutral-600 font-medium leading-relaxed max-w-sm line-clamp-2 md:line-clamp-none">
                           {slide.specDetail}
                         </p>
                       </div>
                     </div>
 
-                    {/* Action Buttons: Dribbble-style Bento Pill Button */}
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1.5 sm:pt-2.5">
+                    {/* Action Buttons: Sharp Rectangular Buttons (Matching Image 5) */}
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-2">
                       <Link
                         to={slide.primaryLink}
-                        className="group inline-flex items-center gap-2.5 sm:gap-3 rounded-full bg-neutral-950 hover:bg-black text-white pl-5 sm:pl-6 pr-2 py-2 sm:pr-2.5 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-200 shadow-md shadow-black/15 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                        className="group inline-flex items-center gap-2 px-6 py-3 rounded-none bg-black hover:bg-[#FF3B00] text-white text-xs font-mono font-black uppercase tracking-wider transition-colors shadow-xs"
                       >
-                        <span>{slide.primaryCta}</span>
-                        <span className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white text-neutral-950 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all duration-200 shadow-2xs">
-                          <ArrowUpRight
-                            size={15}
-                            strokeWidth={2.5}
-                            className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                          />
-                        </span>
+                        <span>{slide.primaryCta || "EXPLORE DROP 04"}</span>
+                        <ArrowUpRight size={14} strokeWidth={2.5} />
                       </Link>
 
                       <Link
                         to="/sale"
-                        className="inline-flex items-center justify-center rounded-full border border-neutral-300 hover:border-neutral-950 bg-white hover:bg-neutral-950 hover:text-white text-neutral-800 px-4 py-2 sm:px-5 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider transition-all shadow-2xs"
+                        className="inline-flex items-center justify-center px-6 py-3 rounded-none border border-black bg-white hover:bg-black hover:text-white text-black text-xs font-mono font-bold uppercase tracking-wider transition-colors"
                       >
-                        Sale %
+                        ARCHIVE SALE (UP TO 50% OFF)
                       </Link>
                     </div>
                   </motion.div>
@@ -581,18 +661,15 @@ const Hero = () => {
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     className="relative h-full w-full flex items-center justify-center"
                   >
-                    {/* Soft Backdrop Radial Aura */}
-                    <div className="absolute inset-2 sm:inset-4 rounded-full bg-gradient-to-tr from-neutral-100 to-neutral-200/60 filter blur-xl -z-10" />
-
                     <img
                       src={slide.image}
                       alt={slide.title}
-                      className="h-full w-auto max-h-full max-w-full object-contain object-bottom drop-shadow-2xl select-none pointer-events-none"
+                      className="h-full w-auto max-h-full max-w-full object-contain object-bottom drop-shadow-xl select-none pointer-events-none"
                     />
 
-                    {/* Floating Micro Spec Pill */}
-                    <div className="absolute bottom-2 right-1 sm:bottom-4 sm:right-4 bg-white/95 backdrop-blur-md border border-neutral-200/90 px-3 py-1.5 rounded-full shadow-lg text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
+                    {/* Floating Micro Spec Pill (Sharp rectangle) */}
+                    <div className="absolute bottom-2 right-1 sm:bottom-4 sm:right-4 bg-white/95 border border-neutral-200 px-3 py-1.5 rounded-none shadow-sm text-[9px] sm:text-[10px] font-mono font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+                      <span className="h-1.5 w-1.5 rounded-none bg-emerald-500" />
                       {slide.accentBadge}
                     </div>
                   </motion.div>
@@ -602,21 +679,19 @@ const Hero = () => {
 
             {/* Bottom Row: Micro Brand Bar & Slider Arrows */}
             <div className="flex items-center justify-between pt-4 border-t border-neutral-100 text-neutral-400 z-20">
-              <div className="text-[11px] font-bold uppercase tracking-widest text-neutral-500">
+              <div className="text-[11px] font-mono font-bold uppercase tracking-widest text-neutral-500">
                 <span className="text-neutral-900 font-black">GENZ STUDIO</span>
                 <span className="mx-2">•</span>
-                <span className="text-neutral-400 font-mono">
-                  {slide.stats}
-                </span>
+                <span className="text-neutral-400">{slide.stats}</span>
               </div>
 
               {/* Prev / Next Circular Controls */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={prevSlide}
                   aria-label="Previous Slide"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all cursor-pointer shadow-2xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-none border border-neutral-300 bg-white hover:bg-black hover:text-white transition-all cursor-pointer shadow-2xs"
                 >
                   <ChevronLeft size={15} strokeWidth={2.5} />
                 </button>
@@ -624,7 +699,7 @@ const Hero = () => {
                   type="button"
                   onClick={nextSlide}
                   aria-label="Next Slide"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all cursor-pointer shadow-2xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-none border border-neutral-300 bg-white hover:bg-black hover:text-white transition-all cursor-pointer shadow-2xs"
                 >
                   <ChevronRight size={15} strokeWidth={2.5} />
                 </button>
@@ -633,17 +708,17 @@ const Hero = () => {
           </div>
 
           {/* ------------------------------------------------------- */}
-          {/* RIGHT BENTO STACK (Right 4 Cols)                         */}
+          {/* RIGHT BENTO STACK (Right 4 Cols - Sharp Rectangles)      */}
           {/* ------------------------------------------------------- */}
           <div className="lg:col-span-4 flex flex-col gap-4 md:gap-5 lg:h-[600px] xl:h-[610px] justify-between">
-            {/* Card 1: Popular Colors Card (Refined borders, pill labels, active ring offset) */}
-            <div className="bg-white rounded-[28px] md:rounded-[32px] border border-neutral-200/90 hover:border-neutral-300/90 p-5 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.03)] transition-all">
+            {/* Card 1: Popular Colors Card */}
+            <div className="bg-white rounded-none border border-neutral-200/90 p-4 sm:p-5 shadow-xs">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-black uppercase tracking-wider text-neutral-950 flex items-center gap-1.5">
-                  <Palette size={14} className="text-[var(--color-primary)]" />
+                <span className="text-xs font-mono font-black uppercase tracking-wider text-neutral-950 flex items-center gap-1.5">
+                  <Palette size={14} className="text-[#FF3B00]" />
                   Popular Colors
                 </span>
-                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200/60">
+                <span className="text-[10px] font-mono font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-none border border-neutral-200">
                   {hoveredColor
                     ? hoveredColor.name
                     : activeColorFilter
@@ -664,25 +739,29 @@ const Hero = () => {
                       onClick={() => handleColorClick(color.filter)}
                       onMouseEnter={() => setHoveredColor(color)}
                       onMouseLeave={() => setHoveredColor(null)}
-                      className={`relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full transition-all duration-200 hover:scale-120 cursor-pointer shadow-xs border ${
-                        color.hex?.toLowerCase() === "#ffffff" || color.hex?.toLowerCase() === "#fffdd0"
+                      className={`relative flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center swatch-dot transition-all duration-200 hover:scale-120 cursor-pointer border ${
+                        color.hex?.toLowerCase() === "#ffffff" ||
+                        color.hex?.toLowerCase() === "#fffdd0"
                           ? "border-neutral-300"
                           : "border-black/10"
                       } ${
                         isActive
-                          ? "ring-2 ring-neutral-950 ring-offset-2 scale-110 shadow-md"
-                          : "hover:ring-2 hover:ring-neutral-400 hover:ring-offset-1"
+                          ? "ring-2 ring-neutral-950 ring-offset-1 scale-110"
+                          : "hover:ring-1 hover:ring-neutral-400"
                       }`}
                       style={{ backgroundColor: color.hex }}
                       title={`${color.name} ${color.count ? `(${color.count} drops)` : ""}`}
                       aria-label={`Filter by ${color.name}`}
                     >
                       {isActive && (
-                        <span className={`h-2 w-2 rounded-full shadow-xs ${
-                          color.hex?.toLowerCase() === "#ffffff" || color.hex?.toLowerCase() === "#fffdd0"
-                            ? "bg-neutral-950"
-                            : "bg-white"
-                        }`} />
+                        <span
+                          className={`h-1.5 w-1.5 swatch-dot ${
+                            color.hex?.toLowerCase() === "#ffffff" ||
+                            color.hex?.toLowerCase() === "#fffdd0"
+                              ? "bg-neutral-950"
+                              : "bg-white"
+                          }`}
+                        />
                       )}
                     </button>
                   );
@@ -690,161 +769,138 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Card 2: Tactical Drop Card (Clean border, rotating circular button) */}
+            {/* Card 2: Tactical Drop Card (Matching Image 5 Bottom-Right Card) */}
             <Link
               to={cargoLink}
-              className="group bg-white rounded-[28px] md:rounded-[32px] border border-neutral-200/90 hover:border-neutral-300/90 p-5 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_30px_-4px_rgba(0,0,0,0.08)] flex items-center justify-between gap-4 transition-all duration-300 hover:-translate-y-1"
+              className="group bg-white rounded-none border border-neutral-200/90 hover:border-black p-4 shadow-xs flex items-center justify-between gap-3 transition-all duration-300"
             >
-              <div className="flex flex-col space-y-1 min-w-0">
-                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--color-primary)]">
-                  Tactical Drop
-                </span>
-                <h2 className="text-sm sm:text-base font-black uppercase tracking-tight text-neutral-950 group-hover:text-[var(--color-primary)] transition-colors truncate">
-                  {cargoName}
-                </h2>
-                <p className="text-xs text-neutral-500 font-medium truncate">
-                  Multi-Pocket Baggy Fit
-                </p>
-              </div>
-
-              {/* Thumbnail + Arrow Badge */}
-              <div className="flex items-center gap-3 shrink-0">
-                <div className="h-20 w-20 sm:h-22 sm:w-22 rounded-2xl bg-neutral-50 overflow-hidden border border-neutral-200/80 p-1.5 flex items-center justify-center shadow-inner">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="h-16 w-16 rounded-none bg-neutral-100 border border-neutral-200/80 p-1 shrink-0 flex items-center justify-center">
                   <img
                     src={cargoImg}
                     alt={cargoName}
-                    className="h-full w-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-300"
+                    className="h-full w-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = "/collections/baggy_pants.png";
                     }}
                   />
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-950 text-white group-hover:bg-[var(--color-primary)] group-hover:scale-110 group-hover:rotate-45 transition-all duration-200 shadow-sm">
-                  <ArrowUpRight size={16} strokeWidth={2.5} />
+                <div className="flex flex-col space-y-0.5 min-w-0">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF3B00]">
+                    • TRENDING BOTTOMWEAR
+                  </span>
+                  <h2 className="text-xs sm:text-sm font-black uppercase tracking-tight text-neutral-950 group-hover:text-[#FF3B00] transition-colors truncate">
+                    {cargoName}
+                  </h2>
+                  <p className="text-[11px] font-mono text-neutral-500 font-medium truncate">
+                    ₹479{" "}
+                    <span className="line-through text-neutral-400">₹799</span>{" "}
+                    • Raw Ecru
+                  </p>
                 </div>
+              </div>
+
+              <div className="flex h-8 w-8 items-center justify-center rounded-none bg-black text-white group-hover:bg-[#FF3B00] transition-colors shrink-0 font-bold text-sm">
+                +
               </div>
             </Link>
 
-            {/* Card 3: Redesigned High-Impact Oversized Box / Signature Drop Card */}
+            {/* Card 3: Spotlight Drop Card (Editorial Studio Showcase) */}
             {(() => {
               const isLightCard = spotlightConfig.cardTheme === "light";
               return (
                 <Link
                   to={spotlightLink}
-                  className={`group relative rounded-[28px] md:rounded-[32px] border p-5 sm:p-6 flex-1 min-h-[180px] flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
+                  className={`group relative rounded-none border p-4 sm:p-5 flex-1 min-h-[280px] flex flex-col justify-between overflow-hidden transition-all duration-300 ${
                     isLightCard
-                      ? "bg-gradient-to-br from-white via-neutral-50 to-neutral-100 text-neutral-950 border-neutral-200/90 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.03)]"
-                      : "bg-gradient-to-br from-[#121418] via-[#0E1013] to-[#08090A] text-white border-neutral-800/90 shadow-xl"
+                      ? "bg-white text-neutral-950 border-neutral-200/90 shadow-xs"
+                      : "bg-[#0E1013] text-white border-neutral-800 shadow-sm"
                   }`}
                 >
-                  {/* Subtle Ambient Radial Lighting */}
-                  <div
-                    className={`pointer-events-none absolute -right-8 -top-8 h-44 w-44 rounded-full filter blur-3xl transition-opacity duration-500 ${
-                      isLightCard
-                        ? "bg-[var(--color-primary)]/10 opacity-70 group-hover:opacity-100"
-                        : "bg-[var(--color-primary)]/20 opacity-80 group-hover:opacity-100"
-                    }`}
-                  />
-                  <div
-                    className={`pointer-events-none absolute -left-8 -bottom-8 h-36 w-36 rounded-full filter blur-2xl transition-opacity duration-500 ${
-                      isLightCard ? "bg-amber-400/10" : "bg-amber-400/15"
-                    }`}
-                  />
-
-                  {/* Top Bar: Specs Badge + Live Pulse */}
-                  <div className="flex items-center justify-between gap-2 z-10 mb-2">
+                  {/* Top Bar: Specs Badge + Tag Pill */}
+                  <div className="flex items-center justify-between gap-2 z-10">
                     <span
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider ${
                         isLightCard
-                          ? "bg-neutral-100 text-neutral-800 border border-neutral-200/90 shadow-2xs"
-                          : "bg-white/10 text-neutral-200 border border-white/10 backdrop-blur-md"
+                          ? "bg-neutral-100 text-neutral-800 border border-neutral-200"
+                          : "bg-white/10 text-neutral-200 border border-white/10"
                       }`}
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-primary)] animate-ping" />
+                      <span className="h-1.5 w-1.5 rounded-none bg-[#FF3B00]" />
                       {spotlightBadge}
                     </span>
 
-                    <span
-                      className={`text-[10px] font-black uppercase tracking-widest ${
-                        isLightCard ? "text-[var(--color-primary)]" : "text-amber-400"
-                      }`}
-                    >
+                    <span className="text-[11px] font-mono font-black uppercase tracking-wider text-[#FF3B00]">
                       {spotlightTag}
                     </span>
                   </div>
 
-                  {/* Middle Content & Garment Showcase */}
-                  <div className="flex items-center justify-between gap-3 z-10 flex-1 my-1">
-                    <div className="flex flex-col space-y-1 min-w-0 flex-1">
-                      <h2
-                        className={`text-base sm:text-lg font-black uppercase tracking-tight transition-colors line-clamp-1 ${
-                          isLightCard
-                            ? "text-neutral-950 group-hover:text-[var(--color-primary)]"
-                            : "text-white group-hover:text-amber-300"
-                        }`}
-                        style={{ fontFamily: "var(--font-heading)" }}
-                      >
-                        {spotlightName}
-                      </h2>
-                      <p
-                        className={`text-xs font-medium line-clamp-1 ${
-                          isLightCard ? "text-neutral-500" : "text-neutral-400"
-                        }`}
-                      >
-                        {spotlightSubtitle}
-                      </p>
-                      <div className="flex items-baseline gap-2 pt-1.5">
-                        <span
-                          className={`text-base sm:text-lg font-black tracking-tight ${
-                            isLightCard ? "text-neutral-950" : "text-white"
-                          }`}
-                        >
-                          ₹{spotlightPrice}
-                        </span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-                          Pre-Shrunk 280 GSM
-                        </span>
-                      </div>
+                  {/* Hero Studio Garment Showcase (Prominent, High-Resolution, No White Square Artifacts) */}
+                  <div className="relative w-full flex-1 min-h-[170px] sm:min-h-[190px] my-3 rounded-none overflow-hidden bg-white border border-neutral-200/50 flex items-center justify-center p-3 group/img shadow-2xs">
+                    {/* Architectural Studio Grid Pattern */}
+                    <div className="absolute inset-0 bg-[radial-gradient(#0000000c_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none" />
+
+                    <img
+                      src={spotlightImg}
+                      alt={spotlightName}
+                      className="h-full w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-108 select-none"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/models/model1.png";
+                      }}
+                    />
+
+                    {/* Bottom Technical Pill on Image */}
+                    <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
+                      <span className="px-2 py-0.5 rounded-none bg-neutral-900/90 text-[9px] font-mono font-bold text-white uppercase tracking-wider border border-white/10">
+                        DROP SPOTLIGHT
+                      </span>
                     </div>
 
-                    {/* Elevated Floating Product Preview with Ambient Backdrop */}
-                    <div className="relative shrink-0 flex items-center justify-center">
-                      <div
-                        className={`relative h-24 w-24 sm:h-26 sm:w-26 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-105 ${
-                          isLightCard
-                            ? "bg-white/90 border border-neutral-200/80 shadow-xs"
-                            : "bg-white/[0.07] backdrop-blur-md border border-white/10 shadow-inner"
-                        }`}
-                      >
-                        <img
-                          src={spotlightImg}
-                          alt={spotlightName}
-                          className={`h-full w-full object-contain p-2 ${
-                            isLightCard ? "mix-blend-multiply" : "drop-shadow-lg"
-                          }`}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "/models/model1.png";
-                          }}
-                        />
-                      </div>
+                    <div className="absolute top-2 right-2 z-10 pointer-events-none">
+                      <span className="px-1.5 py-0.5 rounded-none bg-[#FF3B00] text-[9px] font-mono font-black text-white uppercase tracking-wider">
+                        NEW
+                      </span>
                     </div>
                   </div>
 
-                  {/* Bottom Action Strip: Quick Explore Button */}
-                  <div className="flex items-center justify-between pt-2 border-t border-white/10 z-10">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
-                      Explore Boxy Silhouette
-                    </span>
-                    <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 ${
+                  {/* Product Details Section */}
+                  <div className="flex flex-col space-y-1 z-10">
+                    <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest truncate">
+                      {featuredSpotlightProduct?.brand || "TAGAS ARCHIVE"} •
+                      UNISEX
+                    </p>
+                    <h2
+                      className={`text-sm sm:text-base font-black uppercase tracking-tight transition-colors line-clamp-1 ${
                         isLightCard
-                          ? "bg-neutral-950 text-white group-hover:bg-[var(--color-primary)] group-hover:scale-110 shadow-xs"
-                          : "bg-white text-neutral-950 group-hover:bg-[var(--color-primary)] group-hover:text-white group-hover:scale-110 shadow-md"
+                          ? "text-neutral-950 group-hover:text-[#FF3B00]"
+                          : "text-white group-hover:text-[#FF3B00]"
                       }`}
                     >
-                      <ArrowUpRight size={15} strokeWidth={2.5} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      {spotlightName}
+                    </h2>
+                    <div className="flex items-baseline gap-2.5 pt-0.5">
+                      <span className="text-lg sm:text-xl font-mono font-black text-[#FF3B00]">
+                        ₹{spotlightPrice}
+                      </span>
+                      <span className="text-[11px] font-mono text-neutral-400 font-bold uppercase">
+                        280 GSM • RELAXED CUT
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Action Strip */}
+                  <div
+                    className={`flex items-center justify-between pt-3 mt-2 border-t z-10 ${
+                      isLightCard ? "border-neutral-200" : "border-neutral-800"
+                    }`}
+                  >
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 group-hover:text-[#FF3B00] transition-colors">
+                      CLICK TO INSPECT SILHOUETTE
+                    </span>
+                    <div className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-black group-hover:bg-[#FF3B00] group-hover:text-white transition-colors">
+                      <ArrowUpRight size={14} strokeWidth={2.5} />
                     </div>
                   </div>
                 </Link>
@@ -857,7 +913,7 @@ const Hero = () => {
         {/* LOWER BENTO SUB-ROW: 3 Micro Bento Cards                   */}
         {/* ========================================================= */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 mt-4 md:mt-5">
-          {/* Sub-Card 1: "More Products / Archived Drops" - Smooth scrolls to Lookbook carousel */}
+          {/* Sub-Card 1: "More Products / Archived Drops" */}
           <a
             href="#archived-drops"
             onClick={(e) => {
@@ -869,28 +925,28 @@ const Hero = () => {
                 navigate("/new-arrivals");
               }
             }}
-            className="group bg-white rounded-[28px] md:rounded-[30px] border border-neutral-200/90 hover:border-neutral-400 p-4 sm:p-5 shadow-[0_6px_20px_-2px_rgba(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-between gap-4 cursor-pointer"
+            className="group bg-white rounded-none border border-neutral-200/90 hover:border-black p-4 shadow-xs flex items-center justify-between gap-4 cursor-pointer transition-colors"
           >
             <div>
               <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-xs font-black uppercase tracking-tight text-neutral-950">
+                <span className="text-xs font-mono font-black uppercase tracking-tight text-neutral-950">
                   Archived Catalog
                 </span>
                 <Heart size={13} className="text-rose-500 fill-rose-500" />
               </div>
-              <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+              <p className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider">
                 {products?.length
                   ? `${products.length}+ Streetwear Drops`
                   : "460+ Streetwear Pieces"}
               </p>
             </div>
 
-            {/* Dynamic Product Previews from Backend Data */}
+            {/* Dynamic Product Previews */}
             <div className="flex items-center -space-x-2">
               {archivedCatalogPreviews.map((item, idx) => (
                 <div
                   key={idx}
-                  className="h-10 w-10 rounded-xl bg-neutral-100 border-2 border-white overflow-hidden p-0.5 shadow-xs"
+                  className="h-10 w-10 rounded-none bg-neutral-100 border border-white overflow-hidden p-0.5 shadow-xs"
                 >
                   <img
                     src={item.image}
@@ -906,61 +962,63 @@ const Hero = () => {
             </div>
           </a>
 
-          {/* Sub-Card 2: "12k+ Community • ★ 4.9 Reviews" */}
-          <div className="bg-white rounded-[28px] md:rounded-[30px] border border-neutral-200/90 hover:border-neutral-400 p-4 sm:p-5 shadow-[0_6px_20px_-2px_rgba(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-between gap-4">
+          {/* Sub-Card 2: "10,400+ Verified Streetwear Heads" (Matching Image 5) */}
+          <div className="bg-white rounded-none border border-neutral-200/90 p-4 shadow-xs flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              {/* Member Initials Avatar Cluster (No external image links) */}
-              <div className="flex items-center -space-x-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-neutral-950 text-white text-[11px] font-black shadow-xs ring-1 ring-black/5">
-                  RA
+              <div className="flex items-center -space-x-1.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-none bg-black text-white text-[10px] font-mono font-black">
+                  10K
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[var(--color-primary)] text-white text-[11px] font-black shadow-xs ring-1 ring-black/5">
-                  SK
-                </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-neutral-800 text-amber-300 text-[11px] font-black shadow-xs ring-1 ring-black/5">
-                  JD
+                <div className="flex h-8 w-8 items-center justify-center rounded-none bg-[#FF3B00] text-white text-[10px] font-mono font-black">
+                  <span className="flex items-center gap-0.5">
+                    <span>4.9</span>
+                    <Star size={9} className="fill-white text-white" />
+                  </span>
                 </div>
               </div>
 
               <div>
-                <p className="text-sm font-black text-neutral-950 tracking-tight leading-none">
-                  12k+ Community
+                <p className="text-xs sm:text-[13px] font-mono font-black text-neutral-950 uppercase tracking-tight leading-none">
+                  10,400+ Verified Heads
                 </p>
-                <div className="flex items-center gap-1 mt-1 text-[11px] font-bold text-amber-500">
-                  <Star size={12} className="fill-amber-400 text-amber-400" />
-                  <span>4.9 / 5.0 Rating</span>
-                </div>
+                <p className="text-[10px] font-mono text-neutral-500 font-medium mt-1">
+                  4.8/5 Average Fit & Fabric Rating
+                </p>
               </div>
             </div>
 
-            <span
-              className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"
-              title="Live Community"
-            />
+            <div className="flex items-center gap-1 hidden sm:flex">
+              <span className="text-[9px] font-mono text-neutral-400 uppercase">
+                CORE:
+              </span>
+              <span className="h-2 w-2 swatch-dot bg-black" />
+              <span className="h-2 w-2 swatch-dot bg-[#78350F]" />
+              <span className="h-2 w-2 swatch-dot bg-[#EDE6D6]" />
+            </div>
           </div>
 
           {/* Sub-Card 3: "Hot Drop Radar" */}
           <Link
             to="/new-arrivals"
-            className="group bg-white rounded-[28px] md:rounded-[30px] border border-neutral-200/90 hover:border-neutral-400 p-4 sm:p-5 shadow-[0_6px_20px_-2px_rgba(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-between gap-4"
+            className="group bg-white rounded-none border border-neutral-200/90 hover:border-black p-4 shadow-xs flex items-center justify-between gap-4 transition-colors"
           >
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--color-primary-light)] text-[var(--color-primary)] text-[10px] font-black uppercase tracking-wider">
-                  <Flame size={11} className="fill-[var(--color-primary)]" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none bg-[#FF3B00]/10 text-[#FF3B00] text-[10px] font-mono font-bold uppercase tracking-wider">
+                  <Flame size={11} className="fill-[#FF3B00]" />
                   Hot Radar
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">
                   Worldwide
                 </span>
               </div>
-              <p className="text-xs font-black uppercase tracking-tight text-neutral-950 group-hover:text-[var(--color-primary)] transition-colors">
+              <p className="text-xs font-mono font-black uppercase tracking-tight text-neutral-950 group-hover:text-[#FF3B00] transition-colors">
                 Drop 04 Ships in 24 Hours
               </p>
             </div>
 
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 group-hover:bg-neutral-950 group-hover:text-white group-hover:rotate-45 transition-all duration-200 shadow-2xs">
-              <ArrowUpRight size={15} strokeWidth={2.5} />
+            <div className="flex h-8 w-8 items-center justify-center rounded-none bg-neutral-100 group-hover:bg-black group-hover:text-white transition-colors">
+              <ArrowUpRight size={14} strokeWidth={2.5} />
             </div>
           </Link>
         </div>
@@ -968,37 +1026,28 @@ const Hero = () => {
 
       {/* Trust & Guarantee Strip */}
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 mt-5">
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl border border-neutral-200/90 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.02)] hover:shadow-md transition-all py-3.5 px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-neutral-800">
-          <div className="flex items-center gap-2.5">
-            <Zap size={16} className="text-[var(--color-primary)] shrink-0" />
-            <span className="text-xs font-black uppercase tracking-wider truncate">
+        <div className="bg-white rounded-none border border-neutral-200/90 shadow-2xs py-3.5 px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-neutral-900 font-mono">
+          <div className="flex items-center gap-2">
+            <Zap size={14} className="text-[#FF3B00] shrink-0" />
+            <span className="text-[11px] font-bold uppercase tracking-wider truncate">
               Fast 24-48h Dispatch
             </span>
           </div>
-          <div className="flex items-center gap-2.5">
-            <Layers
-              size={16}
-              className="text-[var(--color-primary)] shrink-0"
-            />
-            <span className="text-xs font-black uppercase tracking-wider truncate">
+          <div className="flex items-center gap-2">
+            <Layers size={14} className="text-[#FF3B00] shrink-0" />
+            <span className="text-[11px] font-bold uppercase tracking-wider truncate">
               280+ GSM Combed Cotton
             </span>
           </div>
-          <div className="flex items-center gap-2.5">
-            <RotateCcw
-              size={16}
-              className="text-[var(--color-primary)] shrink-0"
-            />
-            <span className="text-xs font-black uppercase tracking-wider truncate">
+          <div className="flex items-center gap-2">
+            <RotateCcw size={14} className="text-[#FF3B00] shrink-0" />
+            <span className="text-[11px] font-bold uppercase tracking-wider truncate">
               14-Day Easy Exchange
             </span>
           </div>
-          <div className="flex items-center gap-2.5">
-            <ShieldCheck
-              size={16}
-              className="text-[var(--color-primary)] shrink-0"
-            />
-            <span className="text-xs font-black uppercase tracking-wider truncate">
+          <div className="flex items-center gap-2">
+            <ShieldCheck size={14} className="text-[#FF3B00] shrink-0" />
+            <span className="text-[11px] font-bold uppercase tracking-wider truncate">
               100% Original Streetwear
             </span>
           </div>

@@ -159,12 +159,12 @@ const SearchModal = ({ isOpen, onClose }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.98 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-10 mx-auto w-full max-w-3xl bg-white shadow-2xl md:mt-12 md:rounded-3xl border border-neutral-200/80 overflow-hidden flex flex-col max-h-[92vh]"
+            className="relative z-10 mx-auto w-full max-w-3xl bg-white shadow-2xl md:mt-12 md:rounded-none border border-neutral-200/80 overflow-hidden flex flex-col max-h-[92vh]"
           >
             {/* Search Input Bar */}
             <div className="p-4 sm:p-5 border-b border-neutral-100 bg-white">
               <form onSubmit={handleFormSubmit} className="relative flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-800">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-none bg-neutral-100 text-neutral-800">
                   <Search size={20} strokeWidth={2.5} />
                 </div>
 
@@ -181,7 +181,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                   <button
                     type="button"
                     onClick={() => setQuery('')}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-neutral-900 transition-colors"
+                    className="flex h-8 w-8 items-center justify-center rounded-none bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-neutral-900 transition-colors"
                   >
                     <X size={16} strokeWidth={2.5} />
                   </button>
@@ -190,7 +190,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-xl border border-neutral-200 px-3 py-2 text-xs font-black uppercase tracking-wider text-neutral-600 hover:bg-neutral-100 transition-colors"
+                  className="rounded-none border border-neutral-200 px-3 py-2 text-xs font-black uppercase tracking-wider text-neutral-600 hover:bg-neutral-100 transition-colors"
                 >
                   ESC
                 </button>
@@ -217,7 +217,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                   </div>
 
                   {liveResults.length === 0 ? (
-                    <div className="py-8 text-center bg-neutral-50 rounded-2xl border border-neutral-100">
+                    <div className="py-8 text-center bg-neutral-50 rounded-none border border-neutral-100">
                       <p className="text-sm font-bold text-neutral-800">No products found for "{query}"</p>
                       <p className="text-xs text-neutral-500 mt-1">
                         Try searching for "Oversized", "Hoodie", "Cargo", "Cotton", or "Black"
@@ -233,9 +233,9 @@ const SearchModal = ({ isOpen, onClose }) => {
                             onClose();
                             navigate(`/products/${product._id}`);
                           }}
-                          className="flex items-center gap-3 p-2.5 rounded-2xl border border-neutral-100 hover:border-neutral-300 bg-white hover:bg-neutral-50/80 transition-all cursor-pointer group"
+                          className="flex items-center gap-3 p-2.5 rounded-none border border-neutral-100 hover:border-neutral-300 bg-white hover:bg-neutral-50/80 transition-all cursor-pointer group"
                         >
-                          <div className="h-16 w-14 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
+                          <div className="h-16 w-14 rounded-none overflow-hidden bg-neutral-100 shrink-0">
                             <img
                               src={product.activeImage}
                               alt={product.name}
@@ -290,7 +290,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                       <button
                         key={index}
                         onClick={() => handleSelectSearch(term)}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-neutral-900 hover:text-white text-xs font-bold text-neutral-700 transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-none bg-neutral-100 hover:bg-neutral-900 hover:text-white text-xs font-bold text-neutral-700 transition-colors"
                       >
                         <Clock size={12} className="opacity-50" />
                         {term}
@@ -310,9 +310,9 @@ const SearchModal = ({ isOpen, onClose }) => {
                     <button
                       key={idx}
                       onClick={() => handleSelectSearch(tag)}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-neutral-200 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white text-xs font-bold text-neutral-800 transition-all shadow-2xs cursor-pointer"
+                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-none border border-neutral-200 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white text-xs font-bold text-neutral-800 transition-all shadow-2xs cursor-pointer"
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]"></span>
+                      <span className="h-1.5 w-1.5 rounded-none bg-[var(--color-primary)]"></span>
                       {tag}
                     </button>
                   ))}
@@ -337,7 +337,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                         onClose();
                         navigate(item.link);
                       }}
-                      className="p-3 text-left rounded-2xl bg-neutral-50 hover:bg-neutral-100 border border-neutral-100 transition-colors cursor-pointer"
+                      className="p-3 text-left rounded-none bg-neutral-50 hover:bg-neutral-100 border border-neutral-100 transition-colors cursor-pointer"
                     >
                       <span className="text-xs font-extrabold uppercase text-neutral-900 block truncate">
                         {item.label}

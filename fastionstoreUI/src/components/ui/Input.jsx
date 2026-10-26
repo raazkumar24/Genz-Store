@@ -35,7 +35,7 @@ export const Input = forwardRef(({
         <input
           ref={ref}
           id={inputId}
-          className={`w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''} ${icon ? 'pl-11' : ''} ${rightIcon ? 'pr-11' : ''} ${className}`}
+          className={`w-full rounded-none border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''} ${icon ? 'pl-11' : ''} ${rightIcon ? 'pr-11' : ''} ${className}`}
           {...props}
         />
         {rightIcon && (

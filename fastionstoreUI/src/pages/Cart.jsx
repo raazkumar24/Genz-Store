@@ -65,8 +65,8 @@ const Cart = () => {
           <BackButton size="sm" />
         </div>
 
-        <div className="relative z-10 bg-white rounded-[32px] border border-neutral-200/90 p-8 sm:p-12 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-col items-center max-w-md w-full">
-          <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-[#F5F6F1] border border-neutral-200/80 text-neutral-800 mb-5 shadow-xs">
+        <div className="relative z-10 bg-white rounded-none border border-neutral-200/90 p-8 sm:p-12 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-col items-center max-w-md w-full">
+          <div className="flex h-20 w-20 items-center justify-center rounded-none bg-[#F5F6F1] border border-neutral-200/80 text-neutral-800 mb-5 shadow-xs">
             <ShoppingBag size={34} />
           </div>
           <h1
@@ -80,10 +80,10 @@ const Cart = () => {
           </p>
           <Link
             to="/new-arrivals"
-            className="mt-6 group inline-flex items-center gap-3 rounded-full bg-neutral-900 hover:bg-black text-white pl-6 pr-2.5 py-2.5 text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
+            className="mt-6 group inline-flex items-center gap-3 rounded-none bg-neutral-900 hover:bg-black text-white pl-6 pr-2.5 py-2.5 text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
           >
             <span>Explore Drops</span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors">
+            <span className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors">
               <ArrowRight size={14} strokeWidth={2.5} />
             </span>
           </Link>
@@ -93,23 +93,23 @@ const Cart = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F3F4F0] px-3 py-6 sm:px-6 lg:px-8 pb-24 md:pb-16 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F3F4F0] px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-16 relative overflow-hidden">
       {/* Background Subtle Grid Accent */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
       </div>
 
-      <div className="mx-auto max-w-6xl relative z-10">
+      <div className="mx-auto max-w-7xl relative z-10">
         {/* Back Button */}
         <div className="mb-4 flex items-center justify-between">
           <BackButton size="sm" />
           <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">
-            CHECKOUT // BAG
+            CHECKOUT - BAG
           </span>
         </div>
 
         {/* Bento Header */}
-        <div className="bg-white rounded-[28px] border border-neutral-200/90 p-6 md:p-8 mb-6 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-row items-center justify-between gap-4">
+        <div className="bg-white rounded-none border border-neutral-200/90 p-6 md:p-8 mb-6 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-row items-center justify-between gap-4">
           <div>
             <h1
               className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-900 uppercase break-words"
@@ -124,7 +124,7 @@ const Cart = () => {
 
           <button
             onClick={clearCart}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 hover:text-red-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 hover:text-red-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
           >
             <Trash2 size={13} />
             <span>Clear</span>
@@ -149,13 +149,13 @@ const Cart = () => {
               return (
                 <div
                   key={`${item.productId}-${item.variantId}-${item.size}`}
-                  className="rounded-3xl bg-white p-4 sm:p-5 border border-neutral-200/80 shadow-2xs hover:border-neutral-300 transition-colors"
+                  className="rounded-none bg-white p-4 sm:p-5 border border-neutral-200/80 shadow-2xs hover:border-neutral-300 transition-colors"
                 >
                   <div className="flex gap-4">
                     {/* Product Image */}
                     <Link
                       to={productUrl}
-                      className="relative h-22 w-22 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-2xl border border-neutral-200 bg-[#f8f8f7] hover:opacity-90 transition-opacity flex items-center justify-center"
+                      className="relative h-22 w-22 sm:h-28 sm:w-28 shrink-0 overflow-hidden rounded-none border border-neutral-200 bg-[#f8f8f7] hover:opacity-90 transition-opacity flex items-center justify-center"
                     >
                       {item.image ? (
                         <img
@@ -188,12 +188,12 @@ const Cart = () => {
 
                           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                             {item.color && (
-                              <span className="rounded-md bg-neutral-100 px-2 py-0.5 text-[10px] font-black uppercase text-neutral-700">
+                              <span className="rounded-none bg-neutral-100 px-2 py-0.5 text-[10px] font-black uppercase text-neutral-700">
                                 {item.color}
                               </span>
                             )}
                             {displaySize && (
-                              <span className="rounded-md bg-neutral-100 px-2 py-0.5 text-[10px] font-black uppercase text-neutral-700">
+                              <span className="rounded-none bg-neutral-100 px-2 py-0.5 text-[10px] font-black uppercase text-neutral-700">
                                 Size: {displaySize}
                               </span>
                             )}
@@ -209,7 +209,7 @@ const Cart = () => {
                               item.size,
                             )
                           }
-                          className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl border border-neutral-200 text-neutral-400 hover:border-red-200 hover:bg-red-50 hover:text-red-500 transition-colors cursor-pointer"
+                          className="shrink-0 flex h-8 w-8 items-center justify-center rounded-none border border-neutral-200 text-neutral-400 hover:border-red-200 hover:bg-red-50 hover:text-red-500 transition-colors cursor-pointer"
                           title="Remove item"
                         >
                           <Trash2 size={14} />
@@ -223,7 +223,7 @@ const Cart = () => {
                         </span>
 
                         {/* Quantity Stepper */}
-                        <div className="flex items-center rounded-xl border border-neutral-200 bg-neutral-50 px-1 py-0.5">
+                        <div className="flex items-center rounded-none border border-neutral-200 bg-neutral-50 px-1 py-0.5">
                           <button
                             onClick={() =>
                               updateQuantity(
@@ -234,7 +234,7 @@ const Cart = () => {
                               )
                             }
                             disabled={item.quantity <= 1}
-                            className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-600 hover:bg-white disabled:opacity-30 transition cursor-pointer"
+                            className="flex h-7 w-7 items-center justify-center rounded-none text-neutral-600 hover:bg-white disabled:opacity-30 transition cursor-pointer"
                           >
                             <Minus size={13} />
                           </button>
@@ -253,7 +253,7 @@ const Cart = () => {
                             disabled={
                               item.maxStock && item.quantity >= item.maxStock
                             }
-                            className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-600 hover:bg-white transition cursor-pointer disabled:opacity-30"
+                            className="flex h-7 w-7 items-center justify-center rounded-none text-neutral-600 hover:bg-white transition cursor-pointer disabled:opacity-30"
                           >
                             <Plus size={13} />
                           </button>
@@ -269,7 +269,7 @@ const Cart = () => {
           {/* Order Summary Box */}
           <div className="lg:sticky lg:top-24 space-y-4">
             {/* Promo Code Card */}
-            <div className="rounded-3xl bg-white p-5 border border-neutral-200/80 shadow-2xs">
+            <div className="rounded-none bg-white p-5 border border-neutral-200/80 shadow-2xs">
               <span className="text-xs font-black uppercase tracking-wider text-neutral-900 block mb-2.5 flex items-center gap-1.5">
                 <Tag size={13} className="text-[var(--color-primary)]" />
                 Apply Promo Code
@@ -281,18 +281,18 @@ const Cart = () => {
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                   placeholder="Try: GENZ10"
-                  className="flex-1 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-bold text-neutral-900 uppercase focus:border-neutral-900 focus:bg-white focus:outline-none"
+                  className="flex-1 rounded-none border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-bold text-neutral-900 uppercase focus:border-neutral-900 focus:bg-white focus:outline-none"
                 />
                 <button
                   type="submit"
-                  className="rounded-xl bg-neutral-900 px-4 py-2 text-xs font-black uppercase text-white hover:bg-[var(--color-primary)] transition cursor-pointer"
+                  className="rounded-none bg-neutral-900 px-4 py-2 text-xs font-black uppercase text-white hover:bg-[var(--color-primary)] transition cursor-pointer"
                 >
                   Apply
                 </button>
               </form>
 
               {appliedCoupon && (
-                <div className="mt-2.5 flex items-center justify-between rounded-xl bg-emerald-50 px-3 py-1.5 text-xs text-emerald-800 font-bold border border-emerald-200">
+                <div className="mt-2.5 flex items-center justify-between rounded-none bg-emerald-50 px-3 py-1.5 text-xs text-emerald-800 font-bold border border-emerald-200">
                   <span className="flex items-center gap-1">
                     <Check size={13} className="text-emerald-600" />
                     Code {appliedCoupon} applied ({discountPercent}% OFF)
@@ -311,7 +311,7 @@ const Cart = () => {
             </div>
 
             {/* Total Summary */}
-            <div className="rounded-3xl bg-white p-6 border border-neutral-200/80 shadow-2xs">
+            <div className="rounded-none bg-white p-6 border border-neutral-200/80 shadow-2xs">
               <h2
                 className="text-base font-black text-neutral-900 uppercase tracking-wide mb-4 pb-3 border-b border-neutral-100"
                 style={{ fontFamily: "var(--font-heading)" }}
@@ -353,7 +353,7 @@ const Cart = () => {
                 fullWidth
                 variant="primary"
                 size="lg"
-                className="mt-5 h-12 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                className="mt-5 h-12 rounded-none text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
                 icon={<ArrowRight size={16} />}
                 iconPosition="right"
                 onClick={() =>

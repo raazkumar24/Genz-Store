@@ -95,12 +95,12 @@ const Login = () => {
         <BackButton />
       </div>
 
-      <Card className="relative z-10 w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 overflow-hidden p-0 rounded-3xl border border-neutral-200/80 shadow-lg bg-white">
+      <Card className="relative z-10 w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 overflow-hidden p-0 rounded-none border border-neutral-200/80 shadow-lg bg-white">
         {/* ============ LEFT — Login Form (7 Cols) ============ */}
         <div className="lg:col-span-7 p-6 sm:p-10 md:p-12 flex flex-col justify-between">
           <div>
             <div className="mb-6">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-3">
+              <span className="inline-flex items-center gap-1.5 rounded-none bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-3">
                 <LogIn
                   size={12}
                   strokeWidth={3}
@@ -123,7 +123,7 @@ const Login = () => {
 
             {/* API Error Banner */}
             {apiError && (
-              <div className="mb-6 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700">
+              <div className="mb-6 flex items-center gap-3 rounded-none border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700">
                 <AlertCircle size={16} className="shrink-0 text-red-500" />
                 <span>{apiError}</span>
               </div>
@@ -215,7 +215,7 @@ const Login = () => {
           </div>
 
           <div className="relative z-10 space-y-3 pt-12">
-            <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-xs space-y-1">
+            <div className="p-3.5 rounded-none bg-white/10 backdrop-blur-md border border-white/15 text-xs space-y-1">
               <p className="font-black uppercase text-white flex items-center gap-1.5">
                 <Check size={14} className="text-emerald-400" />
                 Early Access Drops
@@ -225,7 +225,7 @@ const Login = () => {
               </p>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-xs space-y-1">
+            <div className="p-3.5 rounded-none bg-white/10 backdrop-blur-md border border-white/15 text-xs space-y-1">
               <p className="font-black uppercase text-white flex items-center gap-1.5">
                 <Check size={14} className="text-emerald-400" />
                 1-Click Express Checkout

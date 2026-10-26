@@ -57,9 +57,7 @@ const BackButton = ({
     <button
       type="button"
       onClick={handleBack}
-      className={`group inline-flex items-center font-semibold transition-all duration-200 cursor-pointer select-none ${
-        isRoundedFull ? 'rounded-full' : 'rounded-xl'
-      } ${sizeClasses[size] || sizeClasses.md} ${
+      className={`group inline-flex items-center font-semibold transition-all duration-200 cursor-pointer select-none rounded-none ${sizeClasses[size] || sizeClasses.md} ${
         variantClasses[variant] || variantClasses.default
       } ${className}`}
       aria-label={typeof text === 'string' ? text : 'Go back'}

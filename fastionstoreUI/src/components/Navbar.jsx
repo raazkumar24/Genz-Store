@@ -113,7 +113,7 @@ const Navbar = () => {
     };
 
     const actionIconButtonClass =
-        'relative flex items-center justify-center h-10 w-10 rounded-full text-neutral-800 transition-all duration-200 hover:bg-neutral-100 hover:text-black cursor-pointer';
+        'relative flex items-center justify-center h-10 w-10 rounded-none text-neutral-800 transition-all duration-200 hover:bg-neutral-100 hover:text-black cursor-pointer';
 
     return (
         <>
@@ -124,7 +124,7 @@ const Navbar = () => {
                         : 'bg-[#F7F7F4]/95 backdrop-blur-md border-b border-black/[0.04] py-3 sm:py-4'
                 }`}
             >
-                <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     {/* Mobile Navbar (Visible on screens < md) */}
                     <nav className="flex items-center justify-between md:hidden">
                         <div className="flex items-center gap-1">
@@ -133,7 +133,7 @@ const Navbar = () => {
                                 type="button"
                                 aria-label="Open navigation menu"
                                 onClick={() => setIsMobileMenuOpen(true)}
-                                className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-900 hover:bg-neutral-200/60 active:scale-95 transition-all cursor-pointer"
+                                className="flex h-10 w-10 items-center justify-center rounded-none text-neutral-900 hover:bg-neutral-200/60 active:scale-95 transition-all cursor-pointer"
                             >
                                 <Menu size={22} strokeWidth={2.2} />
                             </button>
@@ -143,7 +143,7 @@ const Navbar = () => {
                                 type="button"
                                 aria-label="Search Streetwear"
                                 onClick={() => setIsSearchModalOpen(true)}
-                                className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-900 hover:bg-neutral-200/60 active:scale-95 transition-all cursor-pointer"
+                                className="flex h-10 w-10 items-center justify-center rounded-none text-neutral-900 hover:bg-neutral-200/60 active:scale-95 transition-all cursor-pointer"
                             >
                                 <Search size={20} strokeWidth={2.2} />
                             </button>
@@ -159,11 +159,11 @@ const Navbar = () => {
                             <NavLink
                                 to="/wishlist"
                                 aria-label="My Wishlist"
-                                className="relative flex h-10 w-10 items-center justify-center rounded-full text-neutral-900 hover:bg-neutral-200/60 transition-colors"
+                                className="relative flex h-10 w-10 items-center justify-center rounded-none text-neutral-900 hover:bg-neutral-200/60 transition-colors"
                             >
                                 <Heart size={20} strokeWidth={2} />
                                 {wishlistCount > 0 && (
-                                    <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-black text-white shadow-xs animate-pulse">
+                                    <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center badge-count rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-black text-white shadow-xs animate-pulse">
                                         {wishlistCount}
                                     </span>
                                 )}
@@ -172,14 +172,14 @@ const Navbar = () => {
                             <NavLink
                                 to="/cart"
                                 aria-label="Shopping Cart"
-                                className="relative flex h-10 w-10 items-center justify-center rounded-full text-neutral-900 hover:bg-neutral-200/60 transition-colors"
+                                className="relative flex h-10 w-10 items-center justify-center rounded-none text-neutral-900 hover:bg-neutral-200/60 transition-colors"
                             >
                                 <ShoppingBag size={20} strokeWidth={2} />
                                 {cartCount > 0 && (
                                     <motion.span
                                         initial={{ scale: 0.6 }}
                                         animate={{ scale: 1 }}
-                                        className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-black text-white shadow-xs"
+                                        className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center badge-count rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-black text-white shadow-xs"
                                     >
                                         {cartCount}
                                     </motion.span>
@@ -202,7 +202,7 @@ const Navbar = () => {
                             <NavLink
                                 to="/"
                                 className={({ isActive }) =>
-                                    `relative px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-full ${
+                                    `relative px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-none ${
                                         isActive
                                             ? 'text-black bg-neutral-200/70 font-extrabold'
                                             : 'text-neutral-600 hover:text-black hover:bg-neutral-200/40'
@@ -216,7 +216,7 @@ const Navbar = () => {
                             <div className="relative group py-2">
                                 <button
                                     type="button"
-                                    className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-full text-neutral-600 hover:text-black hover:bg-neutral-200/40 cursor-pointer"
+                                    className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-none text-neutral-600 hover:text-black hover:bg-neutral-200/40 cursor-pointer"
                                 >
                                     Collections
                                     <ChevronDown size={14} strokeWidth={2.5} className="transition-transform duration-200 group-hover:rotate-180" />
@@ -224,16 +224,16 @@ const Navbar = () => {
 
                                 <div className="absolute left-1/2 -translate-x-1/2 top-[100%] w-72 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
                                     <div className="absolute -top-3 left-0 right-0 h-3 bg-transparent" />
-                                    <div className="rounded-2xl border border-neutral-200/80 bg-white/95 backdrop-blur-xl p-2 shadow-xl">
+                                    <div className="rounded-none border border-neutral-200/80 bg-white/95 backdrop-blur-xl p-2 shadow-xl">
                                         <div className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-neutral-400 border-b border-neutral-100 flex items-center justify-between">
                                             <span>Curated Drops</span>
-                                            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]"></span>
+                                            <span className="h-1.5 w-1.5 rounded-none bg-[var(--color-primary)]"></span>
                                         </div>
                                         {collectionLinks.map((link) => (
                                             <NavLink
                                                 key={link.to}
                                                 to={link.to}
-                                                className="flex flex-col px-3.5 py-2 rounded-xl transition-colors hover:bg-neutral-100/80 group/item"
+                                                className="flex flex-col px-3.5 py-2 rounded-none transition-colors hover:bg-neutral-100/80 group/item"
                                             >
                                                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-900 group-hover/item:text-[var(--color-primary)] transition-colors">
                                                     {link.label}
@@ -250,7 +250,7 @@ const Navbar = () => {
                             <NavLink
                                 to="/new-arrivals"
                                 className={({ isActive }) =>
-                                    `relative flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-full ${
+                                    `relative flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-none ${
                                         isActive
                                             ? 'text-black bg-neutral-200/70 font-extrabold'
                                             : 'text-neutral-600 hover:text-black hover:bg-neutral-200/40'
@@ -258,13 +258,13 @@ const Navbar = () => {
                                 }
                             >
                                 New Arrivals
-                                <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="flex h-1.5 w-1.5 rounded-none bg-emerald-500 animate-pulse" />
                             </NavLink>
 
                             <NavLink
                                 to="/sale"
                                 className={({ isActive }) =>
-                                    `relative flex items-center gap-1 px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-full ${
+                                    `relative flex items-center gap-1 px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-none ${
                                         isActive
                                             ? 'text-white bg-[var(--color-primary)] shadow-sm shadow-[var(--color-primary)]/30 font-extrabold'
                                             : 'text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 font-extrabold'
@@ -278,7 +278,7 @@ const Navbar = () => {
                             <NavLink
                                 to="/about"
                                 className={({ isActive }) =>
-                                    `relative px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-full ${
+                                    `relative px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-none ${
                                         isActive
                                             ? 'text-black bg-neutral-200/70 font-extrabold'
                                             : 'text-neutral-600 hover:text-black hover:bg-neutral-200/40'
@@ -291,7 +291,7 @@ const Navbar = () => {
                             <NavLink
                                 to="/contact"
                                 className={({ isActive }) =>
-                                    `relative px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-full ${
+                                    `relative px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 rounded-none ${
                                         isActive
                                             ? 'text-black bg-neutral-200/70 font-extrabold'
                                             : 'text-neutral-600 hover:text-black hover:bg-neutral-200/40'
@@ -309,18 +309,15 @@ const Navbar = () => {
                                 type="button"
                                 aria-label="Open Search"
                                 onClick={() => setIsSearchModalOpen(true)}
-                                className="group flex items-center justify-between gap-3 rounded-full border border-neutral-200/90 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-400 hover:border-neutral-400 hover:text-neutral-700 transition-all shadow-xs cursor-pointer min-w-[170px] lg:min-w-[220px]"
+                                className="group flex items-center justify-between gap-3 rounded-none border border-neutral-200/90 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-400 hover:border-neutral-400 hover:text-neutral-700 transition-all shadow-xs cursor-pointer min-w-[170px] lg:min-w-[220px]"
                             >
                                 <div className="flex items-center gap-2">
                                     <span className="text-xs text-neutral-500 font-medium truncate">
                                         Search products...
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-1.5">
-                                    <kbd className="hidden xl:inline-block rounded border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 text-[10px] font-mono font-bold text-neutral-400">
-                                        ⌘K
-                                    </kbd>
-                                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:bg-[var(--color-primary)] transition-colors">
+                                <div className="flex items-center">
+                                    <span className="flex h-7 w-7 items-center justify-center rounded-none bg-neutral-900 text-white group-hover:bg-[var(--color-primary)] transition-colors">
                                         <Search size={13} strokeWidth={2.5} />
                                     </span>
                                 </div>
@@ -330,14 +327,14 @@ const Navbar = () => {
                             <NavLink
                                 to="/wishlist"
                                 aria-label="Wishlist"
-                                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200/80 bg-white text-neutral-800 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all duration-200 cursor-pointer shadow-xs"
+                                className="relative flex h-10 w-10 items-center justify-center rounded-none border border-neutral-200/80 bg-white text-neutral-800 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all duration-200 cursor-pointer shadow-xs"
                             >
                                 <Heart size={18} strokeWidth={2} />
                                 {wishlistCount > 0 && (
                                     <motion.span
                                         initial={{ scale: 0.6 }}
                                         animate={{ scale: 1 }}
-                                        className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-black text-white shadow-xs"
+                                        className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center badge-count rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-black text-white shadow-xs"
                                     >
                                         {wishlistCount}
                                     </motion.span>
@@ -348,14 +345,14 @@ const Navbar = () => {
                             <NavLink
                                 to="/cart"
                                 aria-label="Cart"
-                                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200/80 bg-white text-neutral-800 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all duration-200 cursor-pointer shadow-xs"
+                                className="relative flex h-10 w-10 items-center justify-center rounded-none border border-neutral-200/80 bg-white text-neutral-800 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all duration-200 cursor-pointer shadow-xs"
                             >
                                 <ShoppingBag size={18} strokeWidth={2} />
                                 {cartCount > 0 && (
                                     <motion.span
                                         initial={{ scale: 0.6 }}
                                         animate={{ scale: 1 }}
-                                        className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-black text-white shadow-xs"
+                                        className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center badge-count rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-black text-white shadow-xs"
                                     >
                                         {cartCount}
                                     </motion.span>
@@ -367,7 +364,7 @@ const Navbar = () => {
                                 <NavLink
                                     to="/admin"
                                     aria-label="Admin Panel"
-                                    className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200/80 bg-white text-neutral-800 hover:text-[var(--color-primary)] hover:border-neutral-900 transition-all cursor-pointer shadow-xs"
+                                    className="flex h-10 w-10 items-center justify-center rounded-none border border-neutral-200/80 bg-white text-neutral-800 hover:text-[var(--color-primary)] hover:border-neutral-900 transition-all cursor-pointer shadow-xs"
                                     title="Admin Dashboard"
                                 >
                                     <Shield size={18} strokeWidth={2} />
@@ -379,19 +376,19 @@ const Navbar = () => {
                                 <div className="relative group py-1">
                                     <NavLink 
                                         to="/profile" 
-                                        className="flex items-center gap-2 pl-3 pr-1 py-1 rounded-full border border-neutral-200/90 bg-white hover:border-neutral-400 transition-all shadow-xs"
+                                        className="flex items-center gap-2 pl-3 pr-1 py-1 rounded-none border border-neutral-200/90 bg-white hover:border-neutral-400 transition-all shadow-xs"
                                     >
                                         <span className="text-xs font-bold uppercase tracking-wider text-neutral-800 max-w-[90px] truncate">
                                             {currentUser?.name?.split(" ")[0] || "Account"}
                                         </span>
-                                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900 text-white text-[11px] font-black uppercase">
+                                        <div className="flex h-7 w-7 items-center justify-center rounded-none bg-neutral-900 text-white text-[11px] font-black uppercase">
                                             {currentUser?.name ? currentUser.name[0] : <User size={13} />}
                                         </div>
                                     </NavLink>
                                     
                                     {/* Dropdown Menu */}
                                     <div className="absolute right-0 top-[100%] w-52 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
-                                        <div className="rounded-2xl border border-neutral-200/80 bg-white/95 backdrop-blur-xl p-2 shadow-xl mt-1">
+                                        <div className="rounded-none border border-neutral-200/80 bg-white/95 backdrop-blur-xl p-2 shadow-xl mt-1">
                                             <div className="px-3 py-2 border-b border-neutral-100 mb-1">
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Streetwear Member</p>
                                                 <p className="text-xs font-bold text-neutral-900 truncate">
@@ -400,21 +397,21 @@ const Navbar = () => {
                                             </div>
                                             <NavLink
                                                 to="/profile"
-                                                className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-100 rounded-xl"
+                                                className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-100 rounded-none"
                                             >
                                                 <User size={14} /> My Profile & Orders
                                             </NavLink>
                                             {showAdminLink && (
                                                 <NavLink
                                                     to="/admin"
-                                                    className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 rounded-xl"
+                                                    className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 rounded-none"
                                                 >
                                                     <Shield size={14} /> Admin Portal
                                                 </NavLink>
                                             )}
                                             <button
                                                 onClick={handleLogout}
-                                                className="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
+                                                className="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-red-600 hover:bg-red-50 rounded-none transition-colors cursor-pointer"
                                             >
                                                 <LogOut size={14} strokeWidth={2} /> Logout
                                             </button>
@@ -424,12 +421,12 @@ const Navbar = () => {
                             ) : (
                                 <NavLink
                                     to="/login"
-                                    className="flex items-center gap-2 pl-3 pr-1 py-1 rounded-full border border-neutral-200/90 bg-neutral-900 text-white hover:bg-black transition-all shadow-xs"
+                                    className="flex items-center gap-2 pl-3 pr-1 py-1 rounded-none border border-neutral-200/90 bg-neutral-900 text-white hover:bg-black transition-all shadow-xs"
                                 >
                                     <span className="text-xs font-bold uppercase tracking-wider pl-1">
                                         Sign In
                                     </span>
-                                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-white text-[11px]">
+                                    <div className="flex h-7 w-7 items-center justify-center rounded-none bg-white/20 text-white text-[11px]">
                                         <User size={13} />
                                     </div>
                                 </NavLink>
@@ -468,7 +465,7 @@ const Navbar = () => {
                                 <button
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     aria-label="Close navigation menu"
-                                    className="p-2 rounded-full hover:bg-neutral-100 text-neutral-800 transition-colors"
+                                    className="p-2 rounded-none hover:bg-neutral-100 text-neutral-800 transition-colors"
                                 >
                                     <X size={20} strokeWidth={2.5} />
                                 </button>
@@ -482,7 +479,7 @@ const Navbar = () => {
                                         setIsMobileMenuOpen(false);
                                         setIsSearchModalOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 rounded-2xl bg-neutral-100 px-4 py-2.5 text-xs font-bold text-neutral-500 hover:bg-neutral-200 transition-colors"
+                                    className="flex w-full items-center gap-2.5 rounded-none bg-neutral-100 px-4 py-2.5 text-xs font-bold text-neutral-500 hover:bg-neutral-200 transition-colors"
                                 >
                                     <Search size={16} strokeWidth={2.5} className="text-neutral-400" />
                                     <span>Search drops, tees, cargos...</span>
@@ -502,7 +499,7 @@ const Navbar = () => {
                                             to={link.to}
                                             onClick={() => setIsMobileMenuOpen(false)}
                                             className={({ isActive }) =>
-                                                `flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all ${
+                                                `flex items-center justify-between px-4 py-3 rounded-none text-xs font-black uppercase tracking-wider transition-all ${
                                                     isActive
                                                         ? 'bg-neutral-900 text-white shadow-xs'
                                                         : 'text-neutral-800 hover:bg-neutral-200/60'
@@ -514,7 +511,7 @@ const Navbar = () => {
                                                 {link.label}
                                             </span>
                                             {link.badge && (
-                                                <span className={`text-[9px] font-black px-2 py-0.5 rounded-full text-white ${link.badgeColor}`}>
+                                                <span className={`text-[9px] font-black px-2 py-0.5 rounded-none text-white ${link.badgeColor}`}>
                                                     {link.badge}
                                                 </span>
                                             )}
@@ -547,7 +544,7 @@ const Navbar = () => {
                                                     key={col.to}
                                                     to={col.to}
                                                     onClick={() => setIsMobileMenuOpen(false)}
-                                                    className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-200/60 transition-colors group"
+                                                    className="flex items-center justify-between px-3.5 py-2.5 rounded-none text-xs font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-200/60 transition-colors group"
                                                 >
                                                     <div>
                                                         <span className="block text-neutral-900 group-hover:text-[var(--color-primary)]">
@@ -572,13 +569,13 @@ const Navbar = () => {
                                     <NavLink
                                         to="/wishlist"
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-neutral-800 hover:bg-neutral-200/60 transition-colors"
+                                        className="flex items-center justify-between px-4 py-2.5 rounded-none text-xs font-bold uppercase tracking-wider text-neutral-800 hover:bg-neutral-200/60 transition-colors"
                                     >
                                         <span className="flex items-center gap-2">
                                             <Heart size={16} /> Saved Wishlist
                                         </span>
                                         {wishlistCount > 0 && (
-                                            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--color-primary)] px-1.5 text-[10px] font-black text-white">
+                                            <span className="flex h-5 min-w-5 items-center justify-center badge-count rounded-full bg-[var(--color-primary)] px-1.5 text-[10px] font-black text-white">
                                                 {wishlistCount}
                                             </span>
                                         )}
@@ -587,13 +584,13 @@ const Navbar = () => {
                                     <NavLink
                                         to="/cart"
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-neutral-800 hover:bg-neutral-200/60 transition-colors"
+                                        className="flex items-center justify-between px-4 py-2.5 rounded-none text-xs font-bold uppercase tracking-wider text-neutral-800 hover:bg-neutral-200/60 transition-colors"
                                     >
                                         <span className="flex items-center gap-2">
                                             <ShoppingBag size={16} /> Shopping Cart
                                         </span>
                                         {cartCount > 0 && (
-                                            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-neutral-900 px-1.5 text-[10px] font-black text-white">
+                                            <span className="flex h-5 min-w-5 items-center justify-center badge-count rounded-full bg-neutral-900 px-1.5 text-[10px] font-black text-white">
                                                 {cartCount}
                                             </span>
                                         )}
@@ -603,12 +600,12 @@ const Navbar = () => {
                                         <NavLink
                                             to="/admin"
                                             onClick={() => setIsMobileMenuOpen(false)}
-                                            className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] bg-[var(--color-primary)]/5 hover:bg-[var(--color-primary)]/10 transition-colors"
+                                            className="flex items-center justify-between px-4 py-2.5 rounded-none text-xs font-bold uppercase tracking-wider text-[var(--color-primary)] bg-[var(--color-primary)]/5 hover:bg-[var(--color-primary)]/10 transition-colors"
                                         >
                                             <span className="flex items-center gap-2">
                                                 <Shield size={16} /> Admin Portal
                                             </span>
-                                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-[var(--color-primary)] text-white">
+                                            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-none bg-[var(--color-primary)] text-white">
                                                 ADMIN
                                             </span>
                                         </NavLink>
@@ -621,7 +618,7 @@ const Navbar = () => {
                                 {isLoggedIn ? (
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-3 px-2 py-1">
-                                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-white text-xs font-black">
+                                            <div className="flex h-9 w-9 items-center justify-center rounded-none bg-neutral-900 text-white text-xs font-black">
                                                 {(currentUser?.name || currentUser?.email || 'U')[0].toUpperCase()}
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -637,13 +634,13 @@ const Navbar = () => {
                                             <NavLink
                                                 to="/profile"
                                                 onClick={() => setIsMobileMenuOpen(false)}
-                                                className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-300 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-800 hover:bg-neutral-100"
+                                                className="flex items-center justify-center gap-1.5 rounded-none border border-neutral-300 py-2.5 text-xs font-bold uppercase tracking-wider text-neutral-800 hover:bg-neutral-100"
                                             >
                                                 <User size={14} /> Profile
                                             </NavLink>
                                             <button
                                                 onClick={handleLogout}
-                                                className="flex items-center justify-center gap-1.5 rounded-xl bg-red-50 text-red-600 border border-red-200 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-red-100 cursor-pointer"
+                                                className="flex items-center justify-center gap-1.5 rounded-none bg-red-50 text-red-600 border border-red-200 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-red-100 cursor-pointer"
                                             >
                                                 <LogOut size={14} /> Logout
                                             </button>
@@ -663,7 +660,7 @@ const Navbar = () => {
                                         <NavLink
                                             to="/register"
                                             onClick={() => setIsMobileMenuOpen(false)}
-                                            className="flex items-center justify-center rounded-full border border-neutral-300 py-2 text-xs font-bold uppercase tracking-wider text-neutral-800 hover:bg-neutral-100"
+                                            className="flex items-center justify-center rounded-none border border-neutral-300 py-2 text-xs font-bold uppercase tracking-wider text-neutral-800 hover:bg-neutral-100"
                                         >
                                             Register
                                         </NavLink>

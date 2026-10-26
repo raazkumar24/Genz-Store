@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Layers } from "lucide-react";
+import { ArrowUpRight, Layers, ArrowRight } from "lucide-react";
 import { fetchAllCollections } from "../services/collectionService";
 import { useProducts } from "../context/ProductContext";
 
@@ -130,7 +130,7 @@ const CategoryScroll = () => {
         {/* Section Header */}
         <div className="flex items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-900 text-white">
+            <span className="flex h-6 w-6 items-center justify-center rounded-none bg-neutral-900 text-white">
               <Layers size={12} className="text-[var(--color-primary)]" />
             </span>
             <h2 className="text-sm md:text-base font-black uppercase tracking-wider text-neutral-900">
@@ -138,8 +138,9 @@ const CategoryScroll = () => {
             </h2>
           </div>
 
-          <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">
-            Swipe To Explore ➔
+          <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 flex items-center gap-1.5">
+            <span>Swipe To Explore</span>
+            <ArrowRight size={13} />
           </span>
         </div>
 
@@ -150,16 +151,16 @@ const CategoryScroll = () => {
               <Link
                 key={category._id || category.id || index}
                 to={category.link || `/collections/${category.slug || ""}`}
-                className="group relative flex-1 min-w-[140px] sm:min-w-[170px] md:min-w-[200px] snap-start bg-white rounded-[24px] border border-neutral-200/90 p-3 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between"
+                className="group relative flex-1 min-w-[140px] sm:min-w-[170px] md:min-w-[200px] snap-start bg-white rounded-none p-3 transition-all duration-300 hover:shadow-md flex flex-col justify-between"
               >
                 {/* Category Visual Arch Frame */}
                 <div
-                  className={`relative w-full aspect-[4/5] rounded-[18px] overflow-hidden flex items-center justify-center ${category.bgColor || "bg-neutral-100"}`}
+                  className={`relative w-full aspect-[4/5] rounded-none overflow-hidden flex items-center justify-center ${category.bgColor || "bg-neutral-100"}`}
                 >
                   <img
                     src={category.image}
                     alt={category.name}
-                    className="w-full h-full object-contain object-bottom p-1 transition-transform duration-500 group-hover:scale-108 select-none"
+                    className="w-full h-full object-contain object-bottom p-1 transition-transform duration-500 group-hover:scale-105 select-none"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = "/models/model1.png";
@@ -167,7 +168,7 @@ const CategoryScroll = () => {
                   />
 
                   {/* Corner Diagonal Arrow badge */}
-                  <div className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/85 backdrop-blur-xs text-neutral-900 shadow-2xs group-hover:bg-neutral-900 group-hover:text-white transition-all duration-200">
+                  <div className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-none bg-black text-white shadow-xs group-hover:bg-[var(--color-primary)] transition-all duration-200">
                     <ArrowUpRight size={14} strokeWidth={2.5} />
                   </div>
                 </div>

@@ -70,7 +70,7 @@ const User = () => {
                     <Card className="p-8 flex flex-col items-center text-center gap-5">
 
                         {/* Avatar circle with initials */}
-                        <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-[var(--color-primary)] text-white text-4xl font-black shadow-lg select-none">
+                        <div className="flex h-24 w-24 items-center justify-center rounded-none bg-[var(--color-primary)] text-white text-4xl font-black shadow-lg select-none">
                             {initials}
                         </div>
 
@@ -91,7 +91,7 @@ const User = () => {
                         {isAdmin && (
                             <Link
                                 to="/admin/products"
-                                className="w-full flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                                className="w-full flex items-center justify-center gap-2 rounded-none border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
                             >
                                 <Settings size={16} />
                                 Admin Panel
@@ -101,7 +101,7 @@ const User = () => {
                         {/* Logout */}
                         <button
                             onClick={handleLogout}
-                            className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors"
+                            className="w-full flex items-center justify-center gap-2 rounded-none border border-red-100 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors"
                         >
                             <LogOut size={16} />
                             Logout
@@ -116,8 +116,8 @@ const User = () => {
 
                         <div className="space-y-4">
                             {/* Name row */}
-                            <div className="flex items-center gap-4 rounded-xl bg-gray-50 p-4">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-gray-200 shadow-sm shrink-0">
+                            <div className="flex items-center gap-4 rounded-none bg-gray-50 p-4">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-none bg-white border border-gray-200 shadow-sm shrink-0">
                                     <UserIcon size={20} className="text-gray-500" />
                                 </div>
                                 <div>
@@ -127,8 +127,8 @@ const User = () => {
                             </div>
 
                             {/* Email row */}
-                            <div className="flex items-center gap-4 rounded-xl bg-gray-50 p-4">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-gray-200 shadow-sm shrink-0">
+                            <div className="flex items-center gap-4 rounded-none bg-gray-50 p-4">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-none bg-white border border-gray-200 shadow-sm shrink-0">
                                     <Mail size={20} className="text-gray-500" />
                                 </div>
                                 <div>
@@ -138,8 +138,8 @@ const User = () => {
                             </div>
 
                             {/* Role row */}
-                            <div className="flex items-center gap-4 rounded-xl bg-gray-50 p-4">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-gray-200 shadow-sm shrink-0">
+                            <div className="flex items-center gap-4 rounded-none bg-gray-50 p-4">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-none bg-white border border-gray-200 shadow-sm shrink-0">
                                     <Shield size={20} className="text-gray-500" />
                                 </div>
                                 <div>
@@ -149,8 +149,8 @@ const User = () => {
                             </div>
 
                             {/* Orders placeholder (future feature) */}
-                            <div className="flex items-center gap-4 rounded-xl border border-dashed border-gray-200 bg-gray-50/50 p-4">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-gray-200 shadow-sm shrink-0">
+                            <div className="flex items-center gap-4 rounded-none border border-dashed border-gray-200 bg-gray-50/50 p-4">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-none bg-white border border-gray-200 shadow-sm shrink-0">
                                     <Package size={20} className="text-gray-400" />
                                 </div>
                                 <div>

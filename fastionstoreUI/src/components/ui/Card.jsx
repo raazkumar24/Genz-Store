@@ -27,7 +27,7 @@ export const Card = ({
 
   return (
     <div
-      className={`rounded-[24px] md:rounded-[28px] ${variantStyles[variant] || variantStyles.default} ${hoverClass} ${padding} ${className}`}
+      className={`rounded-none ${variantStyles[variant] || variantStyles.default} ${hoverClass} ${padding} ${className}`}
       {...props}
     >
       {children}

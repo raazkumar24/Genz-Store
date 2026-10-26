@@ -77,7 +77,7 @@ const ProductAccordion = ({ product }) => {
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`shrink-0 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+            className={`shrink-0 px-4 py-2.5 rounded-none text-xs font-black uppercase tracking-wider transition-all duration-200 cursor-pointer ${
               activeTab === tab.id
                 ? "bg-neutral-900 text-white shadow-xs"
                 : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900"
@@ -92,7 +92,7 @@ const ProductAccordion = ({ product }) => {
       {activeTab === "overview" && (
         <div className="space-y-6">
           {product.description && (
-            <div className="rounded-2xl bg-neutral-50 p-5 border border-neutral-100">
+            <div className="rounded-none bg-neutral-50 p-5 border border-neutral-100">
               <h4 className="text-xs font-black uppercase tracking-widest text-neutral-400 mb-2">Drop Narrative</h4>
               <p className="text-sm text-neutral-700 leading-relaxed font-medium">
                 {product.description}
@@ -106,7 +106,7 @@ const ProductAccordion = ({ product }) => {
               Key Drop Highlights
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="flex items-start gap-2.5 rounded-xl border border-neutral-200 bg-white p-3.5 shadow-2xs">
+              <div className="flex items-start gap-2.5 rounded-none border border-neutral-200 bg-white p-3.5 shadow-2xs">
                 <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-bold text-neutral-900">280 GSM Heavyweight Terry</p>
@@ -114,7 +114,7 @@ const ProductAccordion = ({ product }) => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-2.5 rounded-xl border border-neutral-200 bg-white p-3.5 shadow-2xs">
+              <div className="flex items-start gap-2.5 rounded-none border border-neutral-200 bg-white p-3.5 shadow-2xs">
                 <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-bold text-neutral-900">Engineered Drop-Shoulder</p>
@@ -122,7 +122,7 @@ const ProductAccordion = ({ product }) => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-2.5 rounded-xl border border-neutral-200 bg-white p-3.5 shadow-2xs">
+              <div className="flex items-start gap-2.5 rounded-none border border-neutral-200 bg-white p-3.5 shadow-2xs">
                 <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-bold text-neutral-900">High-Density Screenprint</p>
@@ -130,7 +130,7 @@ const ProductAccordion = ({ product }) => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-2.5 rounded-xl border border-neutral-200 bg-white p-3.5 shadow-2xs">
+              <div className="flex items-start gap-2.5 rounded-none border border-neutral-200 bg-white p-3.5 shadow-2xs">
                 <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-bold text-neutral-900">Zero Plastic Packaging</p>
@@ -146,8 +146,8 @@ const ProductAccordion = ({ product }) => {
       {activeTab === "specs" && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="rounded-2xl bg-neutral-50 p-4 border border-neutral-100 flex items-start gap-3">
-              <div className="h-9 w-9 rounded-xl bg-neutral-200 flex items-center justify-center shrink-0">
+            <div className="rounded-none bg-neutral-50 p-4 border border-neutral-100 flex items-start gap-3">
+              <div className="h-9 w-9 rounded-none bg-neutral-200 flex items-center justify-center shrink-0">
                 <Droplets size={18} className="text-neutral-700" />
               </div>
               <div>
@@ -156,8 +156,8 @@ const ProductAccordion = ({ product }) => {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-neutral-50 p-4 border border-neutral-100 flex items-start gap-3">
-              <div className="h-9 w-9 rounded-xl bg-neutral-200 flex items-center justify-center shrink-0">
+            <div className="rounded-none bg-neutral-50 p-4 border border-neutral-100 flex items-start gap-3">
+              <div className="h-9 w-9 rounded-none bg-neutral-200 flex items-center justify-center shrink-0">
                 <Scissors size={18} className="text-neutral-700" />
               </div>
               <div>
@@ -166,8 +166,8 @@ const ProductAccordion = ({ product }) => {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-neutral-50 p-4 border border-neutral-100 flex items-start gap-3">
-              <div className="h-9 w-9 rounded-xl bg-neutral-200 flex items-center justify-center shrink-0">
+            <div className="rounded-none bg-neutral-50 p-4 border border-neutral-100 flex items-start gap-3">
+              <div className="h-9 w-9 rounded-none bg-neutral-200 flex items-center justify-center shrink-0">
                 <Award size={18} className="text-neutral-700" />
               </div>
               <div>
@@ -177,7 +177,7 @@ const ProductAccordion = ({ product }) => {
             </div>
           </div>
 
-          <div className="rounded-2xl bg-white border border-neutral-200 p-4 text-xs space-y-2 text-neutral-700">
+          <div className="rounded-none bg-white border border-neutral-200 p-4 text-xs space-y-2 text-neutral-700">
             <div className="flex justify-between py-1.5 border-b border-neutral-100">
               <span className="font-semibold text-neutral-500">Fabric Composition</span>
               <span className="font-bold text-neutral-900">100% Combed Pure Cotton (280 GSM)</span>
@@ -202,19 +202,19 @@ const ProductAccordion = ({ product }) => {
       {activeTab === "shipping" && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-2xl bg-neutral-50 p-4 border border-neutral-100 text-center">
+            <div className="rounded-none bg-neutral-50 p-4 border border-neutral-100 text-center">
               <Truck size={24} className="text-[var(--color-primary)] mx-auto mb-2" />
               <h5 className="text-xs font-black uppercase text-neutral-900">Fast 24-48h Dispatch</h5>
               <p className="text-[11px] text-neutral-500 mt-1">Orders placed before 2 PM dispatch same business day.</p>
             </div>
 
-            <div className="rounded-2xl bg-neutral-50 p-4 border border-neutral-100 text-center">
+            <div className="rounded-none bg-neutral-50 p-4 border border-neutral-100 text-center">
               <RotateCcw size={24} className="text-[var(--color-primary)] mx-auto mb-2" />
               <h5 className="text-xs font-black uppercase text-neutral-900">14-Day Easy Return</h5>
               <p className="text-[11px] text-neutral-500 mt-1">Hassle-free reverse doorstep pickup across India.</p>
             </div>
 
-            <div className="rounded-2xl bg-neutral-50 p-4 border border-neutral-100 text-center">
+            <div className="rounded-none bg-neutral-50 p-4 border border-neutral-100 text-center">
               <ShieldCheck size={24} className="text-[var(--color-primary)] mx-auto mb-2" />
               <h5 className="text-xs font-black uppercase text-neutral-900">COD Available</h5>
               <p className="text-[11px] text-neutral-500 mt-1">Pay on delivery with contactless verification.</p>
@@ -227,7 +227,7 @@ const ProductAccordion = ({ product }) => {
       {activeTab === "reviews" && (
         <div className="space-y-6">
           {/* Summary Box */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-neutral-50 border border-neutral-200">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-none bg-neutral-50 border border-neutral-200">
             <div className="flex items-center gap-4">
               <div className="text-center">
                 <span className="text-4xl font-black text-neutral-900" style={{ fontFamily: "var(--font-heading)" }}>4.9</span>
@@ -251,12 +251,12 @@ const ProductAccordion = ({ product }) => {
           {/* Review List */}
           <div className="space-y-4">
             {reviews.map((rev) => (
-              <div key={rev.id} className="p-4 sm:p-5 rounded-2xl bg-white border border-neutral-200/80 shadow-2xs space-y-2.5">
+              <div key={rev.id} className="p-4 sm:p-5 rounded-none bg-white border border-neutral-200/80 shadow-2xs space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-black text-neutral-900">{rev.author}</span>
                     {rev.verified && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                      <span className="inline-flex items-center gap-1 rounded-none bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
                         <CheckCircle2 size={11} />
                         Verified Drop Buyer
                       </span>

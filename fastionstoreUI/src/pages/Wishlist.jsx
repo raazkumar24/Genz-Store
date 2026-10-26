@@ -44,14 +44,14 @@ const Wishlist = () => {
         <div className="mb-5 flex items-center justify-between">
           <BackButton size="sm" />
           <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">
-            GENZ ARCHIVE // SAVED
+            GENZ ARCHIVE - SAVED
           </span>
         </div>
 
         {/* Bento Header Container */}
-        <div className="bg-white rounded-[28px] border border-neutral-200/90 p-6 md:p-8 mb-6 md:mb-8 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="bg-white rounded-none border border-neutral-200/90 p-6 md:p-8 mb-6 md:mb-8 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-200/60 text-[10px] font-black uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none bg-rose-50 text-rose-600 border border-rose-200/60 text-[10px] font-black uppercase tracking-wider mb-2">
               <Heart size={12} className="fill-rose-500 text-rose-500" />
               <span>Personal Vault</span>
             </div>
@@ -74,10 +74,10 @@ const Wishlist = () => {
               <button
                 type="button"
                 onClick={handleAddAllToCart}
-                className="group inline-flex items-center gap-2.5 rounded-full bg-neutral-900 hover:bg-black text-white pl-5 pr-2 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer"
+                className="group inline-flex items-center gap-2.5 rounded-none bg-neutral-900 hover:bg-black text-white pl-5 pr-2 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer"
               >
                 <span>Add All To Bag</span>
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors">
+                <span className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors">
                   <ShoppingBag size={13} />
                 </span>
               </button>
@@ -85,7 +85,7 @@ const Wishlist = () => {
               <button
                 type="button"
                 onClick={clearWishlist}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 hover:text-red-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 hover:text-red-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
                 title="Clear Wishlist"
               >
                 <Trash2 size={13} />
@@ -97,8 +97,8 @@ const Wishlist = () => {
 
         {/* Empty State Card */}
         {wishlist.length === 0 ? (
-          <div className="my-10 flex flex-col items-center justify-center text-center p-8 md:p-14 rounded-[32px] bg-white border border-neutral-200/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] max-w-lg mx-auto">
-            <div className="h-20 w-20 rounded-[24px] bg-[#F5F6F1] border border-neutral-200/80 text-rose-500 flex items-center justify-center mb-5 shadow-xs">
+          <div className="my-10 flex flex-col items-center justify-center text-center p-8 md:p-14 rounded-none bg-white border border-neutral-200/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] max-w-lg mx-auto">
+            <div className="h-20 w-20 rounded-none bg-[#F5F6F1] border border-neutral-200/80 text-rose-500 flex items-center justify-center mb-5 shadow-xs">
               <Heart size={34} className="fill-rose-500/20 text-rose-500" />
             </div>
             <h2
@@ -112,10 +112,10 @@ const Wishlist = () => {
             </p>
             <Link
               to="/new-arrivals"
-              className="group inline-flex items-center gap-3 rounded-full bg-neutral-900 hover:bg-black text-white pl-6 pr-2.5 py-2.5 text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
+              className="group inline-flex items-center gap-3 rounded-none bg-neutral-900 hover:bg-black text-white pl-6 pr-2.5 py-2.5 text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
             >
               <span>Explore Streetwear Drops</span>
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors">
+              <span className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors">
                 <ArrowUpRight size={14} strokeWidth={2.5} />
               </span>
             </Link>

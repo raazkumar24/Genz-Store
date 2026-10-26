@@ -35,6 +35,7 @@
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Space Grotesk', monospace;
   --font-condensed: 'Bebas Neue', 'Anton', sans-serif;
+  --font-serif-italic: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
 }
 
 html {
@@ -52,9 +53,36 @@ body {
   selection-color: #ffffff;
 }
 
-::selection {
-  background: #FF2E00;
-  color: #FFFFFF;
+/* Universal borderless reset: strictly eliminate border-radius for clean streetwear architecture */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+/* Allow circular styling for color swatches, count badges, and indicator dots / pings / spinners */
+.swatch-dot,
+.color-dot,
+[data-swatch="true"],
+.badge-count,
+.cart-count,
+.wishlist-count,
+.count-badge,
+.status-dot,
+.live-dot,
+.indicator-dot,
+.badge-dot,
+.dot,
+[class*="animate-ping"],
+[class*="animate-pulse"][class*="rounded"],
+span[class*="h-1.5"][class*="w-1.5"],
+span[class*="h-2"][class*="w-2"],
+span[class*="h-2.5"][class*="w-2.5"],
+span[class*="h-3"][class*="w-3"],
+div[class*="h-2"][class*="w-2"],
+div[class*="h-1.5"][class*="w-1.5"],
+.animate-spin {
+  border-radius: 9999px !important;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

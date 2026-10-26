@@ -66,7 +66,7 @@ const Collections = () => {
         {/* Header Area styled like Featured Drops */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-text)]/10 bg-[var(--color-surface)] px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-[var(--color-text)] mb-4">
+            <span className="inline-flex items-center gap-2 rounded-none border border-[var(--color-text)]/10 bg-[var(--color-surface)] px-4 py-1.5 text-xs font-black uppercase tracking-[0.2em] text-[var(--color-text)] mb-4">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-primary)] opacity-40"></span>
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--color-primary)]"></span>
@@ -89,7 +89,7 @@ const Collections = () => {
             <Link
               key={item._id || index}
               to={item.link || `/collections/${item.slug || ''}`}
-              className={`group relative overflow-hidden rounded-2xl block ${item.colSpan || (index % 3 === 0 ? 'md:col-span-8' : 'md:col-span-4')} ${item.height || 'h-[350px] md:h-[450px]'} bg-[var(--color-surface)]`}
+              className={`group relative overflow-hidden rounded-none block ${item.colSpan || (index % 3 === 0 ? 'md:col-span-8' : 'md:col-span-4')} ${item.height || 'h-[350px] md:h-[450px]'} bg-[var(--color-surface)]`}
             >
               {/* Image with zoom effect */}
               <div
@@ -115,7 +115,7 @@ const Collections = () => {
                   </h3>
                   
                   {/* Animated Button */}
-                  <div className="inline-flex items-center gap-3 text-white font-bold uppercase tracking-wider text-sm bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-full hover:bg-white hover:text-black transition-colors duration-300">
+                  <div className="inline-flex items-center gap-3 text-white font-bold uppercase tracking-wider text-sm bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-none hover:bg-white hover:text-black transition-colors duration-300">
                     Explore <ArrowRight size={16} />
                   </div>
                 </div>

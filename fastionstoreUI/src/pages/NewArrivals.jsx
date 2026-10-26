@@ -7,14 +7,14 @@ import { Link } from "react-router-dom";
 import ProductFilters, { applyProductFilters } from "../components/ProductFilters";
 
 const ProductSkeleton = () => (
-  <Card className="animate-pulse p-4 rounded-2xl md:rounded-[28px] bg-white border border-neutral-100">
-    <div className="aspect-square md:aspect-[4/5] w-full rounded-xl md:rounded-[20px] bg-neutral-200" />
+  <Card className="animate-pulse p-4 rounded-none bg-white border border-neutral-100">
+    <div className="aspect-square md:aspect-[4/5] w-full rounded-none bg-neutral-200" />
     <div className="mt-4 space-y-3">
-      <div className="h-4 w-3/4 rounded bg-neutral-200" />
-      <div className="h-3 w-1/2 rounded bg-neutral-200" />
+      <div className="h-4 w-3/4 rounded-none bg-neutral-200" />
+      <div className="h-3 w-1/2 rounded-none bg-neutral-200" />
       <div className="flex items-center justify-between pt-2">
-        <div className="h-5 w-20 rounded bg-neutral-200" />
-        <div className="h-8 w-24 rounded-full bg-neutral-200" />
+        <div className="h-5 w-20 rounded-none bg-neutral-200" />
+        <div className="h-8 w-24 rounded-none bg-neutral-200" />
       </div>
     </div>
   </Card>
@@ -99,16 +99,16 @@ const NewArrivals = () => {
 
           {/* Quick Categories Bar */}
           <div className="mt-5 flex flex-wrap justify-center gap-2">
-            <Link to="/collections/oversized-tees" className="px-3.5 py-1.5 rounded-full bg-white border border-neutral-200 text-xs font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white transition shadow-2xs">
+            <Link to="/collections/oversized-tees" className="px-3.5 py-1.5 rounded-none bg-white border border-neutral-200 text-xs font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white transition shadow-2xs">
               Oversized Tees
             </Link>
-            <Link to="/collections/cargos" className="px-3.5 py-1.5 rounded-full bg-white border border-neutral-200 text-xs font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white transition shadow-2xs">
+            <Link to="/collections/cargos" className="px-3.5 py-1.5 rounded-none bg-white border border-neutral-200 text-xs font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white transition shadow-2xs">
               Cargos
             </Link>
-            <Link to="/collections/hoodies" className="px-3.5 py-1.5 rounded-full bg-white border border-neutral-200 text-xs font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white transition shadow-2xs">
+            <Link to="/collections/hoodies" className="px-3.5 py-1.5 rounded-none bg-white border border-neutral-200 text-xs font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white transition shadow-2xs">
               Hoodies
             </Link>
-            <Link to="/sale" className="px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-xs font-black uppercase tracking-wider text-red-600 hover:bg-red-500 hover:text-white transition shadow-2xs">
+            <Link to="/sale" className="px-3.5 py-1.5 rounded-none bg-red-50 border border-red-200 text-xs font-black uppercase tracking-wider text-red-600 hover:bg-red-500 hover:text-white transition shadow-2xs">
               Sale %
             </Link>
           </div>
@@ -134,8 +134,8 @@ const NewArrivals = () => {
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <Card className="flex flex-col items-center justify-center py-16 text-center rounded-3xl bg-white border border-neutral-200 p-8">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-400">
+          <Card className="flex flex-col items-center justify-center py-16 text-center rounded-none bg-white border border-neutral-200 p-8">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-none bg-neutral-100 text-neutral-400">
               <SlidersHorizontal size={28} />
             </div>
             <h3 className="text-xl font-black text-neutral-900 uppercase" style={{ fontFamily: "var(--font-heading)" }}>
@@ -147,7 +147,7 @@ const NewArrivals = () => {
             <button
               type="button"
               onClick={handleResetFilters}
-              className="mt-4 px-5 py-2.5 rounded-full bg-neutral-900 text-white text-xs font-black uppercase tracking-wider hover:bg-[var(--color-primary)] transition-colors cursor-pointer"
+              className="mt-4 px-5 py-2.5 rounded-none bg-neutral-900 text-white text-xs font-black uppercase tracking-wider hover:bg-[var(--color-primary)] transition-colors cursor-pointer"
             >
               Reset Filters
             </button>

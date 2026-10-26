@@ -5,14 +5,13 @@ import { getHeroMasterConfig } from "../services/heroShowcaseService";
 
 /**
  * ArchivedCatalogSlider Component
- * Pixel-perfect Editorial Lookbook Carousel directly matching the user's reference design.
- * Features:
- * - Pure crisp white backdrop (bg-white)
- * - Ultra-tall condensed typography: "THIS SEASON'S WINTER DROPS"
- * - Minimal pill "See All ↗" button
- * - Tall vertical portrait cards with smooth rounded corners
- * - Condensed white titles ("SIMPLE CASUAL", "HANGOUT DRESS", "COZY ANYWHERE")
- * - Floating circular navigation buttons with sleek arrows (← and →)
+ * Editorial Streetwear Campaign Lookbook directly matching Image 1:
+ * - Subtitle: "02 - CURATED CAMPAIGN LOOKBOOK" (orange monospace, NO //)
+ * - Headline: "THIS SEASON'S" (heavy extended) + "winter drops" (italic serif cursive)
+ * - Minimal right link: "VIEW COMPLETE ARCHIVE (09) →"
+ * - Borderless sharp rectangular cards (rounded-none)
+ * - Badges: "LOOK 01 • MONOCHROME SET", "2 ITEMS IN LOOK"
+ * - Action button: "SHOP THIS LOOK ↗" (sharp white button)
  */
 const ArchivedCatalogSlider = () => {
   const [config, setConfig] = useState(() => getHeroMasterConfig().archivedCatalog);
@@ -65,29 +64,40 @@ const ArchivedCatalogSlider = () => {
   return (
     <section
       id="archived-drops"
-      className="relative w-full bg-white py-10 sm:py-14 md:py-18 overflow-hidden scroll-mt-16"
+      className="relative w-full bg-white py-10 sm:py-14 md:py-16 overflow-hidden scroll-mt-16"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Top Header Row matching screenshot */}
-        <div className="flex items-center justify-between gap-4 mb-6 sm:mb-8 md:mb-10">
-          <h2
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black uppercase text-neutral-950 tracking-[-0.01em] leading-none"
-            style={{ fontFamily: "var(--font-condensed)" }}
-          >
-            {config.sectionTitle || "THIS SEASON'S WINTER DROPS"}
-          </h2>
+        {/* Campaign Subtitle Tag (NO //, matching Image 1) */}
+        <div className="mb-2">
+          <span className="text-[11px] sm:text-xs font-mono font-bold tracking-widest text-[#FF3B00] uppercase">
+            {config.campaignTag || "02 - CURATED CAMPAIGN LOOKBOOK"}
+          </span>
+        </div>
+
+        {/* Top Header Row matching Image 1 */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8 md:mb-10">
+          <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap">
+            <h2
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-neutral-950 tracking-tight leading-none"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              {config.sectionTitle || "THIS SEASON'S"}
+            </h2>
+            <span
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-neutral-900 font-normal lowercase tracking-normal leading-none"
+              style={{ fontFamily: "var(--font-serif-italic)" }}
+            >
+              {config.sectionSubtitle || "winter drops"}
+            </span>
+          </div>
 
           <Link
             to={config.seeAllLink || "/new-arrivals"}
-            className="group inline-flex items-center gap-1.5 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full border border-neutral-300 hover:border-neutral-950 bg-white hover:bg-neutral-950 hover:text-white text-xs sm:text-sm font-semibold text-neutral-800 transition-all duration-200 shrink-0 shadow-2xs"
+            className="group inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-mono font-bold uppercase tracking-wider text-neutral-900 hover:text-[#FF3B00] underline underline-offset-4 transition-colors shrink-0"
           >
-            <span>{config.seeAllText || "See All"}</span>
-            <ArrowUpRight
-              size={14}
-              strokeWidth={2.2}
-              className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            />
+            <span>{config.seeAllText || "VIEW COMPLETE ARCHIVE (09)"}</span>
+            <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
 
@@ -98,11 +108,11 @@ const ArchivedCatalogSlider = () => {
             type="button"
             onClick={() => scroll("left")}
             aria-label="Scroll left"
-            className={`absolute -left-2 sm:-left-3 md:-left-5 top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-neutral-200/90 text-neutral-800 hover:bg-neutral-950 hover:text-white hover:scale-110 active:scale-95 transition-all cursor-pointer ${
-              canScrollLeft ? "opacity-100" : "opacity-40 hover:opacity-100"
+            className={`absolute -left-2 sm:-left-3 md:-left-4 top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-none bg-white shadow-md border border-neutral-200 text-neutral-900 hover:bg-black hover:text-white transition-all cursor-pointer ${
+              canScrollLeft ? "opacity-100" : "opacity-30 pointer-events-none"
             }`}
           >
-            <ArrowLeft size={18} strokeWidth={1.8} />
+            <ArrowLeft size={16} strokeWidth={2} />
           </button>
 
           {/* Floating Right Navigation Arrow Button */}
@@ -110,55 +120,98 @@ const ArchivedCatalogSlider = () => {
             type="button"
             onClick={() => scroll("right")}
             aria-label="Scroll right"
-            className={`absolute -right-2 sm:-right-3 md:-right-5 top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-neutral-200/90 text-neutral-800 hover:bg-neutral-950 hover:text-white hover:scale-110 active:scale-95 transition-all cursor-pointer ${
-              canScrollRight ? "opacity-100" : "opacity-40 hover:opacity-100"
+            className={`absolute -right-2 sm:-right-3 md:-right-4 top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-none bg-white shadow-md border border-neutral-200 text-neutral-900 hover:bg-black hover:text-white transition-all cursor-pointer ${
+              canScrollRight ? "opacity-100" : "opacity-30 pointer-events-none"
             }`}
           >
-            <ArrowRight size={18} strokeWidth={1.8} />
+            <ArrowRight size={16} strokeWidth={2} />
           </button>
 
           {/* Horizontal Scrollable Row */}
           <div
             ref={scrollContainerRef}
-            className="flex items-center gap-4 sm:gap-5 md:gap-6 overflow-x-auto scrollbar-none scroll-smooth pb-3 px-1"
+            className="flex items-center gap-4 sm:gap-5 md:gap-6 overflow-x-auto scrollbar-none scroll-smooth pb-3 px-0.5"
             style={{ scrollSnapType: "x mandatory" }}
           >
-            {cards.map((card, index) => (
-              <Link
-                key={card.id || index}
-                to={card.link || "/new-arrivals"}
-                className="group relative shrink-0 w-[270px] sm:w-[310px] md:w-[340px] lg:w-[370px] h-[420px] sm:h-[470px] md:h-[510px] lg:h-[530px] rounded-[24px] md:rounded-[30px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.18)] transition-all duration-500 hover:-translate-y-1"
-                style={{ scrollSnapAlign: "start" }}
-              >
-                {/* Full-bleed Lookbook Lifestyle Photography */}
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/models/model1.png";
-                  }}
-                />
+            {cards.map((card, index) => {
+              const badgeLeft =
+                card.badgeLeft ||
+                (index === 0
+                  ? "LOOK 01 • MONOCHROME SET"
+                  : index === 1
+                  ? "LOOK 02 • FLUID DRAPE"
+                  : "LOOK 03 • STUDIO");
 
-                {/* Bottom Dark Gradient Shadow for High-Contrast Clean Typography */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 via-40% to-transparent flex flex-col justify-end p-6 sm:p-7 md:p-8 transition-opacity duration-300">
-                  <h3
-                    className="text-2xl sm:text-3xl md:text-4xl font-extrabold uppercase tracking-wide text-white leading-none drop-shadow-md group-hover:text-amber-300 transition-colors"
-                    style={{ fontFamily: "var(--font-condensed)" }}
-                  >
-                    {card.title}
-                  </h3>
-                  
-                  <p className="text-xs sm:text-[13px] text-white/90 font-normal leading-snug mt-2 drop-shadow line-clamp-2">
-                    {card.subtitle || "More than 100+ collection available for all gender"}
-                  </p>
+              const badgeRight =
+                card.badgeRight ||
+                (index === 0
+                  ? "2 ITEMS IN LOOK"
+                  : index === 1
+                  ? "3 ITEMS IN LOOK"
+                  : "LIMITED DROP");
+
+              const isOrangeBadge = index === 2 || badgeLeft.includes("STUDIO");
+
+              return (
+                <div
+                  key={card.id || index}
+                  className="group relative shrink-0 w-[280px] sm:w-[320px] md:w-[360px] lg:w-[390px] aspect-[3/4.2] rounded-none overflow-hidden bg-neutral-900 shadow-sm transition-all duration-300"
+                  style={{ scrollSnapAlign: "start" }}
+                >
+                  {/* Full-bleed Lookbook Lifestyle Photography */}
+                  <img
+                    src={card.image}
+                    alt={card.title}
+                    className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/models/model1.png";
+                    }}
+                  />
+
+                  {/* Top Badges (Sharp rectangles matching Image 1, NO //) */}
+                  <div className="absolute top-3.5 inset-x-3.5 z-20 flex items-center justify-between pointer-events-none">
+                    <span
+                      className={`rounded-none px-2.5 py-1 text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-wider ${
+                        isOrangeBadge
+                          ? "bg-[#FF3B00] text-white"
+                          : "bg-black text-white"
+                      }`}
+                    >
+                      {badgeLeft}
+                    </span>
+
+                    {badgeRight && (
+                      <span className="rounded-none bg-white text-black px-2.5 py-1 text-[9px] md:text-[10px] font-mono font-black uppercase tracking-wider shadow-2xs">
+                        {badgeRight}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Bottom Dark Gradient Shadow for High-Contrast Clean Typography */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 via-50% to-transparent flex flex-col justify-end p-5 sm:p-6 md:p-7 z-10">
+                    <h3
+                      className="text-lg sm:text-xl md:text-2xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-md"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
+                      {card.title}
+                    </h3>
+                    
+                    <p className="text-[11px] sm:text-xs text-neutral-200/90 font-medium leading-relaxed mt-1.5 drop-shadow line-clamp-2">
+                      {card.subtitle}
+                    </p>
+
+                    <Link
+                      to={card.link || "/new-arrivals"}
+                      className="inline-flex items-center gap-1.5 mt-3.5 px-4 py-2 rounded-none bg-white hover:bg-[#FF3B00] text-neutral-950 hover:text-white text-[11px] font-black uppercase tracking-wider transition-colors max-w-fit shadow-xs"
+                    >
+                      <span>{card.buttonText || "SHOP THIS LOOK"}</span>
+                      <ArrowUpRight size={13} strokeWidth={2.5} />
+                    </Link>
+                  </div>
                 </div>
-
-                {/* Subtle Hover Ring Accent */}
-                <div className="absolute inset-0 rounded-[24px] md:rounded-[30px] border border-white/0 group-hover:border-white/30 transition-colors pointer-events-none" />
-              </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

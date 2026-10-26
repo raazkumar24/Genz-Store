@@ -50,11 +50,11 @@ const Button = ({
   };
 
   const sizes = {
-    xs: "px-3 py-1.5 text-[11px] rounded-full gap-1.5",
-    sm: "px-4 py-2 text-xs rounded-full gap-1.5",
-    md: "px-6 py-2.5 text-xs md:text-sm rounded-full gap-2",
-    lg: "px-8 py-3.5 text-sm md:text-base rounded-full gap-2.5",
-    xl: "px-10 py-4 text-base md:text-lg rounded-full gap-3",
+    xs: "px-3 py-1.5 text-[11px] rounded-none gap-1.5",
+    sm: "px-4 py-2 text-xs rounded-none gap-1.5",
+    md: "px-6 py-2.5 text-xs md:text-sm rounded-none gap-2",
+    lg: "px-8 py-3.5 text-sm md:text-base rounded-none gap-2.5",
+    xl: "px-10 py-4 text-base md:text-lg rounded-none gap-3",
   };
 
   const iconSizes = {

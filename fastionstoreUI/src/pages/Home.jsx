@@ -15,14 +15,14 @@ import ProductFilters, {
 
 // Loading skeleton for products to show before data is fetched
 const ProductSkeleton = () => (
-  <div className="animate-pulse rounded-2xl border border-neutral-200/80 bg-white p-3 space-y-3">
-    <div className="aspect-[4/5] w-full rounded-xl bg-neutral-200/60" />
+  <div className="animate-pulse rounded-none border border-neutral-200/80 bg-white p-3 space-y-3">
+    <div className="aspect-[4/5] w-full rounded-none bg-neutral-200/60" />
     <div className="space-y-2 pt-1">
-      <div className="h-3.5 w-3/4 rounded bg-neutral-200/60" />
-      <div className="h-3 w-1/2 rounded bg-neutral-200/60" />
+      <div className="h-3.5 w-3/4 rounded-none bg-neutral-200/60" />
+      <div className="h-3 w-1/2 rounded-none bg-neutral-200/60" />
       <div className="flex items-center justify-between pt-2">
-        <div className="h-5 w-16 rounded bg-neutral-200/60" />
-        <div className="h-8 w-8 rounded-full bg-neutral-200/60" />
+        <div className="h-5 w-16 rounded-none bg-neutral-200/60" />
+        <div className="h-8 w-8 rounded-none bg-neutral-200/60" />
       </div>
     </div>
   </div>
@@ -154,7 +154,7 @@ const Home = () => {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 border-b border-neutral-200/80 pb-5">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-2.5">
+            <div className="inline-flex items-center gap-2 rounded-none bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-2.5">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
@@ -173,7 +173,7 @@ const Home = () => {
                 <button
                   type="button"
                   onClick={handleResetFilters}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-200/80 hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer"
+                  className="flex h-9 w-9 items-center justify-center rounded-none bg-neutral-200/80 hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer"
                   title="Clear All Filters"
                 >
                   <ArrowLeft size={16} />
@@ -213,26 +213,6 @@ const Home = () => {
                   ? `Showing ${filteredProducts.length} drops available in ${filters.color}.`
                   : "Heavyweight 280+ GSM combed cotton, drop-shoulder silhouettes, and boxy fits."}
             </p>
-
-            {/* Active Color Filter Pill */}
-            {filters.color !== "all" && (
-              <div className="flex items-center gap-2 mt-3">
-                <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
-                  Active:
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFilters((prev) => ({ ...prev, color: "all" }));
-                    navigate("/");
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neutral-900 text-white text-xs font-black uppercase tracking-wider hover:bg-[var(--color-primary)] transition-colors cursor-pointer shadow-xs"
-                >
-                  <span>Color: {filters.color}</span>
-                  <span className="text-neutral-400 hover:text-white">✕</span>
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
@@ -256,8 +236,8 @@ const Home = () => {
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center rounded-3xl bg-white border border-neutral-200/80 p-8 shadow-xs">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-400">
+          <div className="flex flex-col items-center justify-center py-16 text-center rounded-none bg-white border border-neutral-200/80 p-8 shadow-xs">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-none bg-neutral-100 text-neutral-400">
               <SlidersHorizontal size={28} />
             </div>
             <h3
@@ -273,7 +253,7 @@ const Home = () => {
             <button
               type="button"
               onClick={handleResetFilters}
-              className="mt-5 flex items-center gap-2 rounded-full bg-neutral-900 px-6 py-2.5 text-xs font-black uppercase tracking-wider text-white hover:bg-[var(--color-primary)] transition-colors shadow-xs cursor-pointer"
+              className="mt-5 flex items-center gap-2 rounded-none bg-neutral-900 px-6 py-2.5 text-xs font-black uppercase tracking-wider text-white hover:bg-[var(--color-primary)] transition-colors shadow-xs cursor-pointer"
             >
               <RefreshCw size={14} /> Reset All Filters
             </button>

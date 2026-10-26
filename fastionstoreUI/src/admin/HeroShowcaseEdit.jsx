@@ -385,34 +385,34 @@ const HeroShowcaseEdit = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
           <button
             type="button"
             onClick={handleReset}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
           >
             <RotateCcw size={14} />
-            Reset Defaults
+            <span>Reset</span>
           </button>
 
           <button
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-wider transition-all shadow-md hover:shadow-lg active:scale-95 cursor-pointer disabled:opacity-50"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-wider transition-all shadow-md hover:shadow-lg active:scale-95 cursor-pointer disabled:opacity-50"
           >
             <Check size={15} strokeWidth={3} className="text-emerald-400" />
-            <span>{saving ? "Saving Changes..." : "Save & Publish Live"}</span>
+            <span>{saving ? "Saving..." : "Save & Publish"}</span>
           </button>
         </div>
       </div>
 
       {/* Main Studio Navigation Tabs */}
-      <div className="flex items-center gap-2 p-1.5 bg-gray-100 rounded-2xl max-w-fit border border-gray-200/80">
+      <div className="flex items-center gap-2 p-1.5 bg-gray-100 rounded-2xl max-w-full overflow-x-auto hide-scrollbar border border-gray-200/80">
         <button
           type="button"
           onClick={() => setActiveTab("lookbook")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
             activeTab === "lookbook"
               ? "bg-white text-gray-900 shadow-xs"
               : "text-gray-500 hover:text-gray-900"
@@ -428,7 +428,7 @@ const HeroShowcaseEdit = () => {
         <button
           type="button"
           onClick={() => setActiveTab("slides")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
             activeTab === "slides"
               ? "bg-white text-gray-900 shadow-xs"
               : "text-gray-500 hover:text-gray-900"
@@ -441,7 +441,7 @@ const HeroShowcaseEdit = () => {
         <button
           type="button"
           onClick={() => setActiveTab("spotlight")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
             activeTab === "spotlight"
               ? "bg-white text-gray-900 shadow-xs"
               : "text-gray-500 hover:text-gray-900"

@@ -362,20 +362,20 @@ const ProductFilters = ({
   return (
     <div className="w-full space-y-3.5">
       {/* Top Filter & Sort Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
-        {/* Left: Category Navigation Tabs */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-neutral-200">
+        {/* Left: Category Navigation Tabs (Sharp Rectangles matching Image 3) */}
         {showCategoryTabs && (
-          <div className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-1">
+          <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar py-1">
             {CATEGORY_TABS.map((tab) => {
               const isActive = (filters.category || "all") === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => onFilterChange({ ...filters, category: tab.id })}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer shrink-0 ${
+                  className={`px-4 py-2 rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer shrink-0 ${
                     isActive
-                      ? "bg-neutral-900 text-white shadow-xs"
-                      : "bg-white text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 border border-neutral-200/90"
+                      ? "bg-black text-white shadow-xs"
+                      : "bg-[#F3F4F0] text-neutral-700 hover:bg-neutral-200 hover:text-black"
                   }`}
                 >
                   {tab.label}
@@ -385,22 +385,26 @@ const ProductFilters = ({
           </div>
         )}
 
-        {/* Right Actions: Filter Button + Sort Dropdown */}
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end shrink-0">
+        {/* Right Actions: Showing Count + Filter Button + Sort Dropdown */}
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end shrink-0">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-neutral-500 hidden md:inline">
+            SHOWING {totalResults} SILHOUETTES
+          </span>
+
           {/* Quick Filters Modal Trigger */}
           <button
             type="button"
             onClick={() => setIsFilterModalOpen(true)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer border ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
               activeFilterCount > 0
-                ? "bg-neutral-900 text-white border-neutral-900"
-                : "bg-white text-neutral-800 border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50"
+                ? "bg-black text-white border-black"
+                : "bg-white text-neutral-800 border-neutral-300 hover:border-black"
             }`}
           >
-            <SlidersHorizontal size={13} strokeWidth={2.4} />
+            <SlidersHorizontal size={12} strokeWidth={2.4} />
             <span>Filters</span>
             {activeFilterCount > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-primary)] px-1 text-[10px] font-black text-white">
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-none bg-[#FF3B00] px-1 text-[10px] font-black text-white">
                 {activeFilterCount}
               </span>
             )}
@@ -408,11 +412,11 @@ const ProductFilters = ({
 
           {/* Sort Dropdown */}
           <div className="relative flex items-center shrink-0">
-            <ArrowUpDown size={13} className="absolute left-3 text-neutral-400 pointer-events-none" />
+            <ArrowUpDown size={12} className="absolute left-3 text-neutral-400 pointer-events-none" />
             <select
               value={filters.sortBy || "latest"}
               onChange={(e) => onFilterChange({ ...filters, sortBy: e.target.value })}
-              className="appearance-none rounded-xl bg-white pl-8 pr-8 py-2 text-xs font-black uppercase tracking-wider text-neutral-800 shadow-2xs border border-neutral-200 focus:outline-none focus:border-neutral-900 cursor-pointer"
+              className="appearance-none rounded-none bg-white pl-8 pr-7 py-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-800 border border-neutral-300 focus:outline-none focus:border-black cursor-pointer"
             >
               {SORT_OPTIONS.map((opt) => (
                 <option key={opt.id} value={opt.id}>
@@ -420,7 +424,7 @@ const ProductFilters = ({
                 </option>
               ))}
             </select>
-            <ChevronDown size={12} className="absolute right-2.5 text-neutral-400 pointer-events-none" />
+            <ChevronDown size={12} className="absolute right-2 text-neutral-400 pointer-events-none" />
           </div>
         </div>
       </div>

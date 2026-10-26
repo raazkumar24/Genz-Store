@@ -1,27 +1,32 @@
 import React, { useState } from "react";
 import { 
   MapPin, Mail, Send, MessageSquare, Clock, 
-  ChevronDown, CheckCircle2, Zap
+  ChevronDown, Check, RotateCcw, ShieldCheck, 
+  Package, Zap, ArrowRight, HelpCircle
 } from "lucide-react";
 import { Button, BackButton } from "../components/ui";
 import { useToast } from "../context/ToastContext";
 
 const faqs = [
   {
-    q: "How fast will my order dispatch?",
-    a: "All in-stock drop orders placed before 2:00 PM IST dispatch the same business day. Delivery across major metro cities takes 24 to 48 hours, and 3 to 4 days for rest of India.",
+    q: "How fast will my order dispatch from the warehouse?",
+    a: "All in-stock drop orders placed before 2:00 PM IST dispatch the same business day. Delivery across major Indian metros takes 24 to 48 hours, and 3 to 4 business days for all other tier-2/3 pincodes.",
   },
   {
-    q: "How do 14-day doorstep exchanges work?",
-    a: "If the size doesn't fit your desired streetwear silhouette, simply contact our concierge team or WhatsApp with your Order ID. We arrange a free doorstep reverse pickup and courier your replacement size immediately.",
+    q: "How does the 14-day reverse doorstep exchange work?",
+    a: "If the size or silhouette isn't exactly how you like it, simply contact our concierge team or WhatsApp with your Order ID. We arrange an automated free doorstep reverse pickup and dispatch your replacement size simultaneously.",
   },
   {
-    q: "Are the fabrics really 280+ GSM heavyweight cotton?",
-    a: "Yes! Every Genz Store tee and hoodie is engineered with 280 to 380 GSM combed pure organic cotton. Pre-shrunk and bio-washed for lasting structural drape that won't fade or warp.",
+    q: "Are all garments true 280+ GSM heavyweight cotton?",
+    a: "Yes. Every tee and hoodie in our archive is crafted from 280 to 400 GSM 100% combed ring-spun organic cotton. Pre-shrunk and bio-enzyme washed so that the fabric maintains its sharp, structured boxy drape.",
   },
   {
-    q: "Do you offer Cash on Delivery (COD)?",
-    a: "Yes, COD is available across 26,000+ pincodes in India. You can also pay seamlessly online via UPI, Credit/Debit Cards, and Net Banking.",
+    q: "Do you offer Cash on Delivery (COD) across India?",
+    a: "Yes, COD is active across 26,000+ Indian pincodes. You can also pay seamlessly online via UPI, Credit/Debit Cards, and Net Banking.",
+  },
+  {
+    q: "What are the recommended care instructions for high-density prints?",
+    a: "Wash inside-out in cold water using gentle cycle detergent. Do not bleach or tumble dry on high heat. Iron on reverse side of prints to preserve archival pigment crispness.",
   },
 ];
 
@@ -47,7 +52,7 @@ const Contact = () => {
 
     setTimeout(() => {
       setLoading(false);
-      addToast("Message received! Our streetwear concierge will reply within 2 hours.", "success");
+      addToast("Inquiry logged! Our streetwear concierge will reply within 2 business hours.", "success");
       setFormData({
         name: "",
         email: "",
@@ -55,124 +60,121 @@ const Contact = () => {
         subject: "Order Tracking & Dispatch",
         message: "",
       });
-    }, 800);
+    }, 700);
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-8 md:py-14 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--color-bg)] py-8 sm:py-14 px-4 sm:px-6 lg:px-8 pb-24">
       <div className="max-w-7xl mx-auto space-y-12">
         
-        {/* Back Button & Header */}
+        {/* Top Header & Breadcrumb */}
         <div className="flex flex-col items-start gap-4">
-          <BackButton />
+          <BackButton fallbackPath="/" className="rounded-none border-neutral-300 hover:border-black" />
           
-          <div className="w-full text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 rounded-full bg-neutral-900 text-white px-3.5 py-1 text-xs font-black uppercase tracking-widest mb-3">
+          <div className="w-full text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-none bg-neutral-950 text-white px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-widest">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              24/7 Streetwear Concierge
+              <span>CLIENT CONCIERGE DESK</span>
             </div>
             
             <h1
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-neutral-900 leading-tight break-words max-w-full"
+              className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-neutral-950 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Get In <span className="text-outline-primary ml-1">Touch</span>
+              GET IN <span className="text-[var(--color-primary)]">TOUCH</span>
             </h1>
-            <p className="mt-3 text-sm md:text-base text-neutral-600 font-medium max-w-xl mx-auto">
-              Questions about an exclusive drop, size advice, or doorstep exchange? Our crew is ready to assist.
+
+            <p className="text-xs sm:text-sm text-neutral-600 font-mono max-w-xl mx-auto leading-relaxed">
+              Have questions regarding an exclusive drop, size advice, or reverse exchange? Our Mumbai crew responds in real time.
             </p>
           </div>
         </div>
 
-        {/* 4 Quick Direct Contact Channels */}
+        {/* 4 Direct Contact Bento Channels */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* WhatsApp */}
+          {/* WhatsApp VIP */}
           <a
             href="https://wa.me/919876543210"
             target="_blank"
             rel="noreferrer"
-            className="flex items-start gap-4 p-5 rounded-3xl bg-white border border-neutral-200/80 shadow-2xs hover:border-neutral-900 transition-all group cursor-pointer"
+            className="flex items-start gap-4 p-5 rounded-none bg-white border border-neutral-300 shadow-2xs hover:border-neutral-950 hover:shadow-xs transition-all group cursor-pointer"
           >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-              <MessageSquare size={20} />
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-none bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+              <MessageSquare size={19} />
             </div>
-            <div>
-              <p className="text-xs font-black uppercase tracking-wider text-neutral-400">Instant Chat</p>
-              <p className="text-sm font-bold text-neutral-900 mt-0.5">WhatsApp VIP</p>
-              <p className="text-xs text-neutral-500 mt-1">+91 98765 43210</p>
+            <div className="min-w-0">
+              <p className="text-[10px] font-mono font-black uppercase tracking-wider text-neutral-400">INSTANT CHAT</p>
+              <p className="text-sm font-black font-mono text-neutral-950 mt-0.5">WhatsApp VIP</p>
+              <p className="text-xs font-mono text-neutral-600 mt-1 truncate">+91 98765 43210</p>
             </div>
           </a>
 
-          {/* Email */}
+          {/* Email Concierge */}
           <a
             href="mailto:support@genzstore.com"
-            className="flex items-start gap-4 p-5 rounded-3xl bg-white border border-neutral-200/80 shadow-2xs hover:border-neutral-900 transition-all group cursor-pointer"
+            className="flex items-start gap-4 p-5 rounded-none bg-white border border-neutral-300 shadow-2xs hover:border-neutral-950 hover:shadow-xs transition-all group cursor-pointer"
           >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors">
-              <Mail size={20} />
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-none bg-sky-50 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors">
+              <Mail size={19} />
             </div>
-            <div>
-              <p className="text-xs font-black uppercase tracking-wider text-neutral-400">Email Support</p>
-              <p className="text-sm font-bold text-neutral-900 mt-0.5">Concierge Desk</p>
-              <p className="text-xs text-neutral-500 mt-1">support@genzstore.com</p>
+            <div className="min-w-0">
+              <p className="text-[10px] font-mono font-black uppercase tracking-wider text-neutral-400">EMAIL SUPPORT</p>
+              <p className="text-sm font-black font-mono text-neutral-950 mt-0.5">Concierge Desk</p>
+              <p className="text-xs font-mono text-neutral-600 mt-1 truncate">support@genzstore.com</p>
             </div>
           </a>
 
           {/* Studio Flagship */}
-          <div className="flex items-start gap-4 p-5 rounded-3xl bg-white border border-neutral-200/80 shadow-2xs">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-50 text-orange-600">
-              <MapPin size={20} />
+          <div className="flex items-start gap-4 p-5 rounded-none bg-white border border-neutral-300 shadow-2xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-none bg-amber-50 text-amber-600">
+              <MapPin size={19} />
             </div>
-            <div>
-              <p className="text-xs font-black uppercase tracking-wider text-neutral-400">Studio & HQ</p>
-              <p className="text-sm font-bold text-neutral-900 mt-0.5">Bandra West, Mumbai</p>
-              <p className="text-xs text-neutral-500 mt-1">Linking Road 400050</p>
+            <div className="min-w-0">
+              <p className="text-[10px] font-mono font-black uppercase tracking-wider text-neutral-400">STUDIO ARCHIVE</p>
+              <p className="text-sm font-black font-mono text-neutral-950 mt-0.5">Bandra West, Mumbai</p>
+              <p className="text-xs font-mono text-neutral-600 mt-1 truncate">Linking Road, 400050</p>
             </div>
           </div>
 
-          {/* Instagram Concierge */}
-          <a
-            href="https://instagram.com"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-start gap-4 p-5 rounded-3xl bg-white border border-neutral-200/80 shadow-2xs hover:border-neutral-900 transition-all group cursor-pointer"
-          >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-pink-50 text-pink-600 group-hover:bg-pink-600 group-hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
-  <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
-</svg>
+          {/* 14-Day Exchange Desk */}
+          <div className="flex items-start gap-4 p-5 rounded-none bg-white border border-neutral-300 shadow-2xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-none bg-[var(--color-primary)]/10 text-[var(--color-primary)]">
+              <RotateCcw size={19} />
             </div>
-            <div>
-              <p className="text-xs font-black uppercase tracking-wider text-neutral-400">Community</p>
-              <p className="text-sm font-bold text-neutral-900 mt-0.5">Instagram DMs</p>
-              <p className="text-xs text-neutral-500 mt-1">@genzstore.drops</p>
+            <div className="min-w-0">
+              <p className="text-[10px] font-mono font-black uppercase tracking-wider text-neutral-400">REVERSE DISPATCH</p>
+              <p className="text-sm font-black font-mono text-neutral-950 mt-0.5">14-Day Exchanges</p>
+              <p className="text-xs font-mono text-neutral-600 mt-1 truncate">Doorstep Pickup Service</p>
             </div>
-          </a>
+          </div>
         </div>
 
-        {/* Main Grid: Contact Form + Hours / Info */}
+        {/* Main Section: Interactive Form + Studio Logistics */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Contact Form (7 Cols) */}
-          <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-10 border border-neutral-200/80 shadow-xs">
-            <h2
-              className="text-2xl font-black uppercase text-neutral-900 mb-2 tracking-tight"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Send Us a <span className="text-[var(--color-primary)]">Message</span>
-            </h2>
-            <p className="text-xs text-neutral-500 mb-8 font-medium">
-              Fill out the details below. We typically respond within 2 to 4 business hours.
-            </p>
+          {/* Inquiry Form (7 Columns) */}
+          <div className="lg:col-span-7 bg-white rounded-none p-6 sm:p-10 border border-neutral-300 shadow-xs space-y-6">
+            <div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--color-primary)]">DIRECT DISPATCH INQUIRY</span>
+              <h2
+                className="text-xl sm:text-2xl md:text-3xl font-black uppercase text-neutral-950 tracking-tight mt-1"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Send Us A Message
+              </h2>
+              <p className="text-xs font-mono text-neutral-500 mt-1">
+                Fill in your order information below. Our team responds within 2 hours.
+              </p>
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-neutral-700 mb-1.5">
-                    Your Name *
+                  <label className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
+                    Your Full Name *
                   </label>
                   <input
                     type="text"
@@ -181,12 +183,12 @@ const Contact = () => {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Kabir Sen"
-                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-xs font-semibold text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
+                    className="w-full rounded-none border border-neutral-300 bg-neutral-50 px-4 py-3 text-xs font-mono font-bold text-neutral-900 focus:border-neutral-950 focus:bg-white focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-neutral-700 mb-1.5">
+                  <label className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
                     Email Address *
                   </label>
                   <input
@@ -196,14 +198,14 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="kabir@example.com"
-                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-xs font-semibold text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
+                    className="w-full rounded-none border border-neutral-300 bg-neutral-50 px-4 py-3 text-xs font-mono font-bold text-neutral-900 focus:border-neutral-950 focus:bg-white focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-neutral-700 mb-1.5">
+                  <label className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
                     Order ID (Optional)
                   </label>
                   <input
@@ -211,145 +213,170 @@ const Contact = () => {
                     name="orderId"
                     value={formData.orderId}
                     onChange={handleChange}
-                    placeholder="e.g. #GZ-8921"
-                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-xs font-semibold text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
+                    placeholder="e.g. GNZ-89240"
+                    className="w-full rounded-none border border-neutral-300 bg-neutral-50 px-4 py-3 text-xs font-mono font-bold text-neutral-900 focus:border-neutral-950 focus:bg-white focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-neutral-700 mb-1.5">
-                    Subject Topic *
+                  <label className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
+                    Subject Topic
                   </label>
                   <select
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-xs font-bold text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none"
+                    className="w-full rounded-none border border-neutral-300 bg-neutral-50 px-4 py-3 text-xs font-mono font-bold text-neutral-900 focus:border-neutral-950 focus:bg-white focus:outline-none cursor-pointer"
                   >
-                    <option value="Order Tracking & Dispatch">Order Tracking & Dispatch</option>
-                    <option value="Size Exchange & Return Request">Size Exchange & Return Request</option>
-                    <option value="Product & Fabric Sizing Advice">Product & Fabric Sizing Advice</option>
-                    <option value="Brand Collaborations & Wholesale">Brand Collaborations & Wholesale</option>
-                    <option value="Other Inquiries">Other Inquiries</option>
+                    <option>Order Tracking & Dispatch</option>
+                    <option>14-Day Size Exchange</option>
+                    <option>Product Fit & GSM Advice</option>
+                    <option>Payment & COD Query</option>
+                    <option>Wholesale & Collaborations</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-neutral-700 mb-1.5">
-                  Message *
+                <label className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-800 mb-1.5">
+                  Message Description *
                 </label>
                 <textarea
                   name="message"
                   required
-                  rows={4}
+                  rows={5}
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Tell us what you need help with..."
-                  className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-xs font-semibold text-neutral-900 focus:border-neutral-900 focus:bg-white focus:outline-none resize-none"
-                ></textarea>
+                  placeholder="Detail your inquiry or size exchange specifications..."
+                  className="w-full rounded-none border border-neutral-300 bg-neutral-50 px-4 py-3 text-xs font-mono text-neutral-900 focus:border-neutral-950 focus:bg-white focus:outline-none resize-none"
+                />
               </div>
 
-              <Button
+              <button
                 type="submit"
-                variant="primary"
-                size="lg"
-                loading={loading}
-                className="w-full sm:w-auto px-8 text-xs font-black uppercase tracking-wider shadow-md"
-                icon={<Send size={15} />}
+                disabled={loading}
+                className="w-full h-12 rounded-none bg-neutral-950 hover:bg-black text-white text-xs font-mono font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
               >
-                Send Message
-              </Button>
+                {loading ? (
+                  <span>TRANSMITTING MESSAGE...</span>
+                ) : (
+                  <>
+                    <Send size={14} />
+                    <span>TRANSMIT INQUIRY</span>
+                  </>
+                )}
+              </button>
             </form>
           </div>
 
-          {/* Support Guarantee & Operating Hours (5 Cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            
-            {/* Hours Box */}
-            <div className="rounded-3xl bg-neutral-900 text-white p-6 sm:p-8 shadow-sm space-y-4">
-              <div className="flex items-center gap-2">
-                <Clock size={18} className="text-[var(--color-primary)]" />
-                <h3 className="text-base font-black uppercase tracking-wide">Concierge Hours</h3>
+          {/* Logistics & Studio Desk (5 Columns) */}
+          <div className="lg:col-span-5 space-y-5">
+            {/* Operating Hours Card */}
+            <div className="bg-[#0D0D11] text-white rounded-none p-6 sm:p-8 border border-neutral-800 space-y-5">
+              <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
+                <div className="flex items-center gap-2">
+                  <Clock size={16} className="text-[var(--color-primary)]" />
+                  <span className="text-xs font-mono font-black uppercase tracking-wider">Studio Operating Hours</span>
+                </div>
+                <span className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-bold">
+                  <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Active Now</span>
+                </span>
               </div>
-              <div className="space-y-2 text-xs text-neutral-300">
-                <div className="flex justify-between py-1 border-b border-neutral-800">
-                  <span className="font-semibold text-neutral-400">Monday – Saturday</span>
-                  <span className="font-bold text-white">9:00 AM – 9:00 PM IST</span>
+
+              <div className="space-y-3 font-mono text-xs">
+                <div className="flex justify-between items-center text-neutral-300">
+                  <span>Monday - Saturday</span>
+                  <span className="font-bold text-white">10:00 AM - 9:00 PM IST</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-neutral-800">
-                  <span className="font-semibold text-neutral-400">Sunday</span>
-                  <span className="font-bold text-white">10:00 AM – 6:00 PM IST</span>
+                <div className="flex justify-between items-center text-neutral-300">
+                  <span>Sunday Desk</span>
+                  <span className="font-bold text-white">11:00 AM - 6:00 PM IST</span>
                 </div>
-                <div className="flex justify-between py-1">
-                  <span className="font-semibold text-neutral-400">WhatsApp Dispatch</span>
-                  <span className="font-bold text-emerald-400">Active Now ⚡</span>
+                <div className="flex justify-between items-center text-neutral-300">
+                  <span>Dispatch Cutoff</span>
+                  <span className="font-bold text-[var(--color-primary)]">2:00 PM Daily</span>
                 </div>
+              </div>
+
+              <div className="pt-2 border-t border-neutral-800 space-y-2 text-[11px] font-mono text-neutral-400">
+                <p className="flex items-center gap-2">
+                  <Check size={13} className="text-emerald-400 shrink-0" />
+                  <span>Same-day dispatch for in-stock drops</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Check size={13} className="text-emerald-400 shrink-0" />
+                  <span>Reverse doorstep pickup across 26,000+ pincodes</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Check size={13} className="text-emerald-400 shrink-0" />
+                  <span>Zero restocking fees on size swaps</span>
+                </p>
               </div>
             </div>
 
-            {/* Our Streetwear Promise */}
-            <div className="rounded-3xl bg-white border border-neutral-200/80 p-6 sm:p-8 space-y-4 shadow-2xs">
+            {/* Quick WhatsApp Card */}
+            <div className="bg-emerald-950/20 border border-emerald-900/40 p-6 rounded-none space-y-3">
               <div className="flex items-center gap-2">
-                <Zap size={18} className="text-[var(--color-primary)]" />
-                <h3 className="text-base font-black uppercase tracking-wide text-neutral-900">Our Streetwear Promise</h3>
+                <Zap size={16} className="text-emerald-500" />
+                <span className="text-xs font-mono font-black uppercase tracking-wider text-emerald-400">Fastest Resolution Channel</span>
               </div>
-              
-              <ul className="space-y-3 text-xs text-neutral-600 font-medium">
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
-                  <span><strong>14-Day Free Exchange</strong> with reverse doorstep courier pickup.</span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
-                  <span><strong>Fast Dispatch</strong> within 24 to 48 business hours.</span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
-                  <span><strong>100% Authentic</strong> heavyweight 280+ GSM combed cotton.</span>
-                </li>
-              </ul>
+              <p className="text-xs font-mono text-neutral-700 leading-relaxed">
+                Need instantaneous order tracking or sizing assistance before checking out? Ping our WhatsApp line directly for under-5-minute response times.
+              </p>
+              <a
+                href="https://wa.me/919876543210"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 text-xs font-mono font-black uppercase tracking-wider text-emerald-700 hover:text-emerald-800 transition-colors"
+              >
+                <span>Launch WhatsApp Hotline</span>
+                <ArrowRight size={13} />
+              </a>
             </div>
-
           </div>
 
         </div>
 
-        {/* Streetwear FAQ Section */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-neutral-200/80 shadow-xs">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <h2
-              className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-neutral-900"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Frequently Asked <span className="text-[var(--color-primary)]">Questions</span>
-            </h2>
-            <p className="text-xs text-neutral-500 mt-1 font-medium">Quick answers to standard drop inquiries</p>
+        {/* Streetwear FAQ Accordion Module */}
+        <div className="bg-white rounded-none p-6 sm:p-10 border border-neutral-300 shadow-xs space-y-6">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-primary)]">
+            <HelpCircle size={15} />
+            <span>KNOWLEDGE BASE & FAQS</span>
           </div>
 
-          <div className="max-w-3xl mx-auto space-y-3">
-            {faqs.map((faq, index) => {
-              const isOpen = openFaq === index;
+          <div>
+            <h2
+              className="text-xl sm:text-2xl md:text-3xl font-black uppercase text-neutral-950 tracking-tight"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xs font-mono text-neutral-500 mt-1">
+              Quick answers regarding dispatch, fabric density, reverse pickups, and care.
+            </p>
+          </div>
+
+          <div className="divide-y divide-neutral-200 border-t border-neutral-200">
+            {faqs.map((faq, idx) => {
+              const isOpen = openFaq === idx;
               return (
-                <div
-                  key={index}
-                  className="rounded-2xl border border-neutral-200/80 overflow-hidden transition-all bg-neutral-50/50"
-                >
+                <div key={idx} className="py-4">
                   <button
-                    onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="w-full flex items-center justify-between p-4 sm:p-5 text-left text-xs sm:text-sm font-black uppercase tracking-wider text-neutral-900 hover:text-[var(--color-primary)] transition cursor-pointer"
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    className="w-full flex items-center justify-between text-left gap-4 cursor-pointer"
                   >
-                    <span>{faq.q}</span>
-                    <ChevronDown
-                      size={18}
-                      className={`shrink-0 text-neutral-400 transition-transform duration-200 ${
-                        isOpen ? "rotate-180 text-[var(--color-primary)]" : ""
-                      }`}
-                    />
+                    <span className="text-xs sm:text-sm font-mono font-black uppercase text-neutral-950">
+                      {faq.q}
+                    </span>
+                    <span className={`p-1 rounded-none border border-neutral-300 text-neutral-700 transition-transform duration-200 shrink-0 ${isOpen ? "rotate-180 bg-neutral-950 text-white border-neutral-950" : "bg-neutral-50"}`}>
+                      <ChevronDown size={14} />
+                    </span>
                   </button>
 
                   {isOpen && (
-                    <div className="px-4 sm:px-5 pb-5 text-xs text-neutral-600 leading-relaxed border-t border-neutral-100 pt-3">
+                    <div className="pt-3 text-xs font-mono text-neutral-600 leading-relaxed pr-6 animate-in fade-in">
                       {faq.a}
                     </div>
                   )}

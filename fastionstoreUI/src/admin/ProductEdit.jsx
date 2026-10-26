@@ -25,6 +25,8 @@ import {
   Package,
   Eye,
   SlidersHorizontal,
+  Scissors,
+  Check,
 } from "lucide-react";
 
 const PREDEFINED_SIZES = [
@@ -75,6 +77,42 @@ const SPEC_PRESETS = [
   { key: "Origin", placeholder: "Crafted in India" },
 ];
 
+export const MATERIAL_PRESETS = [
+  "100% Combed Cotton",
+  "French Terry Cotton",
+  "Heavyweight Fleece",
+  "Cotton Silk",
+  "Pure Silk",
+  "Acid Wash Vintage Cotton",
+  "Linen Blend",
+  "Cotton Twill",
+  "Ripstop Fabric",
+  "Raw Denim",
+  "Poly-Cotton Blend",
+];
+
+export const FIT_PRESETS = [
+  "Boxy Fit",
+  "Oversized Fit",
+  "Straight Fit",
+  "Loose Fit",
+  "Relaxed Fit",
+  "Slouchy Drop Shoulder",
+  "Regular Fit",
+  "Slim Fit",
+  "Baggy Skate Fit",
+  "Tactical Cargo Fit",
+];
+
+export const GSM_PRESETS = [
+  "240 GSM",
+  "280 GSM",
+  "320 GSM",
+  "380 GSM",
+  "400 GSM",
+  "180 GSM",
+];
+
 const ProductEdit = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
@@ -94,6 +132,9 @@ const ProductEdit = () => {
     brand: "Fastion Originals",
     topHighlights: "",
     itemDetails: "",
+    material: "100% Combed Cotton",
+    fit: "Oversized Fit",
+    gsm: "280 GSM",
   });
 
   const [variants, setVariants] = useState([
@@ -140,6 +181,21 @@ const ProductEdit = () => {
         brand: product.brand || "Fastion Originals",
         topHighlights: product.productDetails?.topHighlights?.join("\n") || "",
         itemDetails: product.productDetails?.itemDetails || "",
+        material:
+          product.material ||
+          product.productDetails?.material ||
+          product.productDetails?.specifications?.find((s) => s.key?.toLowerCase() === "fabric")?.value ||
+          "",
+        fit:
+          product.fit ||
+          product.productDetails?.fit ||
+          product.productDetails?.specifications?.find((s) => s.key?.toLowerCase() === "fit")?.value ||
+          "",
+        gsm:
+          product.gsm ||
+          product.productDetails?.gsm ||
+          product.productDetails?.specifications?.find((s) => s.key?.toLowerCase() === "gsm")?.value ||
+          "",
       });
 
       if (product.variants && product.variants.length > 0) {
@@ -185,6 +241,61 @@ const ProductEdit = () => {
       nextTags = [...currentTags, tag];
     }
     setFormData((curr) => ({ ...curr, collection: nextTags.join(", ") }));
+  };
+
+  // Quick 1-click Presets handlers that auto-sync with specifications
+  const handleSelectMaterial = (mat) => {
+    setFormData((prev) => ({ ...prev, material: mat }));
+    if (!mat) return;
+    setSpecifications((prev) => {
+      const exists = prev.find(
+        (s) => s.key.toLowerCase() === "fabric" || s.key.toLowerCase() === "material"
+      );
+      if (exists) {
+        return prev.map((s) =>
+          s.key.toLowerCase() === "fabric" || s.key.toLowerCase() === "material"
+            ? { ...s, value: mat }
+            : s
+        );
+      }
+      return [...prev, { key: "Fabric", value: mat }];
+    });
+  };
+
+  const handleSelectFit = (fit) => {
+    setFormData((prev) => ({ ...prev, fit }));
+    if (!fit) return;
+    setSpecifications((prev) => {
+      const exists = prev.find(
+        (s) => s.key.toLowerCase() === "fit" || s.key.toLowerCase() === "silhouette"
+      );
+      if (exists) {
+        return prev.map((s) =>
+          s.key.toLowerCase() === "fit" || s.key.toLowerCase() === "silhouette"
+            ? { ...s, value: fit }
+            : s
+        );
+      }
+      return [...prev, { key: "Fit", value: fit }];
+    });
+  };
+
+  const handleSelectGsm = (gsm) => {
+    setFormData((prev) => ({ ...prev, gsm }));
+    if (!gsm) return;
+    setSpecifications((prev) => {
+      const exists = prev.find(
+        (s) => s.key.toLowerCase() === "gsm" || s.key.toLowerCase() === "weight"
+      );
+      if (exists) {
+        return prev.map((s) =>
+          s.key.toLowerCase() === "gsm" || s.key.toLowerCase() === "weight"
+            ? { ...s, value: gsm }
+            : s
+        );
+      }
+      return [...prev, { key: "GSM", value: gsm }];
+    });
   };
 
   // Variant change handler
@@ -342,6 +453,9 @@ const ProductEdit = () => {
       payload.append("description", formData.description || formData.itemDetails || formData.name);
       payload.append("gender", formData.gender);
       if (formData.brand) payload.append("brand", formData.brand);
+      if (formData.material) payload.append("material", formData.material);
+      if (formData.fit) payload.append("fit", formData.fit);
+      if (formData.gsm) payload.append("gsm", formData.gsm);
 
       if (formData.category) {
         const categoryArray = formData.category.split(",").map((c) => c.trim()).filter(Boolean);
@@ -363,6 +477,9 @@ const ProductEdit = () => {
         specifications: specifications.filter(
           (s) => s.key.trim() !== "" && s.value.trim() !== "",
         ),
+        material: formData.material,
+        fit: formData.fit,
+        gsm: formData.gsm,
         itemDetails: formData.itemDetails,
       };
       payload.append("productDetails", JSON.stringify(productDetails));
@@ -614,6 +731,154 @@ const ProductEdit = () => {
                     className="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-900 focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-y placeholder:text-gray-400 font-mono text-xs"
                   />
                 </div>
+              </div>
+            </Card>
+
+            {/* 1-Click Material, Fit & Fabric Silhouette Presets */}
+            <Card className="p-6 sm:p-8 bg-white border-gray-200 space-y-6 shadow-xs">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <span className="p-2 rounded-xl bg-amber-50 text-amber-700">
+                    <Scissors size={18} />
+                  </span>
+                  <div>
+                    <h3 className="text-base font-black text-gray-900 uppercase tracking-tight">
+                      Material & Fit Presets (1-Click Selection)
+                    </h3>
+                    <p className="text-xs text-gray-500">
+                      Select fabric, fit, or weight instantly without having to type manually.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 1. Material Type (Cotton, Silk, French Terry, etc.) */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-800 flex items-center gap-1.5">
+                    <span>1. Material / Fabric Type:</span>
+                    <span className="text-[var(--color-primary)] font-black">
+                      {formData.material || "None Selected"}
+                    </span>
+                  </label>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase">1-Click Pick</span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {MATERIAL_PRESETS.map((mat) => {
+                    const isSelected = formData.material?.toLowerCase() === mat.toLowerCase();
+                    return (
+                      <button
+                        key={mat}
+                        type="button"
+                        onClick={() => handleSelectMaterial(mat)}
+                        className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isSelected
+                            ? "bg-gray-900 text-white border-gray-900 shadow-xs"
+                            : "bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-400 hover:bg-gray-100"
+                        }`}
+                      >
+                        {isSelected && <Check size={12} strokeWidth={3} className="text-emerald-400" />}
+                        <span>{mat}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <input
+                  type="text"
+                  name="material"
+                  value={formData.material}
+                  onChange={(e) => handleSelectMaterial(e.target.value)}
+                  placeholder="Or enter custom material (e.g. 100% Pure Mulberry Silk)..."
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:border-gray-900 focus:outline-none placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* 2. Fit Type (Boxy, Straight, Loose, Oversized, etc.) */}
+              <div className="space-y-2.5 pt-3 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-800 flex items-center gap-1.5">
+                    <span>2. Silhouette / Fit Type:</span>
+                    <span className="text-[var(--color-primary)] font-black">
+                      {formData.fit || "None Selected"}
+                    </span>
+                  </label>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase">1-Click Pick</span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {FIT_PRESETS.map((fit) => {
+                    const isSelected = formData.fit?.toLowerCase() === fit.toLowerCase();
+                    return (
+                      <button
+                        key={fit}
+                        type="button"
+                        onClick={() => handleSelectFit(fit)}
+                        className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isSelected
+                            ? "bg-gray-900 text-white border-gray-900 shadow-xs"
+                            : "bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-400 hover:bg-gray-100"
+                        }`}
+                      >
+                        {isSelected && <Check size={12} strokeWidth={3} className="text-emerald-400" />}
+                        <span>{fit}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <input
+                  type="text"
+                  name="fit"
+                  value={formData.fit}
+                  onChange={(e) => handleSelectFit(e.target.value)}
+                  placeholder="Or enter custom fit (e.g. Slouchy Tapered Silhouette)..."
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:border-gray-900 focus:outline-none placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* 3. Fabric Weight (GSM) */}
+              <div className="space-y-2.5 pt-3 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider text-gray-800 flex items-center gap-1.5">
+                    <span>3. Fabric Weight / GSM:</span>
+                    <span className="text-[var(--color-primary)] font-black">
+                      {formData.gsm || "None Selected"}
+                    </span>
+                  </label>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase">1-Click Pick</span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {GSM_PRESETS.map((gsm) => {
+                    const isSelected = formData.gsm?.toLowerCase() === gsm.toLowerCase();
+                    return (
+                      <button
+                        key={gsm}
+                        type="button"
+                        onClick={() => handleSelectGsm(gsm)}
+                        className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isSelected
+                            ? "bg-gray-900 text-white border-gray-900 shadow-xs"
+                            : "bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-400 hover:bg-gray-100"
+                        }`}
+                      >
+                        {isSelected && <Check size={12} strokeWidth={3} className="text-emerald-400" />}
+                        <span>{gsm}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <input
+                  type="text"
+                  name="gsm"
+                  value={formData.gsm}
+                  onChange={(e) => handleSelectGsm(e.target.value)}
+                  placeholder="Or enter custom weight (e.g. 360 GSM Heavyweight Terry)..."
+                  className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:border-gray-900 focus:outline-none placeholder:text-gray-400"
+                />
               </div>
             </Card>
 

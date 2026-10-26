@@ -1,12 +1,17 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowUpRight, Flame, ShieldCheck, Zap } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useProducts } from "../context/ProductContext";
 
 /**
  * PromoBanner Component
- * Redesigned High-Impact Streetwear Clearance Vault.
- * Features MADEFACT ARCHIVE // SEASON CLEARANCE with technical badges and dynamic backend product integration.
+ * Redesigned High-Impact Streetwear Clearance Vault directly matching Image 2:
+ * - Borderless sharp black container (rounded-none bg-[#0D0D0D])
+ * - Top badge: "LIMITED ARCHIVAL CLEARANCE - FINAL BATCH" (NO //)
+ * - Title: "SEASONAL" (bold white) + "clearance" (orange italic serif cursive) + "VAULT." (bold white)
+ * - Technical stats grid (40% Markdown, 280-420 GSM, 14-Day Free Exchange)
+ * - Action buttons: "COP GIYU TEE FOR ₹399 ↗" & "ENTER BLOWOUT VAULT" (sharp rectangular, rounded-none)
+ * - Right featured product frame matching Image 2
  */
 const PromoBanner = () => {
   const { products } = useProducts();
@@ -19,7 +24,7 @@ const PromoBanner = () => {
     );
   }, [products]);
 
-  // Pick the first sale product (or fallback to first product if none marked on sale yet)
+  // Pick the first sale product (or fallback)
   const saleProduct = useMemo(() => {
     if (saleProducts.length > 0) return saleProducts[0];
     if (products && products.length > 0) return products[0];
@@ -61,160 +66,152 @@ const PromoBanner = () => {
   const originalPrice = saleVariant?.price || (saleProduct?.price || 1499);
   const salePrice = saleVariant?.salePrice && Number(saleVariant.salePrice) > 0
     ? Number(saleVariant.salePrice)
-    : originalPrice ? Math.round(originalPrice * 0.75) : 999;
+    : originalPrice ? Math.round(originalPrice * 0.75) : 399;
 
   const discountPercent = originalPrice > salePrice 
     ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) 
-    : 30;
+    : 28;
+
+  const productName = saleProduct?.name || "TOMIOKA GIYU OVERSIZED TEE";
+  const productUrl = saleProduct ? `/products/${saleProduct._id}` : "/sale";
 
   return (
-    <section className="relative w-full py-8 md:py-14 bg-[#F3F4F0] overflow-hidden">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
-        <div className="relative rounded-[32px] md:rounded-[40px] overflow-hidden bg-gradient-to-br from-[#0B0C0E] via-[#0E1014] to-[#07080A] text-white border border-neutral-800/90 p-7 sm:p-10 md:p-14 lg:p-16 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)]">
-          {/* Subtle Technical Grid Lines in Background */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.06] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:3.5rem_3.5rem]" />
-
-          {/* Ambient Radial Lights */}
-          <div className="pointer-events-none absolute -left-12 -top-12 h-80 w-80 rounded-full bg-[var(--color-primary)]/20 filter blur-3xl" />
-          <div className="pointer-events-none absolute -right-16 -bottom-16 h-80 w-80 rounded-full bg-blue-600/15 filter blur-3xl" />
-
-          {/* Background Blurred Silhouette Texture */}
-          <div 
-            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-15 mix-blend-luminosity scale-110 filter blur-sm"
-            style={{ backgroundImage: `url('${saleImage}')` }}
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0B0C0E] via-[#0B0C0E]/95 to-transparent" />
-
-          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-14">
-            {/* Left Side: Editorial & Technical Copy */}
-            <div className="max-w-2xl text-center lg:text-left flex-1">
-              {/* Terminal Header Pill */}
-              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-red-500/40 bg-red-500/10 backdrop-blur-md mb-5 shadow-xs">
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                </span>
-                <span className="text-[11px] font-black uppercase tracking-widest text-red-400">
-                  MADEFACT ARCHIVE // SEASON CLEARANCE
-                </span>
-                <span className="text-[10px] font-mono text-neutral-400 pl-2 border-l border-white/20 hidden sm:inline">
-                  VAULT 2026
+    <section className="relative w-full py-8 md:py-12 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Main Vault Container - Sharp & Borderless (rounded-none bg-[#0D0D0D]) */}
+        <div className="relative rounded-none bg-[#0D0D0D] text-white p-6 sm:p-10 md:p-14 lg:p-16 border border-neutral-800">
+          
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14">
+            
+            {/* Left Side: Typography & Copy */}
+            <div className="max-w-2xl text-left flex-1 space-y-5">
+              
+              {/* Top Pill / Badge (NO //) */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none border border-[#FF3B00]/40 bg-[#FF3B00]/10">
+                <span className="text-[10px] md:text-[11px] font-mono font-bold uppercase tracking-widest text-[#FF3B00]">
+                  LIMITED ARCHIVAL CLEARANCE - FINAL BATCH
                 </span>
               </div>
-              
-              {/* Headline */}
-              <h2 
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-black uppercase tracking-tight leading-[1.04] mb-4 text-white"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                Seasonal <span className="bg-gradient-to-r from-red-500 via-rose-400 to-amber-300 bg-clip-text text-transparent">Clearance</span> Vault
-              </h2>
-              
-              <p className="text-neutral-300 text-sm sm:text-base font-medium max-w-xl mb-6 leading-relaxed mx-auto lg:mx-0">
-                {saleProduct 
-                  ? `Archive release of "${saleProduct.name}" and heavy combed cotton drops. Once the batch sells out, it will not be restocked.` 
-                  : "Upgrade your streetwear rotation with flat blowout discounts on oversized tees, fleece hoodies, and parachute cargos."}
+
+              {/* Headline matching Image 2 */}
+              <div className="space-y-1">
+                <h2
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tight leading-none"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  SEASONAL{" "}
+                  <span
+                    className="font-normal lowercase text-[#FF3B00] tracking-normal"
+                    style={{ fontFamily: "var(--font-serif-italic)" }}
+                  >
+                    clearance
+                  </span>{" "}
+                  VAULT.
+                </h2>
+              </div>
+
+              <p className="text-xs sm:text-sm text-neutral-400 font-medium leading-relaxed max-w-xl">
+                Archival release of our #1 Bestseller: {productName} 280 GSM Heavyweight Streetwear Tee. Once this batch sells out, the screenprint plates are retired forever.
               </p>
 
-              {/* 3 Value Props Micro-Strip */}
-              <div className="grid grid-cols-3 gap-2.5 max-w-lg mb-8 mx-auto lg:mx-0">
-                <div className="flex flex-col items-center lg:items-start p-2.5 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-xs">
-                  <span className="text-xs sm:text-sm font-black text-white">UP TO 60%</span>
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-400">Archived Steals</span>
+              {/* Technical Specifications Grid */}
+              <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-3 pb-2 border-y border-neutral-800/80">
+                <div>
+                  <p className="text-base sm:text-xl font-black text-[#FF3B00] font-mono">
+                    UP TO {discountPercent}%
+                  </p>
+                  <p className="text-[10px] sm:text-[11px] text-neutral-400 font-bold uppercase tracking-wider mt-0.5">
+                    ARCHIVE MARKDOWN
+                  </p>
                 </div>
-                <div className="flex flex-col items-center lg:items-start p-2.5 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-xs">
-                  <span className="text-xs sm:text-sm font-black text-amber-300">280-400 GSM</span>
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-400">Combed Fleece</span>
+                <div>
+                  <p className="text-base sm:text-xl font-black text-white font-mono">
+                    280-420
+                  </p>
+                  <p className="text-[10px] sm:text-[11px] text-neutral-400 font-bold uppercase tracking-wider mt-0.5">
+                    HEAVYWEIGHT GSM
+                  </p>
                 </div>
-                <div className="flex flex-col items-center lg:items-start p-2.5 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-xs">
-                  <span className="text-xs sm:text-sm font-black text-emerald-400">14-DAY</span>
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-400">Free Exchange</span>
+                <div>
+                  <p className="text-base sm:text-xl font-black text-emerald-400 font-mono">
+                    14-DAY
+                  </p>
+                  <p className="text-[10px] sm:text-[11px] text-neutral-400 font-bold uppercase tracking-wider mt-0.5">
+                    FREE EXCHANGE
+                  </p>
                 </div>
               </div>
-              
-              {/* Dribbble-style Bento Pill CTA Button */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-                <Link 
-                  to="/sale"
-                  className="group inline-flex items-center gap-3 rounded-full bg-white hover:bg-neutral-100 text-neutral-900 pl-6 pr-2.5 py-2.5 text-xs sm:text-sm font-black uppercase tracking-wider transition-all duration-200 shadow-xl active:scale-[0.98]"
+
+              {/* Action Buttons (Sharp Rectangles rounded-none) */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <Link
+                  to={productUrl}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-none bg-white hover:bg-[#FF3B00] text-neutral-950 hover:text-white text-xs font-black uppercase tracking-wider transition-colors shadow-xs"
                 >
-                  <span>Shop The Clearance Archive</span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:bg-[var(--color-primary)] transition-all duration-200">
-                    <ArrowRight size={16} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />
-                  </span>
+                  <span>COP DROP FOR ₹{salePrice}</span>
+                  <ArrowUpRight size={15} strokeWidth={2.5} />
                 </Link>
 
                 <Link
-                  to="/new-arrivals"
-                  className="inline-flex items-center justify-center rounded-full border border-neutral-700 bg-white/5 hover:bg-white/10 text-neutral-200 px-5 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors"
+                  to="/sale"
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-none bg-black hover:bg-neutral-900 text-white border border-neutral-700 text-xs font-bold uppercase tracking-wider transition-colors"
                 >
-                  Explore New Drops
+                  ENTER BLOWOUT VAULT
                 </Link>
               </div>
             </div>
 
-            {/* Right Side: Featured Luxury Streetwear Card */}
-            <div className="relative group shrink-0 w-full sm:w-auto flex justify-center">
-              <Link 
-                to={saleProduct ? `/products/${saleProduct._id}` : "/sale"} 
-                className="block relative w-72 sm:w-80 aspect-[3/4] rounded-[28px] overflow-hidden border border-white/15 shadow-2xl bg-[#14161B] group-hover:border-red-500/60 transition-all duration-500 hover:shadow-red-500/10 hover:-translate-y-1"
+            {/* Right Side: Featured Product Showcase (Matching Image 2) */}
+            <div className="w-full lg:w-96 shrink-0">
+              <Link
+                to={productUrl}
+                className="group block rounded-none border border-neutral-800 bg-[#141414] p-3 transition-all duration-300 hover:border-neutral-700"
               >
-                {/* Product Image */}
-                <img 
-                  src={saleImage} 
-                  alt={saleProduct ? saleProduct.name : "Sale Product"}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/models/model1.png";
-                  }}
-                />
-                
-                {/* Floating Top Badges */}
-                <div className="absolute top-3.5 left-3.5 z-20 flex items-center gap-1.5">
-                  <span className="px-3 py-1 bg-red-600 text-white text-[10px] font-black uppercase tracking-wider rounded-full shadow-md flex items-center gap-1">
-                    <Flame size={12} className="fill-white" />
-                    -{discountPercent}% OFF
-                  </span>
-                </div>
+                {/* Image Frame */}
+                <div className="relative aspect-[3/3.8] w-full rounded-none overflow-hidden bg-neutral-900 flex items-center justify-center">
+                  <img
+                    src={saleImage}
+                    alt={productName}
+                    className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/models/model1.png";
+                    }}
+                  />
 
-                <div className="absolute top-3.5 right-3.5 z-20">
-                  <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-white/90 text-[9px] font-mono uppercase tracking-wider rounded-full border border-white/20">
-                    LIMITED
-                  </span>
-                </div>
-                
-                {/* Bottom Glassmorphic Overlay for Product Info */}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/85 to-transparent p-5 pt-12 flex flex-col justify-end z-20">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-red-400 mb-1">
-                    MADEFACT ARCHIVE PIECE
-                  </span>
-                  <h3 
-                    className="text-white text-base sm:text-lg font-extrabold uppercase tracking-tight truncate group-hover:text-red-300 transition-colors"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    {saleProduct ? saleProduct.name : "Featured Clearance Drop"}
-                  </h3>
-                  
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/15">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-white text-lg font-black tracking-tight">
-                        ₹{salePrice}
-                      </span>
-                      {originalPrice > salePrice && (
-                        <span className="text-neutral-400 text-xs font-semibold line-through">
-                          ₹{originalPrice}
-                        </span>
-                      )}
-                    </div>
+                  {/* Top-Left Badge (NO //) */}
+                  <div className="absolute top-2.5 left-2.5">
+                    <span className="rounded-none bg-[#FF3B00] text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider">
+                      SAVE {discountPercent}% - ₹{salePrice}
+                    </span>
+                  </div>
 
-                    <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-wider text-white group-hover:text-red-400 transition-colors">
-                      Claim Fit <ArrowUpRight size={14} strokeWidth={2.5} />
+                  {/* Bottom-Right GSM Badge */}
+                  <div className="absolute bottom-2.5 right-2.5">
+                    <span className="rounded-none bg-black text-white px-2 py-0.5 text-[9px] font-mono uppercase tracking-wider border border-white/10">
+                      280 GSM TERRY
                     </span>
                   </div>
                 </div>
+
+                {/* Bottom Metadata */}
+                <div className="pt-3 pb-1 px-1 flex items-baseline justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
+                      02-04-GIYU - BLACK
+                    </p>
+                    <h3 className="text-xs sm:text-[13px] font-black uppercase text-white truncate tracking-tight mt-0.5 group-hover:text-[#FF3B00] transition-colors">
+                      {productName}
+                    </h3>
+                  </div>
+                  <span className="text-sm font-mono font-black text-[#FF3B00] shrink-0">
+                    ₹{salePrice}
+                  </span>
+                </div>
               </Link>
             </div>
+
           </div>
         </div>
       </div>

@@ -358,7 +358,7 @@ export const addProduct = async (req, res) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     return res.status(400).json({ message: "Request body is empty or not parsed." });
   }
-  const { name, description, brand, gender, category, variants, collection, productDetails } = req.body;
+  const { name, description, brand, gender, category, variants, collection, productDetails, material, fit, gsm } = req.body;
 
   try {
     let parsedVariants = variants;
@@ -375,6 +375,10 @@ export const addProduct = async (req, res) => {
     if (parsedCategory.length === 0) parsedCategory = ['Uncategorized'];
 
     let parsedCollection = parseArrayField(collection);
+
+    const resolvedMaterial = material || parsedProductDetails?.material || '';
+    const resolvedFit = fit || parsedProductDetails?.fit || '';
+    const resolvedGsm = gsm || parsedProductDetails?.gsm || '';
 
     // Map variant specific images
     if (req.files && req.files.length > 0 && parsedVariants && parsedVariants.length > 0) {
@@ -403,10 +407,18 @@ export const addProduct = async (req, res) => {
       description: description || '',
       brand: brand || '',
       gender: gender || 'Men',
+      material: resolvedMaterial,
+      fit: resolvedFit,
+      gsm: resolvedGsm,
       category: parsedCategory,
       collection: parsedCollection,
       variants: parsedVariants || [],
-      productDetails: parsedProductDetails || undefined,
+      productDetails: {
+        ...(parsedProductDetails || {}),
+        material: resolvedMaterial,
+        fit: resolvedFit,
+        gsm: resolvedGsm,
+      },
     };
 
     try {
@@ -427,13 +439,16 @@ export const updateProduct = async (req, res) => {
   const productId = req.params.id;
 
   try {
-    const { name, description, brand, gender, category, variants, collection, productDetails } = req.body;
+    const { name, description, brand, gender, category, variants, collection, productDetails, material, fit, gsm } = req.body;
 
     let updateData = {};
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
     if (brand !== undefined) updateData.brand = brand;
     if (gender !== undefined) updateData.gender = gender;
+    if (material !== undefined) updateData.material = material;
+    if (fit !== undefined) updateData.fit = fit;
+    if (gsm !== undefined) updateData.gsm = gsm;
     
     if (category !== undefined) {
       updateData.category = parseArrayField(category);
@@ -443,7 +458,13 @@ export const updateProduct = async (req, res) => {
       updateData.collection = parseArrayField(collection);
     }
     if (productDetails !== undefined) {
-      updateData.productDetails = typeof productDetails === 'string' ? JSON.parse(productDetails) : productDetails;
+      const parsed = typeof productDetails === 'string' ? JSON.parse(productDetails) : productDetails;
+      updateData.productDetails = {
+        ...parsed,
+        material: material !== undefined ? material : parsed?.material,
+        fit: fit !== undefined ? fit : parsed?.fit,
+        gsm: gsm !== undefined ? gsm : parsed?.gsm,
+      };
     }
 
     if (variants) {

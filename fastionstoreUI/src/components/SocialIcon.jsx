@@ -173,7 +173,7 @@ const SocialIcon = ({
         <a
             href={href || '#'}
             className={`
-                rounded-full flex items-center justify-center 
+                rounded-none flex items-center justify-center 
                 transition-all duration-300 
                 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)]
                 ${variants[variant] || variants.default}

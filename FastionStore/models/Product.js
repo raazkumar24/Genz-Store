@@ -18,11 +18,17 @@ const productSchema = new mongoose.Schema({
   description: { type: String, default: '' },
   brand: { type: String, default: '' },
   gender: { type: String, default: 'Men' }, // Men, Women, Unisex
+  material: { type: String, default: '' },
+  fit: { type: String, default: '' },
+  gsm: { type: String, default: '' },
   category: { type: [String], default: ['Uncategorized'] },
   collection: { type: [String], default: [] },
   productDetails: {
     topHighlights: [{ type: String }],
     specifications: [{ key: String, value: String }],
+    material: { type: String, default: '' },
+    fit: { type: String, default: '' },
+    gsm: { type: String, default: '' },
     style: { type: String, default: '' },
     itemDetails: { type: String, default: '' }
   },
