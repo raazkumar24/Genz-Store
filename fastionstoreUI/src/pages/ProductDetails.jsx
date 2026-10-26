@@ -6,7 +6,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { useToast } from "../context/ToastContext";
 import { Button, Badge, BackButton } from "../components/ui";
 import { 
-  Heart, ShoppingBag, X, 
+  Heart, ShoppingBag, ShoppingCart, X, 
   ShieldCheck, RotateCcw, Ruler, Plus, Minus, Share2, 
   MapPin, CheckCircle2, Zap, Check, Flame, Layers
 } from "lucide-react";
@@ -36,7 +36,9 @@ const colorMap = {
   black: "#111111",
   white: "#FFFFFF",
   red: "#EF4444",
-  blue: "#3B82F6",
+  crimson: "#EF4444",
+  wine: "#EF4444",
+  blue: "#2563EB",
   green: "#22C55E",
   yellow: "#EAB308",
   pink: "#EC4899",
@@ -44,11 +46,13 @@ const colorMap = {
   orange: "#F97316",
   gray: "#6B7280",
   grey: "#6B7280",
-  brown: "#92400E",
+  brown: "#78350F",
+  coffee: "#78350F",
+  mocha: "#78350F",
   navy: "#1E3A8A",
   olive: "#4D7C0F",
   beige: "#D4B996",
-  cream: "#FFFDD0",
+  cream: "#D4B996",
   original: "#DDDDDD",
 };
 
@@ -582,7 +586,7 @@ const ProductDetails = () => {
                     disabled={isAddDisabled}
                     variant="primary"
                     size="md"
-                    icon={!isAddDisabled ? <ShoppingBag size={16} /> : undefined}
+                    icon={!isAddDisabled ? <ShoppingCart size={16} /> : undefined}
                     className="flex-1 min-w-0 h-11 sm:h-12 px-3 sm:px-6 text-xs font-black uppercase tracking-wider rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     {isAddDisabled ? "SOLD OUT" : "ADD TO BAG"}

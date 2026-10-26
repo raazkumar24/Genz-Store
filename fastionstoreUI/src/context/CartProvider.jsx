@@ -269,7 +269,10 @@ export const CartProvider = ({ children }) => {
       return next;
     });
 
-    addToast(`"${name.slice(0, 28)}" cart mein add hua! 🛒`, "success");
+    addToast(`"${name.slice(0, 28)}" cart mein add ho gaya`, "cart", {
+      icon: "cart",
+      title: "Cart Updated",
+    });
 
     // Async backend save — fire and forget with debounce
     setTimeout(() => {

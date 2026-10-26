@@ -34,6 +34,7 @@
   --font-heading: 'Poppins', sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Space Grotesk', monospace;
+  --font-condensed: 'Bebas Neue', 'Anton', sans-serif;
 }
 
 html {

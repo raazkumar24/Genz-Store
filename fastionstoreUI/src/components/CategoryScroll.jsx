@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight, Layers } from "lucide-react";
 import { fetchAllCollections } from "../services/collectionService";
 import { useProducts } from "../context/ProductContext";
 
@@ -131,7 +131,7 @@ const CategoryScroll = () => {
         <div className="flex items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-900 text-white">
-              <Sparkles size={12} className="text-[var(--color-primary)]" />
+              <Layers size={12} className="text-[var(--color-primary)]" />
             </span>
             <h2 className="text-sm md:text-base font-black uppercase tracking-wider text-neutral-900">
               Curated Silhouettes

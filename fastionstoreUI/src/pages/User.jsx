@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Link } from 'react-router-dom';
-import { Mail, Shield, User as UserIcon, LogOut, Settings, Package } from 'lucide-react';
+import { Mail, Shield, User as UserIcon, LogOut, Settings, Package, Info } from 'lucide-react';
 import { getStoredUser, getUserRole, isLoggedIn, clearAuth } from '../utils/auth';
 import { Card, Badge, BackButton } from '../components/ui';
 
@@ -161,8 +161,9 @@ const User = () => {
                         </div>
 
                         {/* ── Note about email update ── */}
-                        <p className="mt-6 text-xs text-gray-400">
-                            💡 Email updated after login? Logout and login again to see fresh data.
+                        <p className="mt-6 text-xs text-gray-400 flex items-center gap-1.5">
+                            <Info size={13} className="shrink-0 text-gray-400" />
+                            <span>Email updated after login? Logout and login again to see fresh data.</span>
                         </p>
                     </Card>
                 </div>

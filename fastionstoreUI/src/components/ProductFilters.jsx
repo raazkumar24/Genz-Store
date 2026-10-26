@@ -48,6 +48,44 @@ export const SORT_OPTIONS = [
   { id: "discount-desc", label: "Biggest Discount %" },
 ];
 
+export const COLOR_FAMILIES = {
+  red: ["red", "wine", "crimson", "maroon", "burgundy", "ruby", "scarlet"],
+  brown: ["brown", "coffee", "mocha", "chocolate", "espresso"],
+  white: ["white", "swanwhite", "ivory", "snow"],
+  blue: ["blue", "sky", "navy", "cobalt", "cyan", "teal", "indigo"],
+  black: ["black", "noir", "dark", "jet", "pitch"],
+  grey: ["grey", "gray", "charcoal", "slate", "ash", "silver"],
+  gray: ["grey", "gray", "charcoal", "slate", "ash", "silver"],
+  beige: ["beige", "cream", "khaki", "sand", "tan", "nude"],
+  green: ["green", "olive", "sage", "forest", "emerald", "lime"],
+  orange: ["orange", "rust", "tangerine", "peach"],
+  yellow: ["yellow", "mustard", "amber", "gold"],
+  purple: ["purple", "lavender", "violet", "lilac"],
+  pink: ["pink", "rose", "fuchsia", "magenta"],
+};
+
+export const matchesColorFamily = (vColor, target) => {
+  if (!vColor || !target) return false;
+  const v = String(vColor).toLowerCase().trim();
+  const t = String(target).toLowerCase().trim();
+  if (v === t || v.includes(t) || t.includes(v)) return true;
+
+  const familyKeywords = COLOR_FAMILIES[t];
+  if (familyKeywords && familyKeywords.some((kw) => v.includes(kw))) {
+    return true;
+  }
+
+  for (const [fam, kws] of Object.entries(COLOR_FAMILIES)) {
+    if ((fam === t || kws.includes(t)) && kws.some((kw) => v.includes(kw))) {
+      return true;
+    }
+  }
+
+  const vWords = v.split(/[\s-_]+/);
+  const tWords = t.split(/[\s-_]+/);
+  return vWords.some((vw) => tWords.includes(vw)) || tWords.some((tw) => vWords.includes(tw));
+};
+
 /**
  * Filter Engine: Filters and sorts products based on the filter state
  */
@@ -159,11 +197,7 @@ export const applyProductFilters = (products = [], filters = {}) => {
 
     // 6. Color Filter
     if (color && color !== "all") {
-      const cTarget = color.toLowerCase().trim();
-      const hasColor = product.variants?.some((v) => {
-        const vColor = String(v.color || "").toLowerCase().trim();
-        return vColor === cTarget || vColor.includes(cTarget) || cTarget.includes(vColor);
-      });
+      const hasColor = product.variants?.some((v) => matchesColorFamily(v.color, color));
       if (!hasColor) return false;
     }
 
@@ -189,15 +223,7 @@ export const applyProductFilters = (products = [], filters = {}) => {
     let targetVariant = null;
 
     // Helper for fuzzy color match
-    const matchesColor = (vColor, target) => {
-      if (!vColor || !target) return false;
-      const v = String(vColor).toLowerCase().trim();
-      const t = String(target).toLowerCase().trim();
-      if (v === t || v.includes(t) || t.includes(v)) return true;
-      const vWords = v.split(/[\s-_]+/);
-      const tWords = t.split(/[\s-_]+/);
-      return vWords.some((vw) => tWords.includes(vw)) || tWords.some((tw) => vWords.includes(tw));
-    };
+    const matchesColor = (vColor, target) => matchesColorFamily(vColor, target);
 
     // 1. If color filter is active (highest visual priority)
     if (color && color !== "all") {

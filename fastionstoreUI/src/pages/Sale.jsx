@@ -357,12 +357,12 @@ const Sale = () => {
         {/* Curated Deal Quick Filters Pills */}
         <div className="mb-6 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
           {[
-            { key: "all", label: "🔥 All Blowout Deals", count: baseSaleProducts.length },
-            { key: "under999", label: "⚡ Under ₹999 Steals" },
-            { key: "tees", label: "👕 Oversized Tees" },
-            { key: "cargos", label: "👖 Baggy Cargos" },
-            { key: "hoodies", label: "🧥 Heavyweight Hoodies" },
-            { key: "steals", label: "💥 50%+ Off Mega Deals" },
+            { key: "all", label: "All Blowout Deals", count: baseSaleProducts.length },
+            { key: "under999", label: "Under ₹999 Steals" },
+            { key: "tees", label: "Oversized Tees" },
+            { key: "cargos", label: "Baggy Cargos" },
+            { key: "hoodies", label: "Heavyweight Hoodies" },
+            { key: "steals", label: "50%+ Off Mega Deals" },
           ].map((tab) => {
             const isSelected = activeTab === tab.key;
             return (
@@ -395,7 +395,7 @@ const Sale = () => {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -431,7 +431,7 @@ const Sale = () => {
             </div>
           </Card>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-4">
             {filteredProducts.map((product) => (
               <div
                 key={product._id}

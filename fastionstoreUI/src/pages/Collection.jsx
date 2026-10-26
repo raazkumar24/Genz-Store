@@ -199,7 +199,7 @@ const Collection = () => {
 
         {/* Full-width Products Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-1 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -229,7 +229,7 @@ const Collection = () => {
             </div>
           </Card>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-1 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {filteredProducts.map((product) => (
               <div key={product._id} className="transition-transform duration-300 hover:-translate-y-1">
                 <ProductCard product={product} />

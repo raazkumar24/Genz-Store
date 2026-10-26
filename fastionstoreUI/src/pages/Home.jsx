@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import Hero from "../components/hero";
 import ProductCard from "../components/ProductCard";
 import PromoBanner from "../components/PromoBanner";
+import ArchivedCatalogSlider from "../components/ArchivedCatalogSlider";
 import { useProducts } from "../context/ProductContext";
 import Marquee from "../components/Marquee";
 import CategoryScroll from "../components/CategoryScroll";
@@ -139,6 +140,7 @@ const Home = () => {
             ]}
           />
           <Hero />
+          <ArchivedCatalogSlider />
           <CategoryScroll />
           <PromoBanner />
         </>
@@ -248,7 +250,7 @@ const Home = () => {
 
         {/* Full-width Products Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-1 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -281,7 +283,7 @@ const Home = () => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4"
+            className="grid grid-cols-2 gap-1 sm:gap-4 md:grid-cols-3 lg:grid-cols-4"
           >
             {filteredProducts.map((product) => (
               <motion.div key={product._id} variants={itemVariants}>

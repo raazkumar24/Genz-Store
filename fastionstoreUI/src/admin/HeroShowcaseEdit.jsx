@@ -5,20 +5,30 @@ import {
   Search,
   Check,
   RotateCcw,
-  Sparkles,
   ArrowUpRight,
-  ExternalLink,
   Sliders,
   Layers,
   Shirt,
   Tag,
+  Plus,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  Sparkle,
+  Image as ImageIcon,
+  Compass,
 } from "lucide-react";
 import { useProducts } from "../context/ProductContext";
 import { useToast } from "../context/ToastContext";
 import {
-  getHeroSpotlightConfig,
-  saveHeroSpotlightConfig,
-  resetHeroSpotlightConfig,
+  getHeroMasterConfig,
+  saveHeroMasterConfig,
+  resetHeroMasterConfig,
+  DEFAULT_ARCHIVED_CATALOG,
+  DEFAULT_HERO_SLIDES,
+  DEFAULT_HERO_SPOTLIGHT,
+  DEFAULT_TACTICAL_DROP,
 } from "../services/heroShowcaseService";
 
 const BADGE_PRESETS = [
@@ -31,21 +41,214 @@ const BADGE_PRESETS = [
   "LIMITED ARCHIVAL DROP",
 ];
 
+const LOOKBOOK_PRESETS = {
+  winter: {
+    sectionTitle: "THIS SEASON'S WINTER DROPS",
+    seeAllText: "See All",
+    seeAllLink: "/new-arrivals",
+    cards: [
+      {
+        id: "card-1",
+        title: "SIMPLE CASUAL",
+        subtitle: "More than 100+ collection available for all gender",
+        image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+        link: "/collections/oversized-tees",
+      },
+      {
+        id: "card-2",
+        title: "HANGOUT DRESS",
+        subtitle: "More than 100+ collection available for all gender",
+        image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=80",
+        link: "/new-arrivals",
+      },
+      {
+        id: "card-3",
+        title: "COZY ANYWHERE",
+        subtitle: "More than 100+ collection available for all gender",
+        image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
+        link: "/collections/hoodies",
+      },
+      {
+        id: "card-4",
+        title: "URBAN ROTATION",
+        subtitle: "More than 100+ collection available for all gender",
+        image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80",
+        link: "/collections/cargos",
+      },
+      {
+        id: "card-5",
+        title: "TACTICAL STREET",
+        subtitle: "More than 100+ collection available for all gender",
+        image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=800&q=80",
+        link: "/sale",
+      },
+    ],
+  },
+  summer: {
+    sectionTitle: "SUMMER ESSENTIALS & GRAPHIC DROPS",
+    seeAllText: "Explore Edit",
+    seeAllLink: "/collections/oversized-tees",
+    cards: [
+      {
+        id: "card-s1",
+        title: "HEAVYWEIGHT TEES",
+        subtitle: "280 GSM combed organic cotton in relaxed drop cut",
+        image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80",
+        link: "/collections/oversized-tees",
+      },
+      {
+        id: "card-s2",
+        title: "RELAXED SHORTS",
+        subtitle: "French terry raw-edge sweatshorts with drawstring",
+        image: "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=800&q=80",
+        link: "/collections/cargos",
+      },
+      {
+        id: "card-s3",
+        title: "MINIMAL ACCESSORIES",
+        subtitle: "Tactical crossbody bags and stainless streetwear jewelry",
+        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
+        link: "/new-arrivals",
+      },
+    ],
+  },
+};
+
 const HeroShowcaseEdit = () => {
   const { products, loading } = useProducts();
   const { addToast } = useToast();
 
-  const [config, setConfig] = useState(getHeroSpotlightConfig());
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all"); // "all" | "tee" | "hoodie" | "cargo"
+  // Active studio tab: "lookbook" | "slides" | "spotlight"
+  const [activeTab, setActiveTab] = useState("lookbook");
+
+  // Master Configuration State
+  const [masterConfig, setMasterConfig] = useState(getHeroMasterConfig);
   const [saving, setSaving] = useState(false);
 
-  // Sync state on mount
+  // Sub-states for specific tabs
+  const [selectedSlideIndex, setSelectedSlideIndex] = useState(0);
+  const [spotlightSearchTerm, setSpotlightSearchTerm] = useState("");
+  const [spotlightCategoryFilter, setSpotlightCategoryFilter] = useState("all");
+
   useEffect(() => {
-    setConfig(getHeroSpotlightConfig());
+    setMasterConfig(getHeroMasterConfig());
   }, []);
 
-  // Filter products list based on search and category tab
+  // Update Lookbook Section Header
+  const handleLookbookMetaChange = (field, val) => {
+    setMasterConfig((prev) => ({
+      ...prev,
+      archivedCatalog: {
+        ...prev.archivedCatalog,
+        [field]: val,
+      },
+    }));
+  };
+
+  // Update specific Lookbook Card
+  const handleLookbookCardChange = (index, field, val) => {
+    setMasterConfig((prev) => {
+      const cards = [...(prev.archivedCatalog?.cards || [])];
+      if (cards[index]) {
+        cards[index] = { ...cards[index], [field]: val };
+      }
+      return {
+        ...prev,
+        archivedCatalog: {
+          ...prev.archivedCatalog,
+          cards,
+        },
+      };
+    });
+  };
+
+  // Add new Lookbook Card
+  const handleAddLookbookCard = () => {
+    const newCard = {
+      id: `card-${Date.now()}`,
+      title: "NEW LOOKBOOK DROP",
+      subtitle: "More than 100+ collection available for all gender",
+      image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+      link: "/new-arrivals",
+    };
+    setMasterConfig((prev) => ({
+      ...prev,
+      archivedCatalog: {
+        ...prev.archivedCatalog,
+        cards: [...(prev.archivedCatalog?.cards || []), newCard],
+      },
+    }));
+    addToast("New Lookbook card added!", "info");
+  };
+
+  // Remove Lookbook Card
+  const handleRemoveLookbookCard = (index) => {
+    const currentCards = masterConfig.archivedCatalog?.cards || [];
+    if (currentCards.length <= 1) {
+      addToast("Lookbook carousel must have at least 1 card.", "warning");
+      return;
+    }
+    const filtered = currentCards.filter((_, i) => i !== index);
+    setMasterConfig((prev) => ({
+      ...prev,
+      archivedCatalog: {
+        ...prev.archivedCatalog,
+        cards: filtered,
+      },
+    }));
+    addToast("Lookbook card removed.", "info");
+  };
+
+  // Apply Lookbook Preset
+  const handleApplyLookbookPreset = (presetKey) => {
+    const preset = LOOKBOOK_PRESETS[presetKey];
+    if (!preset) return;
+    setMasterConfig((prev) => ({
+      ...prev,
+      archivedCatalog: {
+        ...preset,
+      },
+    }));
+    addToast(`Applied "${preset.sectionTitle}" preset!`, "success");
+  };
+
+  // Update Hero Slide Field
+  const handleSlideChange = (field, val) => {
+    setMasterConfig((prev) => {
+      const slides = [...(prev.slides || DEFAULT_HERO_SLIDES)];
+      if (slides[selectedSlideIndex]) {
+        slides[selectedSlideIndex] = {
+          ...slides[selectedSlideIndex],
+          [field]: val,
+        };
+      }
+      return { ...prev, slides };
+    });
+  };
+
+  // Update Spotlight Bento Field
+  const handleSpotlightChange = (field, val) => {
+    setMasterConfig((prev) => ({
+      ...prev,
+      spotlight: {
+        ...(prev.spotlight || DEFAULT_HERO_SPOTLIGHT),
+        [field]: val,
+      },
+    }));
+  };
+
+  // Update Tactical Drop Field
+  const handleTacticalChange = (field, val) => {
+    setMasterConfig((prev) => ({
+      ...prev,
+      tactical: {
+        ...(prev.tactical || DEFAULT_TACTICAL_DROP),
+        [field]: val,
+      },
+    }));
+  };
+
+  // Filter products for Spotlight Picker
   const filteredProducts = useMemo(() => {
     if (!products || products.length === 0) return [];
     return products.filter((p) => {
@@ -53,29 +256,30 @@ const HeroShowcaseEdit = () => {
         .join(" ")
         .toLowerCase();
       const matchesSearch =
-        !searchTerm.trim() || text.includes(searchTerm.toLowerCase().trim());
+        !spotlightSearchTerm.trim() ||
+        text.includes(spotlightSearchTerm.toLowerCase().trim());
 
       let matchesCat = true;
-      if (categoryFilter === "tee") {
+      if (spotlightCategoryFilter === "tee") {
         matchesCat = text.includes("tee") || text.includes("t-shirt") || text.includes("tshirt");
-      } else if (categoryFilter === "hoodie") {
+      } else if (spotlightCategoryFilter === "hoodie") {
         matchesCat = text.includes("hoodie") || text.includes("sweatshirt") || text.includes("fleece");
-      } else if (categoryFilter === "cargo") {
+      } else if (spotlightCategoryFilter === "cargo") {
         matchesCat = text.includes("cargo") || text.includes("pant") || text.includes("baggy");
       }
 
       return matchesSearch && matchesCat;
     });
-  }, [products, searchTerm, categoryFilter]);
+  }, [products, spotlightSearchTerm, spotlightCategoryFilter]);
 
-  // Selected product object
+  // Spotlight Selected Product
   const selectedProduct = useMemo(() => {
     if (!products || products.length === 0) return null;
-    if (config.productId) {
-      return products.find((p) => p._id === config.productId) || products[0];
+    const currentSpotlight = masterConfig.spotlight || DEFAULT_HERO_SPOTLIGHT;
+    if (currentSpotlight.productId) {
+      return products.find((p) => p._id === currentSpotlight.productId) || products[0];
     }
-    // Auto fallback
-    if (config.targetCategory === "tee") {
+    if (currentSpotlight.targetCategory === "tee") {
       return (
         products.find((p) => {
           const t = [p.name, ...(p.category || []), ...(p.collection || [])].join(" ").toLowerCase();
@@ -89,130 +293,95 @@ const HeroShowcaseEdit = () => {
         return t.includes("hoodie") || t.includes("fleece");
       }) || products[0]
     );
-  }, [products, config.productId, config.targetCategory]);
+  }, [products, masterConfig.spotlight]);
 
-  // Compute display details for live preview
-  const previewImage =
-    config.customImage ||
+  const spotlightPreviewImage =
+    masterConfig.spotlight?.customImage ||
     selectedProduct?.variants?.find((v) => v.images && v.images.length > 0)?.images?.[0] ||
     selectedProduct?.variants?.[0]?.images?.[0] ||
     selectedProduct?.image ||
     "/models/model1.png";
 
-  const previewTitle = config.title || selectedProduct?.name || "Select A Product Drop";
-  const previewPrice =
-    config.customPrice ||
+  const spotlightPreviewTitle =
+    masterConfig.spotlight?.title || selectedProduct?.name || "Signature Drop Showcase";
+
+  const spotlightPreviewPrice =
+    masterConfig.spotlight?.customPrice ||
     selectedProduct?.variants?.[0]?.salePrice ||
     selectedProduct?.variants?.[0]?.price ||
     1499;
 
-  // Handler to pick a product
-  const handleSelectProduct = (product) => {
-    const isTee = [product.name, ...(product.category || [])]
-      .join(" ")
-      .toLowerCase()
-      .includes("tee");
-    const isHoodie = [product.name, ...(product.category || [])]
-      .join(" ")
-      .toLowerCase()
-      .includes("hoodie");
+  // Pick a product for spotlight
+  const handleSelectProductForSpotlight = (product) => {
+    const isTee = [product.name, ...(product.category || [])].join(" ").toLowerCase().includes("tee");
+    const isHoodie = [product.name, ...(product.category || [])].join(" ").toLowerCase().includes("hoodie");
 
-    setConfig((prev) => ({
+    setMasterConfig((prev) => ({
       ...prev,
-      productId: product._id,
-      title: product.name,
-      targetCategory: isTee ? "tee" : isHoodie ? "hoodie" : "custom",
-      badgeText: isTee
-        ? "HEAVYWEIGHT 240 GSM TEE"
-        : isHoodie
-        ? "HEAVYWEIGHT 380 GSM HOODIE"
-        : prev.badgeText,
-      subtitle: isTee
-        ? "Bio-washed combed cotton with relaxed drop shoulder."
-        : "Drop shoulder & double-needle ribbed hem.",
-      customPrice: "",
-      customImage: "",
+      spotlight: {
+        ...(prev.spotlight || DEFAULT_HERO_SPOTLIGHT),
+        productId: product._id,
+        title: product.name,
+        targetCategory: isTee ? "tee" : isHoodie ? "hoodie" : "custom",
+        badgeText: isTee
+          ? "HEAVYWEIGHT 240 GSM TEE"
+          : isHoodie
+          ? "HEAVYWEIGHT 380 GSM HOODIE"
+          : "LIMITED ARCHIVAL DROP",
+        subtitle: isTee
+          ? "Bio-washed combed cotton with relaxed drop shoulder."
+          : "Drop shoulder & double-needle ribbed hem.",
+        customPrice: "",
+        customImage: "",
+      },
     }));
-  };
-
-  // Quick 1-click Preset switchers (Tee vs Hoodie vs Cargo)
-  const handleQuickPreset = (type) => {
-    setCategoryFilter(type);
-    if (!products || products.length === 0) return;
-
-    if (type === "tee") {
-      const tee = products.find((p) => {
-        const t = [p.name, ...(p.category || []), ...(p.collection || [])].join(" ").toLowerCase();
-        return t.includes("tee") || t.includes("t-shirt");
-      });
-      if (tee) {
-        handleSelectProduct(tee);
-        addToast("Switched to Heavyweight T-Shirt Drop!", "info");
-      }
-    } else if (type === "hoodie") {
-      const hoodie = products.find((p) => {
-        const t = [p.name, ...(p.category || []), ...(p.collection || [])].join(" ").toLowerCase();
-        return t.includes("hoodie") || t.includes("sweatshirt");
-      });
-      if (hoodie) {
-        handleSelectProduct(hoodie);
-        addToast("Switched to Heavyweight Hoodie Drop!", "info");
-      }
-    } else if (type === "cargo") {
-      const cargo = products.find((p) => {
-        const t = [p.name, ...(p.category || []), ...(p.collection || [])].join(" ").toLowerCase();
-        return t.includes("cargo") || t.includes("pant");
-      });
-      if (cargo) {
-        handleSelectProduct(cargo);
-        addToast("Switched to Parachute Cargos Drop!", "info");
-      }
-    }
+    addToast(`Selected "${product.name}" for Hero Spotlight!`, "info");
   };
 
   // Save changes
   const handleSave = () => {
     setSaving(true);
-    const success = saveHeroSpotlightConfig(config);
+    const success = saveHeroMasterConfig(masterConfig);
     setTimeout(() => {
       setSaving(false);
       if (success) {
-        addToast("Hero Spotlight Card updated live on Home Page!", "success");
+        addToast("Hero & Lookbook Studio updated live across Storefront!", "success");
       } else {
-        addToast("Failed to save Hero Spotlight configuration", "error");
+        addToast("Failed to save changes. Please try again.", "error");
       }
-    }, 200);
+    }, 250);
   };
 
   // Reset to default
   const handleReset = () => {
-    if (window.confirm("Reset Hero Spotlight card to default Heavyweight Hoodie?")) {
-      resetHeroSpotlightConfig();
-      setConfig(getHeroSpotlightConfig());
-      setCategoryFilter("all");
-      setSearchTerm("");
-      addToast("Hero Spotlight reset to default configuration.", "info");
+    if (window.confirm("Reset all Hero Slides, Bento Cards, and Archived Lookbook to defaults?")) {
+      resetHeroMasterConfig();
+      setMasterConfig(getHeroMasterConfig());
+      addToast("Reset all Hero & Lookbook components to pristine defaults.", "info");
     }
   };
 
+  const activeSlide = (masterConfig.slides || DEFAULT_HERO_SLIDES)[selectedSlideIndex] || DEFAULT_HERO_SLIDES[0];
+  const lookbookCards = masterConfig.archivedCatalog?.cards || DEFAULT_ARCHIVED_CATALOG.cards;
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
-      {/* Page Header */}
+      {/* Top Header Row */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-200">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-900 text-white shadow-xs">
-              <Flame size={16} className="text-amber-400 fill-amber-400" />
+              <Compass size={16} className="text-amber-400" />
             </span>
             <h1
               className="text-2xl sm:text-3xl font-black text-gray-900 uppercase tracking-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Hero Spotlight Drop
+              Hero & Lookbook Studio
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-gray-500 font-medium max-w-2xl">
-            Control which drop (T-Shirt, Hoodie, or Cargos) appears in the prominent Hero Bento Card on your storefront. Changes reflect immediately!
+            Live master control for Winter Drops Lookbook, Editorial Hero Slides, and Bento Showcase. Changes reflect instantly!
           </p>
         </div>
 
@@ -223,7 +392,7 @@ const HeroShowcaseEdit = () => {
             className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
           >
             <RotateCcw size={14} />
-            Reset Default
+            Reset Defaults
           </button>
 
           <button
@@ -238,117 +407,829 @@ const HeroShowcaseEdit = () => {
         </div>
       </div>
 
-      {/* Main Grid: Settings & Product Picker (Left 7 Cols) + Live Preview (Right 5 Cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        {/* Left Column: Form & Product Selector */}
-        <div className="lg:col-span-7 space-y-6">
+      {/* Main Studio Navigation Tabs */}
+      <div className="flex items-center gap-2 p-1.5 bg-gray-100 rounded-2xl max-w-fit border border-gray-200/80">
+        <button
+          type="button"
+          onClick={() => setActiveTab("lookbook")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+            activeTab === "lookbook"
+              ? "bg-white text-gray-900 shadow-xs"
+              : "text-gray-500 hover:text-gray-900"
+          }`}
+        >
+          <Layers size={15} />
+          <span>Archived Lookbook ("Winter Drops")</span>
+          <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">
+            Screenshot
+          </span>
+        </button>
 
-          {/* Quick Preset Selector Buttons */}
-          <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
-            <span className="text-xs font-black uppercase tracking-wider text-gray-900 block mb-3 flex items-center gap-1.5">
-              <Sparkles size={14} className="text-[var(--color-primary)]" />
-              1-Click Fast Switchers
-            </span>
-            <div className="grid grid-cols-3 gap-2.5">
-              <button
-                type="button"
-                onClick={() => handleQuickPreset("tee")}
-                className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                  config.targetCategory === "tee"
-                    ? "border-[var(--color-primary)] bg-blue-50/60 ring-2 ring-[var(--color-primary)]/20 shadow-xs"
-                    : "border-gray-200 bg-gray-50 hover:bg-gray-100/80"
-                }`}
-              >
-                <span className="text-xl mb-1">👕</span>
-                <span className="text-xs font-black uppercase text-gray-900">Oversized Tee</span>
-                <span className="text-[10px] text-gray-500 font-semibold mt-0.5">240-280 GSM</span>
-              </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("slides")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+            activeTab === "slides"
+              ? "bg-white text-gray-900 shadow-xs"
+              : "text-gray-500 hover:text-gray-900"
+          }`}
+        >
+          <Flame size={15} />
+          <span>Hero Editorial Slides</span>
+        </button>
 
-              <button
-                type="button"
-                onClick={() => handleQuickPreset("hoodie")}
-                className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                  config.targetCategory === "hoodie"
-                    ? "border-[var(--color-primary)] bg-blue-50/60 ring-2 ring-[var(--color-primary)]/20 shadow-xs"
-                    : "border-gray-200 bg-gray-50 hover:bg-gray-100/80"
-                }`}
-              >
-                <span className="text-xl mb-1">🧥</span>
-                <span className="text-xs font-black uppercase text-gray-900">Heavy Hoodie</span>
-                <span className="text-[10px] text-gray-500 font-semibold mt-0.5">380-400 GSM</span>
-              </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("spotlight")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+            activeTab === "spotlight"
+              ? "bg-white text-gray-900 shadow-xs"
+              : "text-gray-500 hover:text-gray-900"
+          }`}
+        >
+          <Shirt size={15} />
+          <span>Right Bento Spotlight Drop</span>
+        </button>
+      </div>
 
-              <button
-                type="button"
-                onClick={() => handleQuickPreset("cargo")}
-                className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-center transition-all cursor-pointer ${
-                  config.targetCategory === "cargo"
-                    ? "border-[var(--color-primary)] bg-blue-50/60 ring-2 ring-[var(--color-primary)]/20 shadow-xs"
-                    : "border-gray-200 bg-gray-50 hover:bg-gray-100/80"
-                }`}
-              >
-                <span className="text-xl mb-1">👖</span>
-                <span className="text-xs font-black uppercase text-gray-900">Parachute Cargos</span>
-                <span className="text-[10px] text-gray-500 font-semibold mt-0.5">Tactical Fit</span>
-              </button>
+      {/* ========================================================================= */}
+      {/* TAB 1: ARCHIVED CATALOG LOOKBOOK (MATCHES SCREENSHOT)                     */}
+      {/* ========================================================================= */}
+      {activeTab === "lookbook" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Form: Lookbook Settings & Cards */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Quick Presets */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+                  <Sliders size={14} className="text-[var(--color-primary)]" />
+                  Quick Lookbook Presets
+                </span>
+                <span className="text-[10px] text-gray-400 font-bold uppercase">1-Click Setup</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleApplyLookbookPreset("winter")}
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold bg-neutral-900 text-white hover:bg-black transition-all cursor-pointer shadow-xs"
+                >
+                  Winter Drops (Reference Style)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleApplyLookbookPreset("summer")}
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold bg-neutral-100 text-neutral-800 hover:bg-neutral-200 border border-neutral-300 transition-all cursor-pointer shadow-xs"
+                >
+                  Summer Streetwear Edit
+                </button>
+              </div>
+            </div>
+
+            {/* Section Header Configuration */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
+              <h2 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-2">
+                <Tag size={15} className="text-[var(--color-primary)]" />
+                Section Header & Navigation
+              </h2>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-1">
+                    Section Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={masterConfig.archivedCatalog?.sectionTitle || ""}
+                    onChange={(e) => handleLookbookMetaChange("sectionTitle", e.target.value)}
+                    placeholder="e.g. THIS SEASON'S WINTER DROPS"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:border-black focus:ring-1 focus:ring-black text-sm font-black uppercase tracking-tight"
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1 font-medium">
+                    This displays prominently above the carousel in heavy condensed streetwear typography.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-1">
+                      Button Label
+                    </label>
+                    <input
+                      type="text"
+                      value={masterConfig.archivedCatalog?.seeAllText || ""}
+                      onChange={(e) => handleLookbookMetaChange("seeAllText", e.target.value)}
+                      placeholder="e.g. See All"
+                      className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-1">
+                      Destination Link
+                    </label>
+                    <input
+                      type="text"
+                      value={masterConfig.archivedCatalog?.seeAllLink || ""}
+                      onChange={(e) => handleLookbookMetaChange("seeAllLink", e.target.value)}
+                      placeholder="e.g. /new-arrivals"
+                      className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Lookbook Cards List */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-2">
+                    <ImageIcon size={15} className="text-[var(--color-primary)]" />
+                    Lookbook Cards ({lookbookCards.length} items)
+                  </h2>
+                  <p className="text-[11px] text-gray-400 font-medium mt-0.5">
+                    Vertical full-bleed lifestyle photography with bottom condensed typography.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddLookbookCard}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-900 text-white hover:bg-black text-[11px] font-black uppercase tracking-wider transition cursor-pointer shadow-xs"
+                >
+                  <Plus size={13} />
+                  Add Card
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {lookbookCards.map((card, idx) => (
+                  <div
+                    key={card.id || idx}
+                    className="p-4 rounded-2xl border border-gray-200 bg-gray-50/60 hover:bg-white hover:border-gray-300 transition-all space-y-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-black uppercase tracking-wider text-gray-700 bg-gray-200/80 px-2 py-0.5 rounded-md">
+                        Card #{idx + 1}
+                      </span>
+                      {lookbookCards.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveLookbookCard(idx)}
+                          className="text-gray-400 hover:text-rose-600 transition p-1 cursor-pointer"
+                          title="Remove Card"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
+                          Card Title
+                        </label>
+                        <input
+                          type="text"
+                          value={card.title || ""}
+                          onChange={(e) => handleLookbookCardChange(idx, "title", e.target.value)}
+                          placeholder="e.g. SIMPLE CASUAL"
+                          className="w-full px-3 py-1.5 rounded-lg border border-gray-300 focus:border-black text-xs font-black uppercase tracking-tight bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
+                          Collection Link URL
+                        </label>
+                        <input
+                          type="text"
+                          value={card.link || ""}
+                          onChange={(e) => handleLookbookCardChange(idx, "link", e.target.value)}
+                          placeholder="e.g. /collections/oversized-tees"
+                          className="w-full px-3 py-1.5 rounded-lg border border-gray-300 focus:border-black text-xs font-mono bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
+                        Card Subtitle
+                      </label>
+                      <input
+                        type="text"
+                        value={card.subtitle || ""}
+                        onChange={(e) => handleLookbookCardChange(idx, "subtitle", e.target.value)}
+                        placeholder="e.g. More than 100+ collection available for all gender"
+                        className="w-full px-3 py-1.5 rounded-lg border border-gray-300 focus:border-black text-xs font-medium bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
+                        Model / Lifestyle Image URL
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={card.image || ""}
+                          onChange={(e) => handleLookbookCardChange(idx, "image", e.target.value)}
+                          placeholder="https://images.unsplash.com/..."
+                          className="flex-1 px-3 py-1.5 rounded-lg border border-gray-300 focus:border-black text-xs font-mono bg-white"
+                        />
+                        <div className="h-8 w-8 rounded-lg overflow-hidden bg-gray-200 border border-gray-300 shrink-0">
+                          <img
+                            src={card.image}
+                            alt=""
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "/models/model1.png";
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Product Selection List */}
-          <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-black uppercase tracking-wider text-gray-900">
-                  Select Product Drop from Inventory
-                </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Click any product below to link it to the Hero Showcase
+          {/* Right Column: Live Lookbook Preview */}
+          <div className="lg:col-span-5 sticky top-6 space-y-4">
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+                <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+                  <Eye size={14} className="text-emerald-500" />
+                  Lookbook Live Preview
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  Exact Customer View
+                </span>
+              </div>
+
+              {/* Mini Section Container matching screenshot */}
+              <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-xs space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <h3
+                    className="text-lg sm:text-xl font-black uppercase text-neutral-950 leading-none tracking-tight"
+                    style={{ fontFamily: "var(--font-condensed)" }}
+                  >
+                    {masterConfig.archivedCatalog?.sectionTitle || "THIS SEASON'S WINTER DROPS"}
+                  </h3>
+                  <div className="px-2.5 py-1 rounded-full border border-neutral-300 bg-white text-[10px] font-semibold text-neutral-800 flex items-center gap-1 shrink-0">
+                    <span>{masterConfig.archivedCatalog?.seeAllText || "See All"}</span>
+                    <ArrowUpRight size={12} strokeWidth={2.2} />
+                  </div>
+                </div>
+
+                {/* Card preview row */}
+                <div className="grid grid-cols-2 gap-2.5">
+                  {(lookbookCards.slice(0, 2)).map((card, idx) => (
+                    <div
+                      key={idx}
+                      className="relative aspect-[3/4.5] rounded-2xl overflow-hidden bg-neutral-900 shadow-sm border border-neutral-200"
+                    >
+                      <img
+                        src={card.image}
+                        alt={card.title}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/models/model1.png";
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 via-40% to-transparent flex flex-col justify-end p-3 text-white">
+                        <h4
+                          className="text-sm font-black uppercase tracking-wide text-white drop-shadow-sm leading-none"
+                          style={{ fontFamily: "var(--font-condensed)" }}
+                        >
+                          {card.title}
+                        </h4>
+                        <p className="text-[8px] text-white/90 line-clamp-1 mt-1 font-normal">
+                          {card.subtitle}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider text-center pt-1">
+                  + {Math.max(0, lookbookCards.length - 2)} more cards in horizontal scroll
                 </p>
               </div>
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-gray-100 text-gray-700">
-                {filteredProducts.length} drops available
+
+              <button
+                type="button"
+                onClick={handleSave}
+                className="mt-4 w-full py-3 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
+              >
+                <Check size={16} strokeWidth={3} className="text-emerald-400" />
+                <span>Publish Lookbook To Storefront</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 2: HERO EDITORIAL SLIDES                                              */}
+      {/* ========================================================================= */}
+      {activeTab === "slides" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Form: Slide selector & properties */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Slide Index Tabs */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
+              <span className="text-xs font-black uppercase tracking-wider text-gray-900 block mb-3">
+                Select Slide To Edit
               </span>
-            </div>
-
-            {/* Search Input */}
-            <div className="relative">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by product name, category, or collection (e.g. Tee, Hoodie, Acid)..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-900 focus:bg-white focus:border-gray-900 focus:outline-none"
-              />
-            </div>
-
-            {/* Scrollable Product Picker */}
-            <div className="max-h-[300px] overflow-y-auto space-y-2 pr-1 divide-y divide-gray-100">
-              {filteredProducts.map((p) => {
-                const isSelected = selectedProduct?._id === p._id;
-                const thumb =
-                  p.variants?.find((v) => v.images && v.images.length > 0)?.images?.[0] ||
-                  p.image ||
-                  "/models/model1.png";
-                const price = p.variants?.[0]?.salePrice || p.variants?.[0]?.price || 0;
-
-                return (
+              <div className="grid grid-cols-3 gap-2">
+                {(masterConfig.slides || DEFAULT_HERO_SLIDES).map((slide, idx) => (
                   <button
-                    key={p._id}
+                    key={idx}
                     type="button"
-                    onClick={() => handleSelectProduct(p)}
-                    className={`w-full pt-2 flex items-center justify-between gap-3 p-3 rounded-2xl text-left transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-blue-50/80 border border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]"
-                        : "hover:bg-gray-50 border border-transparent"
+                    onClick={() => setSelectedSlideIndex(idx)}
+                    className={`py-3 px-3 rounded-2xl text-left border transition-all cursor-pointer ${
+                      selectedSlideIndex === idx
+                        ? "bg-neutral-900 text-white border-neutral-900 shadow-sm"
+                        : "bg-gray-50 text-neutral-700 border-gray-200 hover:bg-gray-100"
                     }`}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-12 w-12 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center p-0.5">
+                    <span className="block text-[10px] font-black uppercase tracking-widest opacity-70">
+                      Slide {slide.number || `0${idx + 1}`}
+                    </span>
+                    <span className="block text-xs font-bold truncate mt-0.5">
+                      {slide.tag || `Drop 0${idx + 1}`}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Slide Configuration Form */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
+              <h2 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-2">
+                <Flame size={15} className="text-amber-500" />
+                Slide 0{selectedSlideIndex + 1} Content & Specs
+              </h2>
+
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                      Badge Text
+                    </label>
+                    <input
+                      type="text"
+                      value={activeSlide.badge || ""}
+                      onChange={(e) => handleSlideChange("badge", e.target.value)}
+                      placeholder="e.g. DROP 04 // 2026"
+                      className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                      Category Tag
+                    </label>
+                    <input
+                      type="text"
+                      value={activeSlide.tag || ""}
+                      onChange={(e) => handleSlideChange("tag", e.target.value)}
+                      placeholder="e.g. OVERSIZED FIT"
+                      className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                    Main Headline Title
+                  </label>
+                  <input
+                    type="text"
+                    value={activeSlide.title || ""}
+                    onChange={(e) => handleSlideChange("title", e.target.value)}
+                    placeholder="e.g. Heavyweight Boxy Streetwear."
+                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-sm font-black"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                      Spec Headline
+                    </label>
+                    <input
+                      type="text"
+                      value={activeSlide.specHeadline || ""}
+                      onChange={(e) => handleSlideChange("specHeadline", e.target.value)}
+                      placeholder="e.g. Clear Silhouettes"
+                      className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                      Fabric Stats
+                    </label>
+                    <input
+                      type="text"
+                      value={activeSlide.stats || ""}
+                      onChange={(e) => handleSlideChange("stats", e.target.value)}
+                      placeholder="e.g. 280 GSM • Heavy Combed"
+                      className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                    Spec Detail Description
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={activeSlide.specDetail || ""}
+                    onChange={(e) => handleSlideChange("specDetail", e.target.value)}
+                    placeholder="Technical fabric details..."
+                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-medium"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                      Primary CTA Text
+                    </label>
+                    <input
+                      type="text"
+                      value={activeSlide.primaryCta || ""}
+                      onChange={(e) => handleSlideChange("primaryCta", e.target.value)}
+                      placeholder="e.g. View All Products"
+                      className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                      Primary CTA Link
+                    </label>
+                    <input
+                      type="text"
+                      value={activeSlide.primaryLink || ""}
+                      onChange={(e) => handleSlideChange("primaryLink", e.target.value)}
+                      placeholder="e.g. /new-arrivals"
+                      className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                    Model Hero Image URL / Path
+                  </label>
+                  <input
+                    type="text"
+                    value={activeSlide.image || ""}
+                    onChange={(e) => handleSlideChange("image", e.target.value)}
+                    placeholder="e.g. /models/model1.png"
+                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Slide Preview */}
+          <div className="lg:col-span-5 sticky top-6 space-y-4">
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+                <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+                  <Eye size={14} className="text-emerald-500" />
+                  Hero Slide 0{selectedSlideIndex + 1} Preview
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  Live View
+                </span>
+              </div>
+
+              {/* Mini Slide Card */}
+              <div className="relative rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 p-5 text-white min-h-[300px] flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-[9px] font-black uppercase tracking-wider">
+                      {activeSlide.badge || "NEW SEASON"}
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400 uppercase">
+                      {activeSlide.tag}
+                    </span>
+                  </div>
+                  <h3
+                    className="text-lg font-black uppercase tracking-tight leading-tight text-white"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {activeSlide.title || "Streetwear Drop"}
+                  </h3>
+                  <p className="text-xs text-neutral-300 mt-2 line-clamp-2">
+                    {activeSlide.specDetail}
+                  </p>
+                </div>
+
+                <div className="flex items-end justify-between pt-4 border-t border-white/10">
+                  <div>
+                    <span className="text-[10px] font-bold text-amber-400 uppercase block">
+                      {activeSlide.stats}
+                    </span>
+                    <span className="text-xs font-bold underline mt-1 block">
+                      {activeSlide.primaryCta} ↗
+                    </span>
+                  </div>
+                  <div className="h-20 w-20 rounded-xl overflow-hidden bg-white/5 border border-white/10 shrink-0">
+                    <img
+                      src={activeSlide.image}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/models/model1.png";
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleSave}
+                className="mt-4 w-full py-3 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
+              >
+                <Check size={16} strokeWidth={3} className="text-emerald-400" />
+                <span>Save Slide Changes</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 3: RIGHT BENTO SPOTLIGHT & TACTICAL                                   */}
+      {/* ========================================================================= */}
+      {activeTab === "spotlight" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Form: Spotlight Controls */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Quick Fast Switchers */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
+              <span className="text-xs font-black uppercase tracking-wider text-gray-900 block mb-3 flex items-center gap-1.5">
+                <Sliders size={14} className="text-[var(--color-primary)]" />
+                1-Click Category Drop Switchers
+              </span>
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSpotlightChange("targetCategory", "tee");
+                    handleSpotlightChange("badgeText", "HEAVYWEIGHT 240 GSM TEE");
+                    addToast("Set to Heavyweight T-Shirt Drop", "info");
+                  }}
+                  className={`flex flex-col items-start p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                    masterConfig.spotlight?.targetCategory === "tee"
+                      ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
+                      : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <Shirt size={16} className="mb-1" />
+                  <span className="text-xs font-black uppercase tracking-wider">T-Shirt Drop</span>
+                  <span className="text-[10px] opacity-70">240 GSM Boxy</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSpotlightChange("targetCategory", "hoodie");
+                    handleSpotlightChange("badgeText", "HEAVYWEIGHT 380 GSM HOODIE");
+                    addToast("Set to Heavyweight Hoodie Drop", "info");
+                  }}
+                  className={`flex flex-col items-start p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                    masterConfig.spotlight?.targetCategory === "hoodie"
+                      ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
+                      : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <Flame size={16} className="mb-1" />
+                  <span className="text-xs font-black uppercase tracking-wider">Hoodie Drop</span>
+                  <span className="text-[10px] opacity-70">380 GSM Fleece</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSpotlightChange("targetCategory", "cargo");
+                    handleSpotlightChange("badgeText", "TACTICAL RIPSTOP CARGO");
+                    addToast("Set to Parachute Cargos Drop", "info");
+                  }}
+                  className={`flex flex-col items-start p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                    masterConfig.spotlight?.targetCategory === "cargo"
+                      ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
+                      : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <Layers size={16} className="mb-1" />
+                  <span className="text-xs font-black uppercase tracking-wider">Cargo Drop</span>
+                  <span className="text-[10px] opacity-70">Ripstop Baggy</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Product Picker from Inventory */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <h2 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+                  <Search size={14} className="text-[var(--color-primary)]" />
+                  Select Store Product Drop
+                </h2>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={spotlightSearchTerm}
+                    onChange={(e) => setSpotlightSearchTerm(e.target.value)}
+                    placeholder="Search product..."
+                    className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-gray-200 focus:border-black w-44"
+                  />
+                  <Search size={13} className="absolute left-2.5 top-2.5 text-gray-400" />
+                </div>
+              </div>
+
+              {/* Product Grid */}
+              <div className="max-h-60 overflow-y-auto space-y-2 pr-1 divide-y divide-gray-100">
+                {filteredProducts.slice(0, 10).map((prod) => {
+                  const isSelected =
+                    masterConfig.spotlight?.productId === prod._id ||
+                    (!masterConfig.spotlight?.productId && selectedProduct?._id === prod._id);
+                  const img =
+                    prod.variants?.[0]?.images?.[0] || prod.image || "/models/model1.png";
+                  const price = prod.variants?.[0]?.salePrice || prod.variants?.[0]?.price || 1499;
+
+                  return (
+                    <button
+                      key={prod._id}
+                      type="button"
+                      onClick={() => handleSelectProductForSpotlight(prod)}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl transition text-left cursor-pointer ${
+                        isSelected
+                          ? "bg-neutral-900 text-white"
+                          : "hover:bg-gray-50 text-neutral-800"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-10 w-10 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
+                          <img src={img} alt="" className="h-full w-full object-contain" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold truncate">{prod.name}</p>
+                          <p className={`text-[10px] ${isSelected ? "text-neutral-300" : "text-gray-400"}`}>
+                            ₹{price}
+                          </p>
+                        </div>
+                      </div>
+                      {isSelected && <Check size={16} className="text-emerald-400 shrink-0 mr-2" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Custom Overrides & Badge Details */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
+              <h2 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+                <Tag size={14} className="text-[var(--color-primary)]" />
+                Card Style & Custom Overrides
+              </h2>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                    Card Theme
+                  </label>
+                  <select
+                    value={masterConfig.spotlight?.cardTheme || "dark"}
+                    onChange={(e) => handleSpotlightChange("cardTheme", e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                  >
+                    <option value="dark">Dark Minimal Noir (Recommended)</option>
+                    <option value="light">Clean Light Paper</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                    Badge Preset
+                  </label>
+                  <select
+                    value={masterConfig.spotlight?.badgeText || BADGE_PRESETS[0]}
+                    onChange={(e) => handleSpotlightChange("badgeText", e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                  >
+                    {BADGE_PRESETS.map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                    Custom Title Override
+                  </label>
+                  <input
+                    type="text"
+                    value={masterConfig.spotlight?.title || ""}
+                    onChange={(e) => handleSpotlightChange("title", e.target.value)}
+                    placeholder={selectedProduct?.name || "Leave empty to use product name"}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                    Custom Price Override (₹)
+                  </label>
+                  <input
+                    type="number"
+                    value={masterConfig.spotlight?.customPrice || ""}
+                    onChange={(e) => handleSpotlightChange("customPrice", e.target.value)}
+                    placeholder="Leave empty for auto"
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Live Bento Preview */}
+          <div className="lg:col-span-5 sticky top-6 space-y-4">
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+                <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+                  <Eye size={14} className="text-emerald-500" />
+                  Hero Bento Card Preview
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  {masterConfig.spotlight?.cardTheme === "light" ? "Light Card" : "Dark Card"}
+                </span>
+              </div>
+
+              {/* Bento Card */}
+              {(() => {
+                const isLight = masterConfig.spotlight?.cardTheme === "light";
+                return (
+                  <div
+                    className={`rounded-[26px] p-5 border transition-all ${
+                      isLight
+                        ? "bg-neutral-50 text-neutral-900 border-neutral-200"
+                        : "bg-neutral-950 text-white border-neutral-800"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span
+                        className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                          isLight
+                            ? "bg-neutral-200 text-neutral-800"
+                            : "bg-white/10 text-neutral-200 border border-white/10"
+                        }`}
+                      >
+                        {masterConfig.spotlight?.badgeText || "HEAVYWEIGHT DROP"}
+                      </span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-primary)]">
+                        Signature Drop
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <h4
+                          className="text-base font-black uppercase tracking-tight leading-tight"
+                          style={{ fontFamily: "var(--font-heading)" }}
+                        >
+                          {spotlightPreviewTitle}
+                        </h4>
+                        <p className="text-xs text-neutral-400 mt-1 line-clamp-1">
+                          {masterConfig.spotlight?.subtitle || "Drop shoulder & double-needle ribbed hem."}
+                        </p>
+                        <p className="text-lg font-black tracking-tight mt-2 text-emerald-400">
+                          ₹{spotlightPreviewPrice}
+                        </p>
+                      </div>
+
+                      <div className="h-20 w-20 rounded-2xl bg-white/5 border border-white/10 p-1.5 shrink-0 flex items-center justify-center">
                         <img
-                          src={thumb}
-                          alt={p.name}
+                          src={spotlightPreviewImage}
+                          alt=""
                           className="h-full w-full object-contain"
                           onError={(e) => {
                             e.target.onerror = null;
@@ -356,312 +1237,23 @@ const HeroShowcaseEdit = () => {
                           }}
                         />
                       </div>
-                      <div className="min-w-0">
-                        <h4 className="text-xs font-black uppercase text-gray-900 truncate">
-                          {p.name}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[11px] font-extrabold text-[var(--color-primary)]">
-                            ₹{price}
-                          </span>
-                          <span className="text-[10px] text-gray-400 font-bold uppercase truncate">
-                            {p.brand || "GENZ ORIGINALS"}
-                          </span>
-                        </div>
-                      </div>
                     </div>
-
-                    <div className="shrink-0">
-                      {isSelected ? (
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-primary)] text-white shadow-xs">
-                          <Check size={13} strokeWidth={3} />
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-bold text-gray-400 uppercase group-hover:text-gray-900">
-                          Select
-                        </span>
-                      )}
-                    </div>
-                  </button>
+                  </div>
                 );
-              })}
+              })()}
+
+              <button
+                type="button"
+                onClick={handleSave}
+                className="mt-4 w-full py-3 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
+              >
+                <Check size={16} strokeWidth={3} className="text-emerald-400" />
+                <span>Save Spotlight Changes</span>
+              </button>
             </div>
-          </div>
-
-          {/* Custom Badges & Typography Controls */}
-          <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
-            <h3 className="text-sm font-black uppercase tracking-wider text-gray-900">
-              Card Content & Taglines
-            </h3>
-
-            {/* Badge Text */}
-            <div>
-              <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1.5">
-                Top Badge Text (e.g. HEAVYWEIGHT 240 GSM TEE)
-              </label>
-              <input
-                type="text"
-                value={config.badgeText}
-                onChange={(e) => setConfig({ ...config, badgeText: e.target.value })}
-                placeholder="HEAVYWEIGHT 380 GSM"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-900 uppercase focus:bg-white focus:border-gray-900 focus:outline-none"
-              />
-              {/* Preset Chips */}
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {BADGE_PRESETS.map((badge) => (
-                  <button
-                    key={badge}
-                    type="button"
-                    onClick={() => setConfig({ ...config, badgeText: badge })}
-                    className="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-[10px] font-bold uppercase transition-colors cursor-pointer"
-                  >
-                    {badge}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Custom Subtitle */}
-            <div>
-              <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1.5">
-                Subtitle / Description
-              </label>
-              <input
-                type="text"
-                value={config.subtitle}
-                onChange={(e) => setConfig({ ...config, subtitle: e.target.value })}
-                placeholder="Drop shoulder & double-needle ribbed hem."
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-medium text-gray-900 focus:bg-white focus:border-gray-900 focus:outline-none"
-              />
-            </div>
-
-            {/* Tag Pill & Price Override */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1.5">
-                  Corner Pill Tag
-                </label>
-                <input
-                  type="text"
-                  value={config.tagPill}
-                  onChange={(e) => setConfig({ ...config, tagPill: e.target.value })}
-                  placeholder="Signature Fit"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-900 uppercase focus:bg-white focus:border-gray-900 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-1.5">
-                  Price Override (Optional)
-                </label>
-                <input
-                  type="number"
-                  value={config.customPrice}
-                  onChange={(e) => setConfig({ ...config, customPrice: e.target.value })}
-                  placeholder={String(previewPrice)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-900 focus:bg-white focus:border-gray-900 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Card Surface Theme (Light with CSS mix-blend-mode BG remove vs Dark Obsidian) */}
-            <div className="pt-2 border-t border-gray-100">
-              <label className="text-xs font-bold text-gray-700 uppercase tracking-wide block mb-2">
-                Card Theme & BG Blend Mode
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setConfig({ ...config, cardTheme: "dark" })}
-                  className={`flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                    config.cardTheme !== "light"
-                      ? "bg-gray-900 text-white border-gray-900 shadow-sm"
-                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="h-4 w-4 rounded-full bg-black border border-white/20 shrink-0" />
-                  <div>
-                    <p className="text-xs font-black uppercase">Obsidian Dark</p>
-                    <p className="text-[10px] opacity-70">Studio White Podium</p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setConfig({ ...config, cardTheme: "light" })}
-                  className={`flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                    config.cardTheme === "light"
-                      ? "bg-amber-50 text-amber-900 border-amber-400 shadow-sm ring-1 ring-amber-400"
-                      : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="h-4 w-4 rounded-full bg-white border border-gray-300 shrink-0" />
-                  <div>
-                    <p className="text-xs font-black uppercase">Studio Light (Rec.)</p>
-                    <p className="text-[10px] opacity-70">100% Seamless BG Remove</p>
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Right Column: Live Interactive Bento Card Preview */}
-        <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-8">
-          <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
-                Live Storefront Card Preview
-              </span>
-              <span className="text-[10px] font-bold text-gray-400 uppercase">
-                Home Hero Bento #3
-              </span>
-            </div>
-
-            <p className="text-xs text-gray-500 mb-4 font-medium">
-              This is the exact bento card customers will see in the hero section:
-            </p>
-
-            {/* Exact Bento Card 3 Replica */}
-            {(() => {
-              const isLightCard = config.cardTheme === "light";
-              return (
-                <div
-                  className={`relative rounded-[28px] border p-5 shadow-xl flex items-center justify-between gap-4 overflow-hidden transition-all ${
-                    isLightCard
-                      ? "bg-white text-neutral-900 border-neutral-200/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.06)]"
-                      : "bg-[#0E0F12] text-white border-neutral-800"
-                  }`}
-                >
-                  {/* Subtle background glow */}
-                  <div
-                    className={`pointer-events-none absolute -right-6 -bottom-6 h-36 w-36 rounded-full filter blur-2xl ${
-                      isLightCard
-                        ? "bg-[var(--color-primary)]/10"
-                        : "bg-red-600/15"
-                    }`}
-                  />
-
-                  <div className="flex flex-col justify-between h-full space-y-2.5 min-w-0 flex-1 z-10">
-                    <div>
-                      <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-1.5 ${
-                          isLightCard
-                            ? "bg-neutral-100 text-neutral-800 border border-neutral-200/80"
-                            : "bg-white/10 text-neutral-300"
-                        }`}
-                      >
-                        {config.badgeText || "HEAVYWEIGHT 380 GSM"}
-                      </span>
-                      <h2
-                        className={`text-sm sm:text-base font-black uppercase tracking-tight transition-colors truncate ${
-                          isLightCard
-                            ? "text-neutral-900"
-                            : "text-white"
-                        }`}
-                      >
-                        {previewTitle}
-                      </h2>
-                      <p
-                        className={`text-xs font-medium line-clamp-1 mt-0.5 ${
-                          isLightCard ? "text-neutral-500" : "text-neutral-400"
-                        }`}
-                      >
-                        {config.subtitle || "Drop shoulder & ribbed hem"}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2 pt-1">
-                      <span
-                        className={`text-sm sm:text-base font-black ${
-                          isLightCard ? "text-neutral-900" : "text-amber-400"
-                        }`}
-                      >
-                        ₹{previewPrice}
-                      </span>
-                      <span
-                        className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-md ${
-                          isLightCard
-                            ? "bg-neutral-100 text-neutral-700"
-                            : "bg-white/5 text-neutral-400"
-                        }`}
-                      >
-                        {config.tagPill || "Signature Fit"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Preview Showcase (Enlarged with CSS mix-blend-multiply BG removal) */}
-                  <div className="flex items-center gap-3 shrink-0 z-10">
-                    <div
-                      className={`relative flex items-center justify-center ${
-                        isLightCard
-                          ? "h-24 w-24 sm:h-28 sm:w-28"
-                          : "h-22 w-22 sm:h-26 sm:w-26 rounded-2xl bg-white p-2 shadow-md border border-white/20"
-                      }`}
-                    >
-                      <img
-                        src={previewImage}
-                        alt={previewTitle}
-                        className="h-full w-full object-contain mix-blend-multiply"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "/models/model1.png";
-                        }}
-                      />
-                    </div>
-                    <div
-                      className={`flex h-9 w-9 items-center justify-center rounded-full shadow-sm shrink-0 ${
-                        isLightCard
-                          ? "bg-neutral-900 text-white"
-                          : "bg-white text-neutral-900"
-                      }`}
-                    >
-                      <ArrowUpRight size={16} strokeWidth={2.5} />
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Linked Product Metadata */}
-            {selectedProduct && (
-              <div className="mt-4 p-3 rounded-2xl bg-gray-50 border border-gray-200 text-xs text-gray-600 space-y-1">
-                <div className="flex justify-between font-bold text-gray-900">
-                  <span>Linked Product ID:</span>
-                  <span className="font-mono text-[11px] text-[var(--color-primary)]">
-                    {selectedProduct._id}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Inventory Stock:</span>
-                  <span className="font-bold text-emerald-600">
-                    {selectedProduct.variants?.reduce((sum, v) => sum + (v.stock || 0), 0) || 0} in stock
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Destination URL:</span>
-                  <span className="font-mono text-[10px] text-gray-500">
-                    /products/{selectedProduct._id}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            <button
-              type="button"
-              onClick={handleSave}
-              className="mt-4 w-full py-3 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
-            >
-              <Check size={16} strokeWidth={3} className="text-emerald-400" />
-              <span>Publish This Drop To Hero</span>
-            </button>
           </div>
         </div>
-
-      </div>
+      )}
     </div>
   );
 };

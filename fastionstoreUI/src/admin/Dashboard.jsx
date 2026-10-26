@@ -623,7 +623,7 @@ const Dashboard = () => {
             })
           ) : (
             <div className="py-12 text-center">
-              <span className="text-4xl inline-block mb-3 text-gray-300">📦</span>
+              <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
               <p className="text-sm font-medium text-gray-500">
                 No products found in inventory.
               </p>

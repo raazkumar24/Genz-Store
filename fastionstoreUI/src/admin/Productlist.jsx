@@ -184,6 +184,7 @@ const ProductList = () => {
       await deleteProduct(productToDelete._id);
       removeProduct(productToDelete._id);
       addToast(`"${productToDelete.name}" deleted successfully`, "success");
+      window.dispatchEvent(new CustomEvent("catalogUpdated"));
       setProductToDelete(null);
     } catch (deleteError) {
       console.error("Error deleting product:", deleteError);

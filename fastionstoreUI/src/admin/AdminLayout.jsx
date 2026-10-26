@@ -12,14 +12,20 @@ import {
   ShieldCheck,
   AlertTriangle,
   Flame,
+  Bell,
+  CheckCircle2,
+  Trash2,
 } from "lucide-react";
 import { clearAuth, getUser } from "../utils/auth";
 import { useProducts } from "../context/ProductContext";
+import { useToast } from "../context/ToastContext";
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
   const location = useLocation();
   const { products } = useProducts();
+  const { notifications = [], clearNotifications } = useToast();
   const currentUser = getUser();
 
   // Compute live counts
@@ -49,7 +55,7 @@ const AdminLayout = () => {
     if (p.includes("/admin/products/edit")) return "Edit Product Details";
     if (p.includes("/admin/products")) return "Product Inventory";
     if (p.includes("/admin/collections")) return "Collections & Banners";
-    if (p.includes("/admin/hero-showcase")) return "Hero Spotlight Drop";
+    if (p.includes("/admin/hero-showcase")) return "Hero & Lookbook Studio";
     return "Store Overview";
   };
 
@@ -194,10 +200,10 @@ const AdminLayout = () => {
           >
             <div className="flex items-center gap-3">
               <Flame size={19} strokeWidth={2.2} className="text-amber-500" />
-              <span>Hero Spotlight</span>
+              <span>Hero & Lookbook</span>
             </div>
             <span className="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-200">
-              Live
+              Studio
             </span>
           </NavLink>
         </div>
@@ -232,8 +238,8 @@ const AdminLayout = () => {
         </div>
 
         {/* Topbar */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white/90 backdrop-blur-md px-6 md:px-10 z-10 shadow-xs">
-          <div className="flex items-center gap-4">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white/90 backdrop-blur-md px-3.5 sm:px-6 md:px-10 z-10 shadow-xs">
+          <div className="flex items-center gap-3 sm:gap-4">
             {/* Hamburger Menu for Mobile */}
             <button
               className="md:hidden flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors"
@@ -243,7 +249,7 @@ const AdminLayout = () => {
             </button>
             <div>
               <h1
-                className="text-lg font-black tracking-tight text-gray-900"
+                className="text-base sm:text-lg font-black tracking-tight text-gray-900"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 {getPageTitle()}
@@ -254,7 +260,7 @@ const AdminLayout = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Live Indicator */}
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
@@ -270,6 +276,93 @@ const AdminLayout = () => {
                 <span>{lowStockCount} Low Stock</span>
               </NavLink>
             )}
+
+            {/* Notification Bell Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsNotifOpen((prev) => !prev)}
+                className={`relative flex h-9 w-9 items-center justify-center rounded-xl border transition-all cursor-pointer ${
+                  isNotifOpen
+                    ? "bg-neutral-900 text-white border-neutral-900 shadow-sm"
+                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                }`}
+                title="Notifications"
+                aria-label="View notifications"
+              >
+                <Bell size={16} />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-primary)] px-1 text-[9px] font-black text-white ring-2 ring-white shadow-xs">
+                    {notifications.length > 9 ? "9+" : notifications.length}
+                  </span>
+                )}
+              </button>
+
+              {isNotifOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-30"
+                    onClick={() => setIsNotifOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-2 z-40 w-[calc(100vw-2rem)] max-w-sm sm:w-96 rounded-2xl bg-white border border-gray-200 shadow-2xl p-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <span className="p-1 rounded-lg bg-blue-50 text-[var(--color-primary)]">
+                          <Bell size={14} />
+                        </span>
+                        <h4 className="text-xs font-black uppercase tracking-wider text-gray-900">
+                          Activity & Alerts
+                        </h4>
+                      </div>
+                      {notifications.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={clearNotifications}
+                          className="text-[11px] font-bold text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex items-center gap-1"
+                        >
+                          <Trash2 size={12} />
+                          <span>Clear</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="max-h-72 overflow-y-auto space-y-2 pt-3 divide-y divide-gray-50">
+                      {notifications.length === 0 ? (
+                        <div className="text-center py-6 text-gray-400 space-y-1">
+                          <CheckCircle2 size={24} className="mx-auto text-gray-300 mb-1" />
+                          <p className="text-xs font-bold text-gray-600">All caught up!</p>
+                          <p className="text-[11px]">Product updates and alerts will appear here.</p>
+                        </div>
+                      ) : (
+                        notifications.map((n) => (
+                          <div key={n.id} className="pt-2 first:pt-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <span
+                                className={`text-[10px] font-black uppercase px-1.5 py-0.5 rounded ${
+                                  n.type === "success"
+                                    ? "bg-emerald-50 text-emerald-700"
+                                    : n.type === "error"
+                                    ? "bg-red-50 text-red-700"
+                                    : "bg-blue-50 text-blue-700"
+                                }`}
+                              >
+                                {n.title || n.type}
+                              </span>
+                              <span className="text-[10px] text-gray-400 font-medium shrink-0">
+                                {n.timestamp}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-xs text-gray-800 font-semibold leading-snug">
+                              {n.message}
+                            </p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
             <NavLink
               to="/"

@@ -52,16 +52,17 @@ const POPULAR_COLLECTION_TAGS = [
 ];
 
 const POPULAR_COLOR_PRESETS = [
-  { name: "Jet Black", hex: "#0a0a0a" },
-  { name: "Pure White", hex: "#ffffff" },
-  { name: "Charcoal Grey", hex: "#374151" },
-  { name: "Olive Green", hex: "#4b5320" },
-  { name: "Navy Blue", hex: "#1e3a8a" },
-  { name: "Crimson Red", hex: "#dc2626" },
-  { name: "Beige / Cream", hex: "#f5f5dc" },
-  { name: "Sage Green", hex: "#9ca986" },
-  { name: "Mocha Brown", hex: "#6f4e37" },
-  { name: "Pastel Lilac", hex: "#c8b6ff" },
+  { name: "Black", hex: "#111111" },
+  { name: "White", hex: "#ffffff" },
+  { name: "Blue", hex: "#2563eb" },
+  { name: "Grey", hex: "#6b7280" },
+  { name: "Red", hex: "#ef4444" },
+  { name: "Green", hex: "#4d7c0f" },
+  { name: "Orange", hex: "#f97316" },
+  { name: "Beige", hex: "#d4b996" },
+  { name: "Purple", hex: "#a855f7" },
+  { name: "Yellow", hex: "#eab308" },
+  { name: "Pink", hex: "#ec4899" },
 ];
 
 const SPEC_PRESETS = [
@@ -391,13 +392,25 @@ const ProductEdit = () => {
 
       if (isNewProduct) {
         const response = await createProduct(payload);
-        if (response.product) addProduct(response.product);
-        addToast(`Drop "${formData.name}" created successfully`, "success");
+        const createdProduct = response?.product || response;
+        if (createdProduct) addProduct(createdProduct);
+        addToast(`Drop "${formData.name}" created successfully!`, "package", {
+          duration: 5000,
+          title: "Product Created",
+          icon: "package",
+        });
+        window.dispatchEvent(new CustomEvent("catalogUpdated"));
         navigate("/admin/products");
       } else {
-        const updatedProduct = await updateProduct(productId, payload);
-        replaceProduct(updatedProduct);
-        addToast(`Drop "${formData.name}" updated successfully`, "success");
+        const response = await updateProduct(productId, payload);
+        const updatedProduct = response?.product || response;
+        if (updatedProduct) replaceProduct(updatedProduct);
+        addToast(`Drop "${formData.name}" updated successfully!`, "package", {
+          duration: 5000,
+          title: "Product Updated",
+          icon: "package",
+        });
+        window.dispatchEvent(new CustomEvent("catalogUpdated"));
         navigate("/admin/products");
       }
     } catch (submitError) {
@@ -408,7 +421,7 @@ const ProductEdit = () => {
         errorMessage = data.error || data.message || errorMessage;
       }
       setError(errorMessage);
-      addToast(errorMessage, "error");
+      addToast(errorMessage, "error", { title: "Update Failed", duration: 6000 });
     } finally {
       setSaving(false);
     }
@@ -1158,9 +1171,9 @@ const ProductEdit = () => {
         </Card>
 
         {/* 4. Floating Elevated Save Action Bar */}
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-t border-gray-200 px-6 py-4 shadow-2xl">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4 text-xs font-bold text-gray-600">
+        <div className="fixed bottom-0 left-0 md:left-64 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-3 sm:px-6 py-2.5 sm:py-3.5 shadow-2xl">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+            <div className="hidden sm:flex items-center gap-4 text-xs font-bold text-gray-600">
               <span className="flex items-center gap-1.5">
                 <Package size={16} className="text-gray-400" />
                 {variants.length} Colorway(s)
@@ -1171,27 +1184,27 @@ const ProductEdit = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-end">
               <Link
                 to="/admin/products"
-                className="px-5 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-700 hover:bg-gray-100 transition-colors"
+                className="flex-1 sm:flex-none text-center px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-[11px] sm:text-xs font-bold text-gray-700 hover:bg-gray-100 transition-colors"
               >
-                Cancel & Discard
+                Cancel
               </Link>
               <button
                 type="submit"
                 disabled={saving}
-                className="flex items-center justify-center gap-2 rounded-2xl bg-gray-900 text-white px-8 py-2.5 text-xs font-black uppercase tracking-wider hover:bg-gray-800 transition-all shadow-md shadow-black/10 active:scale-95 disabled:opacity-50"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-gray-900 text-white px-4 sm:px-8 py-2 sm:py-2.5 text-[11px] sm:text-xs font-black uppercase tracking-wider hover:bg-gray-800 transition-all shadow-md shadow-black/10 active:scale-95 disabled:opacity-50"
               >
                 {saving ? (
                   <>
-                    <Loader2 size={16} className="animate-spin" />
-                    <span>Saving Drop...</span>
+                    <Loader2 size={15} className="animate-spin" />
+                    <span>Saving...</span>
                   </>
                 ) : (
                   <>
-                    <Save size={16} />
-                    <span>{isNewProduct ? "Publish New Drop" : "Save All Changes"}</span>
+                    <Save size={15} />
+                    <span>{isNewProduct ? "Publish Drop" : "Save Changes"}</span>
                   </>
                 )}
               </button>

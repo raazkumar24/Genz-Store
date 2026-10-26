@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Heart,
   Star,
   Flame,
@@ -13,9 +12,13 @@ import {
   ShieldCheck,
   RotateCcw,
   Layers,
+  Palette,
 } from "lucide-react";
 import { fetchPopularColors } from "../services/productService";
-import { getHeroSpotlightConfig } from "../services/heroShowcaseService";
+import {
+  getHeroSpotlightConfig,
+  getHeroMasterConfig,
+} from "../services/heroShowcaseService";
 import { useProducts } from "../context/ProductContext";
 
 /**
@@ -118,18 +121,44 @@ const resolveColorHex = (colorString) => {
   return hues[Math.abs(hash) % hues.length];
 };
 
+const CANONICAL_PALETTES = [
+  { key: "black", name: "Black", hex: "#111111", keywords: ["black", "noir", "dark", "jet", "pitch"] },
+  { key: "white", name: "White", hex: "#FFFFFF", keywords: ["white", "ivory", "snow", "swanwhite"] },
+  { key: "blue", name: "Blue", hex: "#2563EB", keywords: ["blue", "navy", "cobalt", "cyan", "teal", "indigo", "sky", "denim"] },
+  { key: "red", name: "Red", hex: "#EF4444", keywords: ["red", "crimson", "wine", "maroon", "burgundy", "ruby", "scarlet", "cherry"] },
+  { key: "brown", name: "Brown", hex: "#78350F", keywords: ["brown", "coffee", "mocha", "chocolate", "espresso", "cocoa"] },
+  { key: "green", name: "Green", hex: "#4D7C0F", keywords: ["green", "olive", "sage", "forest", "emerald", "lime", "mint"] },
+  { key: "grey", name: "Grey", hex: "#6B7280", keywords: ["grey", "gray", "charcoal", "slate", "ash", "silver"] },
+  { key: "beige", name: "Beige", hex: "#D4B996", keywords: ["beige", "cream", "khaki", "sand", "tan", "nude", "wheat"] },
+  { key: "orange", name: "Orange", hex: "#F97316", keywords: ["orange", "rust", "tangerine", "peach", "coral"] },
+  { key: "purple", name: "Purple", hex: "#A855F7", keywords: ["purple", "lavender", "violet", "lilac", "plum"] },
+  { key: "yellow", name: "Yellow", hex: "#EAB308", keywords: ["yellow", "mustard", "amber", "gold"] },
+  { key: "pink", name: "Pink", hex: "#EC4899", keywords: ["pink", "rose", "fuchsia", "magenta"] },
+];
+
+const canonicalizeColor = (colorString) => {
+  if (!colorString) return null;
+  const str = String(colorString).trim().toLowerCase();
+  for (const pal of CANONICAL_PALETTES) {
+    if (pal.key === str || pal.keywords.some((kw) => str.includes(kw))) {
+      return pal;
+    }
+  }
+  return null;
+};
+
 /**
  * Fallback curated palette swatches for the Bento "Popular Colors" widget
  */
 const defaultPopularColors = [
-  { name: "Pitch Black", hex: "#111111", filter: "black", count: 14 },
-  { name: "Cobalt Blue", hex: "#2563EB", filter: "blue", count: 8 },
-  { name: "Sunset Orange", hex: "#F97316", filter: "orange", count: 6 },
-  { name: "Acid Lime", hex: "#84CC16", filter: "lime", count: 5 },
-  { name: "Signal Crimson", hex: "#EF4444", filter: "red", count: 7 },
-  { name: "Military Olive", hex: "#4D7C0F", filter: "olive", count: 5 },
-  { name: "Off White", hex: "#FFFFFF", filter: "white", count: 9 },
-  { name: "Desert Beige", hex: "#D4B996", filter: "beige", count: 4 },
+  { name: "Black", hex: "#111111", filter: "black", count: 14 },
+  { name: "White", hex: "#FFFFFF", filter: "white", count: 9 },
+  { name: "Blue", hex: "#2563EB", filter: "blue", count: 8 },
+  { name: "Orange", hex: "#F97316", filter: "orange", count: 6 },
+  { name: "Red", hex: "#EF4444", filter: "red", count: 7 },
+  { name: "Green", hex: "#4D7C0F", filter: "olive", count: 5 },
+  { name: "Grey", hex: "#6B7280", filter: "grey", count: 4 },
+  { name: "Beige", hex: "#D4B996", filter: "beige", count: 4 },
 ];
 
 /**
@@ -145,63 +174,112 @@ const Hero = () => {
   const navigate = useNavigate();
   const activeColorFilter = searchParams.get("color")?.toLowerCase() || "";
 
+  const [masterConfig, setMasterConfig] = useState(getHeroMasterConfig);
   const [spotlightConfig, setSpotlightConfig] = useState(
-    getHeroSpotlightConfig,
+    () => getHeroMasterConfig().spotlight || getHeroSpotlightConfig()
   );
 
-  // Listen for live spotlight updates from Admin panel
+  // Listen for live master config & spotlight updates from Admin panel
   useEffect(() => {
-    const handleUpdate = (e) => {
+    const handleMasterUpdate = (e) => {
+      const cfg = e.detail || getHeroMasterConfig();
+      setMasterConfig(cfg);
+      if (cfg?.spotlight) {
+        setSpotlightConfig(cfg.spotlight);
+      }
+    };
+
+    const handleSpotlightUpdate = (e) => {
       setSpotlightConfig(e.detail || getHeroSpotlightConfig());
     };
-    window.addEventListener("heroSpotlightUpdated", handleUpdate);
-    return () =>
-      window.removeEventListener("heroSpotlightUpdated", handleUpdate);
+
+    window.addEventListener("heroConfigUpdated", handleMasterUpdate);
+    window.addEventListener("heroSpotlightUpdated", handleSpotlightUpdate);
+    return () => {
+      window.removeEventListener("heroConfigUpdated", handleMasterUpdate);
+      window.removeEventListener("heroSpotlightUpdated", handleSpotlightUpdate);
+    };
   }, []);
 
   const { products } = useProducts();
 
-  // Fetch dynamic popular colors from backend and sanitize hex values
+  // Fetch dynamic popular colors from backend and sanitize hex values with canonical deduplication
   useEffect(() => {
     let isMounted = true;
-    fetchPopularColors().then((data) => {
-      if (isMounted && Array.isArray(data) && data.length > 0) {
-        // Ensure every item has a rich streetwear hex code
-        const sanitized = data.map((item) => ({
-          ...item,
-          hex: item.hex && item.hex !== "#888888" && item.hex !== "#888" 
-            ? item.hex 
-            : resolveColorHex(item.filter || item.color || item.name),
-        }));
-        setColorsList(sanitized);
-      } else if (isMounted && products && products.length > 0) {
-        // Extract live colors from products context
-        const counts = {};
-        products.forEach((p) => {
-          (p.variants || []).forEach((v) => {
-            if (v.color) {
-              const clean = String(v.color).trim().toLowerCase();
-              counts[clean] = (counts[clean] || 0) + 1;
+
+    const loadColors = () => {
+      fetchPopularColors().then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          // Enforce canonical normalization & deduplication so duplicate color circles are NEVER created
+          const seenKeys = new Set();
+          const unique = [];
+          data.forEach((item) => {
+            const raw = item.filter || item.color || item.name;
+            const canonical = canonicalizeColor(raw);
+            const key = canonical?.key || String(raw).toLowerCase().trim();
+            if (!seenKeys.has(key)) {
+              seenKeys.add(key);
+              unique.push({
+                name: canonical?.name || item.name || (key.charAt(0).toUpperCase() + key.slice(1)),
+                filter: key,
+                hex: item.hex && item.hex !== "#888888" && item.hex !== "#888" 
+                  ? item.hex 
+                  : (canonical?.hex || resolveColorHex(key)),
+                count: item.count || 0,
+              });
             }
           });
-        });
-        const derived = Object.entries(counts)
-          .map(([color, count]) => ({
-            name: color.charAt(0).toUpperCase() + color.slice(1),
-            filter: color,
-            hex: resolveColorHex(color),
-            count,
-          }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 8);
-
-        if (derived.length > 0) {
-          setColorsList(derived);
+          if (unique.length > 0) {
+            setColorsList(unique.slice(0, 8));
+            return;
+          }
         }
-      }
-    });
+
+        if (isMounted && products && products.length > 0) {
+          // Extract live colors from products context with canonical grouping
+          const counts = {};
+          products.forEach((p) => {
+            const productColors = new Set();
+            (p.variants || []).forEach((v) => {
+              if (v.color) {
+                const canonical = canonicalizeColor(v.color);
+                if (canonical?.key) {
+                  productColors.add(canonical.key);
+                }
+              }
+            });
+            productColors.forEach((k) => {
+              counts[k] = (counts[k] || 0) + 1;
+            });
+          });
+
+          const derived = CANONICAL_PALETTES
+            .filter((p) => (counts[p.key] || 0) > 0)
+            .map((p) => ({
+              name: p.name,
+              filter: p.key,
+              hex: p.hex,
+              count: counts[p.key],
+            }))
+            .sort((a, b) => b.count - a.count);
+
+          if (derived.length > 0) {
+            setColorsList(derived.slice(0, 8));
+          }
+        }
+      });
+    };
+
+    loadColors();
+
+    const handleCatalogUpdate = () => {
+      loadColors();
+    };
+    window.addEventListener("catalogUpdated", handleCatalogUpdate);
+
     return () => {
       isMounted = false;
+      window.removeEventListener("catalogUpdated", handleCatalogUpdate);
     };
   }, [products]);
 
@@ -359,13 +437,18 @@ const Hero = () => {
     ];
   }, [products]);
 
+  const activeSlides =
+    masterConfig?.slides && masterConfig.slides.length > 0
+      ? masterConfig.slides
+      : heroSlides;
+
   const nextSlide = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % heroSlides.length);
-  }, []);
+    setCurrent((prev) => (prev + 1) % activeSlides.length);
+  }, [activeSlides.length]);
 
   const prevSlide = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  }, []);
+    setCurrent((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
+  }, [activeSlides.length]);
 
   // Automatic slide rotation
   useEffect(() => {
@@ -373,13 +456,15 @@ const Hero = () => {
     return () => clearInterval(timer);
   }, [nextSlide]);
 
-  const slide = heroSlides[current];
+  const slide = activeSlides[current % activeSlides.length] || activeSlides[0];
 
   return (
-    <section className="relative w-full bg-[#F3F4F0] pt-4 md:pt-6 pb-6 md:pb-10 overflow-hidden">
-      {/* Background Micro Noise Texture */}
-      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.02]">
-        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:28px_28px]" />
+    <section className="relative w-full bg-[#F6F7F9] pt-4 md:pt-6 pb-6 md:pb-10 overflow-hidden">
+      {/* Background Subtle Gradient & Micro Texture */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-amber-200/20 blur-3xl" />
+        <div className="absolute top-1/2 -right-40 h-96 w-96 rounded-full bg-[var(--color-primary)]/10 blur-3xl" />
+        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px] opacity-[0.025]" />
       </div>
 
       <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 relative z-10">
@@ -390,24 +475,23 @@ const Hero = () => {
           {/* ------------------------------------------------------- */}
           {/* MAIN HERO BENTO CARD (Left 8 Cols)                      */}
           {/* ------------------------------------------------------- */}
-          <div className="lg:col-span-8 bg-white rounded-[28px] md:rounded-[34px] border border-neutral-200/90 p-6 sm:p-8 md:p-10 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] relative overflow-hidden flex flex-col justify-between min-h-[500px] md:min-h-[560px]">
+          <div className="lg:col-span-8 bg-white rounded-[32px] md:rounded-[36px] border border-neutral-200/90 hover:border-neutral-300/90 p-5 sm:p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_16px_40px_rgb(0,0,0,0.07)] transition-all duration-300 relative overflow-hidden flex flex-col justify-between h-[560px] sm:h-[580px] md:h-[580px] lg:h-[600px] xl:h-[610px]">
             {/* Top Row: Pill Badges & Slide Number indicator */}
             <div className="flex items-center justify-between gap-3 z-20 flex-wrap">
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-neutral-100 text-neutral-800 text-[11px] font-bold uppercase tracking-wider border border-neutral-200/60">
-                  <Sparkles size={12} className="text-[var(--color-primary)]" />
+                <span className="inline-flex items-center gap-1.5 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-neutral-100/90 text-neutral-800 text-[10px] sm:text-[11px] font-black uppercase tracking-wider border border-neutral-200/80 shadow-2xs">
                   {slide.badge}
                 </span>
 
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-black uppercase tracking-wider">
-                  <Flame size={11} className="text-amber-400 fill-amber-400" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-neutral-950 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-sm">
+                  <Flame size={12} className="text-amber-400 fill-amber-400" />
                   {slide.tag}
                 </span>
               </div>
 
               {/* Slider Dots */}
-              <div className="flex items-center gap-2">
-                {heroSlides.map((_, idx) => (
+              <div className="flex items-center gap-1.5 bg-neutral-100/70 p-1 rounded-full border border-neutral-200/60">
+                {activeSlides.map((_, idx) => (
                   <button
                     key={idx}
                     type="button"
@@ -415,8 +499,8 @@ const Hero = () => {
                     aria-label={`Jump to slide ${idx + 1}`}
                     className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                       idx === current
-                        ? "w-7 bg-neutral-900"
-                        : "w-2 bg-neutral-200 hover:bg-neutral-300"
+                        ? "w-6 bg-neutral-950"
+                        : "w-2 bg-neutral-300 hover:bg-neutral-400"
                     }`}
                   />
                 ))}
@@ -424,51 +508,51 @@ const Hero = () => {
             </div>
 
             {/* Middle Stage: Editorial Copy + Floating Product Cutout */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center my-auto pt-6 pb-4 z-10">
+            <div className="flex flex-col md:grid md:grid-cols-12 gap-3 sm:gap-6 items-center flex-1 min-h-0 pt-2 pb-1 sm:pt-4 sm:pb-2 z-10 overflow-hidden">
               {/* Left Copy Column (7 cols on md) */}
-              <div className="md:col-span-7 flex flex-col justify-center space-y-4 md:space-y-6">
+              <div className="w-full md:col-span-7 flex flex-col justify-center space-y-3 sm:space-y-4 md:space-y-6 shrink-0">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={current}
-                    initial={{ opacity: 0, y: 14 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -14 }}
-                    transition={{ duration: 0.35, ease: "easeOut" }}
-                    className="space-y-4"
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="space-y-2.5 sm:space-y-4"
                   >
                     {/* Big Streetwear Heading */}
                     <h1
-                      className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black uppercase tracking-tight text-neutral-900 leading-[1.04]"
+                      className="text-2xl sm:text-3xl md:text-5xl lg:text-[3.25rem] font-black uppercase tracking-tight text-neutral-950 leading-[1.05] line-clamp-2 md:line-clamp-none"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {slide.title}
                     </h1>
 
                     {/* Spec Label with 01 —— Detail Line */}
-                    <div className="flex items-start gap-3.5 pt-1">
-                      <span className="text-2xl sm:text-3xl font-black text-neutral-300 tracking-tighter shrink-0 select-none">
+                    <div className="flex items-start gap-3 sm:gap-4 pt-0.5 sm:pt-1">
+                      <span className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-200 tracking-tighter shrink-0 select-none">
                         {slide.number}
                       </span>
-                      <div className="border-l-2 border-neutral-200 pl-3.5 space-y-1">
-                        <p className="text-xs font-black uppercase tracking-wider text-neutral-900">
+                      <div className="border-l-2 border-neutral-200 pl-3 sm:pl-4 space-y-0.5 sm:space-y-1">
+                        <p className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-neutral-950">
                           {slide.specHeadline}
                         </p>
-                        <p className="text-xs sm:text-sm text-neutral-500 font-medium leading-relaxed max-w-sm">
+                        <p className="text-[11px] sm:text-xs md:text-sm text-neutral-500 font-medium leading-relaxed max-w-sm line-clamp-2 md:line-clamp-none">
                           {slide.specDetail}
                         </p>
                       </div>
                     </div>
 
                     {/* Action Buttons: Dribbble-style Bento Pill Button */}
-                    <div className="flex flex-wrap items-center gap-3 pt-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1.5 sm:pt-2.5">
                       <Link
                         to={slide.primaryLink}
-                        className="group inline-flex items-center gap-3 rounded-full bg-neutral-900 hover:bg-black text-white pl-6 pr-2.5 py-2.5 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all duration-200 shadow-md shadow-black/10 active:scale-[0.98]"
+                        className="group inline-flex items-center gap-2.5 sm:gap-3 rounded-full bg-neutral-950 hover:bg-black text-white pl-5 sm:pl-6 pr-2 py-2 sm:pr-2.5 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-black uppercase tracking-wider transition-all duration-200 shadow-md shadow-black/15 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                       >
                         <span>{slide.primaryCta}</span>
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all duration-200">
+                        <span className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white text-neutral-950 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all duration-200 shadow-2xs">
                           <ArrowUpRight
-                            size={16}
+                            size={15}
                             strokeWidth={2.5}
                             className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                           />
@@ -477,7 +561,7 @@ const Hero = () => {
 
                       <Link
                         to="/sale"
-                        className="inline-flex items-center justify-center rounded-full border border-neutral-300/90 bg-white hover:bg-neutral-100 text-neutral-800 px-5 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors shadow-2xs"
+                        className="inline-flex items-center justify-center rounded-full border border-neutral-300 hover:border-neutral-950 bg-white hover:bg-neutral-950 hover:text-white text-neutral-800 px-4 py-2 sm:px-5 sm:py-2.5 text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-wider transition-all shadow-2xs"
                       >
                         Sale %
                       </Link>
@@ -487,27 +571,27 @@ const Hero = () => {
               </div>
 
               {/* Right Cutout Showcase (5 cols on md) */}
-              <div className="md:col-span-5 relative flex items-center justify-center h-[260px] sm:h-[320px] md:h-[360px]">
+              <div className="w-full md:col-span-5 relative flex-1 min-h-[170px] max-h-[220px] sm:max-h-[260px] md:max-h-none md:h-[340px] lg:h-[390px] flex items-center justify-center overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={current}
-                    initial={{ opacity: 0, scale: 0.94, y: 15 }}
+                    initial={{ opacity: 0, scale: 0.94, y: 12 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 1.02, y: -10 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    exit={{ opacity: 0, scale: 1.02, y: -8 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
                     className="relative h-full w-full flex items-center justify-center"
                   >
                     {/* Soft Backdrop Radial Aura */}
-                    <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-neutral-100 to-neutral-200/50 filter blur-xl -z-10" />
+                    <div className="absolute inset-2 sm:inset-4 rounded-full bg-gradient-to-tr from-neutral-100 to-neutral-200/60 filter blur-xl -z-10" />
 
                     <img
                       src={slide.image}
                       alt={slide.title}
-                      className="h-full w-auto object-contain object-bottom drop-shadow-2xl select-none"
+                      className="h-full w-auto max-h-full max-w-full object-contain object-bottom drop-shadow-2xl select-none pointer-events-none"
                     />
 
                     {/* Floating Micro Spec Pill */}
-                    <div className="absolute bottom-4 right-2 sm:right-4 bg-white/90 backdrop-blur-md border border-neutral-200/80 px-3 py-1.5 rounded-full shadow-md text-[10px] font-black uppercase tracking-wider text-neutral-800 flex items-center gap-1.5 animate-bounce">
+                    <div className="absolute bottom-2 right-1 sm:bottom-4 sm:right-4 bg-white/95 backdrop-blur-md border border-neutral-200/90 px-3 py-1.5 rounded-full shadow-lg text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
                       {slide.accentBadge}
                     </div>
@@ -519,7 +603,7 @@ const Hero = () => {
             {/* Bottom Row: Micro Brand Bar & Slider Arrows */}
             <div className="flex items-center justify-between pt-4 border-t border-neutral-100 text-neutral-400 z-20">
               <div className="text-[11px] font-bold uppercase tracking-widest text-neutral-500">
-                <span>GENZ STUDIO</span>
+                <span className="text-neutral-900 font-black">GENZ STUDIO</span>
                 <span className="mx-2">•</span>
                 <span className="text-neutral-400 font-mono">
                   {slide.stats}
@@ -532,7 +616,7 @@ const Hero = () => {
                   type="button"
                   onClick={prevSlide}
                   aria-label="Previous Slide"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all cursor-pointer shadow-2xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all cursor-pointer shadow-2xs"
                 >
                   <ChevronLeft size={15} strokeWidth={2.5} />
                 </button>
@@ -540,7 +624,7 @@ const Hero = () => {
                   type="button"
                   onClick={nextSlide}
                   aria-label="Next Slide"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all cursor-pointer shadow-2xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all cursor-pointer shadow-2xs"
                 >
                   <ChevronRight size={15} strokeWidth={2.5} />
                 </button>
@@ -551,14 +635,15 @@ const Hero = () => {
           {/* ------------------------------------------------------- */}
           {/* RIGHT BENTO STACK (Right 4 Cols)                         */}
           {/* ------------------------------------------------------- */}
-          <div className="lg:col-span-4 flex flex-col gap-4 md:gap-5">
-            {/* Card 1: Popular Colors Card (Direct homage to Dribbble shot & backend connected) */}
-            <div className="bg-white rounded-[28px] border border-neutral-200/90 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)]">
+          <div className="lg:col-span-4 flex flex-col gap-4 md:gap-5 lg:h-[600px] xl:h-[610px] justify-between">
+            {/* Card 1: Popular Colors Card (Refined borders, pill labels, active ring offset) */}
+            <div className="bg-white rounded-[28px] md:rounded-[32px] border border-neutral-200/90 hover:border-neutral-300/90 p-5 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.03)] transition-all">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-black uppercase tracking-wider text-neutral-900">
+                <span className="text-xs font-black uppercase tracking-wider text-neutral-950 flex items-center gap-1.5">
+                  <Palette size={14} className="text-[var(--color-primary)]" />
                   Popular Colors
                 </span>
-                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-full border border-neutral-200/60">
                   {hoveredColor
                     ? hoveredColor.name
                     : activeColorFilter
@@ -585,7 +670,7 @@ const Hero = () => {
                           : "border-black/10"
                       } ${
                         isActive
-                          ? "ring-2 ring-neutral-900 ring-offset-2 scale-110 shadow-md"
+                          ? "ring-2 ring-neutral-950 ring-offset-2 scale-110 shadow-md"
                           : "hover:ring-2 hover:ring-neutral-400 hover:ring-offset-1"
                       }`}
                       style={{ backgroundColor: color.hex }}
@@ -595,7 +680,7 @@ const Hero = () => {
                       {isActive && (
                         <span className={`h-2 w-2 rounded-full shadow-xs ${
                           color.hex?.toLowerCase() === "#ffffff" || color.hex?.toLowerCase() === "#fffdd0"
-                            ? "bg-neutral-900"
+                            ? "bg-neutral-950"
                             : "bg-white"
                         }`} />
                       )}
@@ -605,16 +690,16 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Card 2: Spotlight Drop Card with Circular Arrow Button */}
+            {/* Card 2: Tactical Drop Card (Clean border, rotating circular button) */}
             <Link
               to={cargoLink}
-              className="group bg-white rounded-[28px] border border-neutral-200/90 p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)] flex items-center justify-between gap-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+              className="group bg-white rounded-[28px] md:rounded-[32px] border border-neutral-200/90 hover:border-neutral-300/90 p-5 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_30px_-4px_rgba(0,0,0,0.08)] flex items-center justify-between gap-4 transition-all duration-300 hover:-translate-y-1"
             >
               <div className="flex flex-col space-y-1 min-w-0">
                 <span className="text-[10px] font-black uppercase tracking-widest text-[var(--color-primary)]">
                   Tactical Drop
                 </span>
-                <h2 className="text-sm sm:text-base font-extrabold uppercase tracking-tight text-neutral-900 group-hover:text-[var(--color-primary)] transition-colors truncate">
+                <h2 className="text-sm sm:text-base font-black uppercase tracking-tight text-neutral-950 group-hover:text-[var(--color-primary)] transition-colors truncate">
                   {cargoName}
                 </h2>
                 <p className="text-xs text-neutral-500 font-medium truncate">
@@ -624,7 +709,7 @@ const Hero = () => {
 
               {/* Thumbnail + Arrow Badge */}
               <div className="flex items-center gap-3 shrink-0">
-                <div className="h-20 w-20 sm:h-22 sm:w-22 rounded-2xl bg-neutral-50 overflow-hidden border border-neutral-200/80 p-1.5 flex items-center justify-center">
+                <div className="h-20 w-20 sm:h-22 sm:w-22 rounded-2xl bg-neutral-50 overflow-hidden border border-neutral-200/80 p-1.5 flex items-center justify-center shadow-inner">
                   <img
                     src={cargoImg}
                     alt={cargoName}
@@ -635,111 +720,131 @@ const Hero = () => {
                     }}
                   />
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-white group-hover:bg-[var(--color-primary)] group-hover:scale-110 transition-all duration-200 shadow-2xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-950 text-white group-hover:bg-[var(--color-primary)] group-hover:scale-110 group-hover:rotate-45 transition-all duration-200 shadow-sm">
                   <ArrowUpRight size={16} strokeWidth={2.5} />
                 </div>
               </div>
             </Link>
 
-            {/* Card 3: Featured Technical Outerwear Showcase (Configurable from Admin Panel) */}
+            {/* Card 3: Redesigned High-Impact Oversized Box / Signature Drop Card */}
             {(() => {
               const isLightCard = spotlightConfig.cardTheme === "light";
               return (
                 <Link
                   to={spotlightLink}
-                  className={`group relative rounded-[28px] border p-5 sm:p-6 shadow-lg flex-1 min-h-[168px] flex items-center justify-between gap-4 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${
+                  className={`group relative rounded-[28px] md:rounded-[32px] border p-5 sm:p-6 flex-1 min-h-[180px] flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
                     isLightCard
-                      ? "bg-white text-neutral-900 border-neutral-200/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.04)]"
-                      : "bg-[#0E0F12] text-white border-neutral-800"
+                      ? "bg-gradient-to-br from-white via-neutral-50 to-neutral-100 text-neutral-950 border-neutral-200/90 shadow-[0_8px_24px_-4px_rgba(0,0,0,0.03)]"
+                      : "bg-gradient-to-br from-[#121418] via-[#0E1013] to-[#08090A] text-white border-neutral-800/90 shadow-xl"
                   }`}
                 >
-                  {/* Subtle background glow */}
+                  {/* Subtle Ambient Radial Lighting */}
                   <div
-                    className={`pointer-events-none absolute -right-6 -bottom-6 h-40 w-40 rounded-full filter blur-2xl transition-opacity ${
+                    className={`pointer-events-none absolute -right-8 -top-8 h-44 w-44 rounded-full filter blur-3xl transition-opacity duration-500 ${
                       isLightCard
-                        ? "bg-[var(--color-primary)]/10 opacity-70"
-                        : "bg-[var(--color-primary)]/20"
+                        ? "bg-[var(--color-primary)]/10 opacity-70 group-hover:opacity-100"
+                        : "bg-[var(--color-primary)]/20 opacity-80 group-hover:opacity-100"
+                    }`}
+                  />
+                  <div
+                    className={`pointer-events-none absolute -left-8 -bottom-8 h-36 w-36 rounded-full filter blur-2xl transition-opacity duration-500 ${
+                      isLightCard ? "bg-amber-400/10" : "bg-amber-400/15"
                     }`}
                   />
 
-                  <div className="flex flex-col justify-between h-full space-y-2.5 min-w-0 flex-1 z-10">
-                    <div>
-                      <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-1.5 ${
-                          isLightCard
-                            ? "bg-neutral-100 text-neutral-800 border border-neutral-200/80"
-                            : "bg-white/10 text-neutral-300"
-                        }`}
-                      >
-                        {spotlightBadge}
-                      </span>
+                  {/* Top Bar: Specs Badge + Live Pulse */}
+                  <div className="flex items-center justify-between gap-2 z-10 mb-2">
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                        isLightCard
+                          ? "bg-neutral-100 text-neutral-800 border border-neutral-200/90 shadow-2xs"
+                          : "bg-white/10 text-neutral-200 border border-white/10 backdrop-blur-md"
+                      }`}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-primary)] animate-ping" />
+                      {spotlightBadge}
+                    </span>
+
+                    <span
+                      className={`text-[10px] font-black uppercase tracking-widest ${
+                        isLightCard ? "text-[var(--color-primary)]" : "text-amber-400"
+                      }`}
+                    >
+                      {spotlightTag}
+                    </span>
+                  </div>
+
+                  {/* Middle Content & Garment Showcase */}
+                  <div className="flex items-center justify-between gap-3 z-10 flex-1 my-1">
+                    <div className="flex flex-col space-y-1 min-w-0 flex-1">
                       <h2
-                        className={`text-sm sm:text-base font-black uppercase tracking-tight transition-colors truncate ${
+                        className={`text-base sm:text-lg font-black uppercase tracking-tight transition-colors line-clamp-1 ${
                           isLightCard
-                            ? "text-neutral-900 group-hover:text-[var(--color-primary)]"
-                            : "text-white group-hover:text-amber-400"
+                            ? "text-neutral-950 group-hover:text-[var(--color-primary)]"
+                            : "text-white group-hover:text-amber-300"
                         }`}
+                        style={{ fontFamily: "var(--font-heading)" }}
                       >
                         {spotlightName}
                       </h2>
                       <p
-                        className={`text-xs font-medium line-clamp-1 mt-0.5 ${
+                        className={`text-xs font-medium line-clamp-1 ${
                           isLightCard ? "text-neutral-500" : "text-neutral-400"
                         }`}
                       >
                         {spotlightSubtitle}
                       </p>
+                      <div className="flex items-baseline gap-2 pt-1.5">
+                        <span
+                          className={`text-base sm:text-lg font-black tracking-tight ${
+                            isLightCard ? "text-neutral-950" : "text-white"
+                          }`}
+                        >
+                          ₹{spotlightPrice}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                          Pre-Shrunk 280 GSM
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-2 pt-1">
-                      <span
-                        className={`text-sm sm:text-base font-black ${
-                          isLightCard ? "text-neutral-900" : "text-amber-400"
-                        }`}
-                      >
-                        ₹{spotlightPrice}
-                      </span>
-                      <span
-                        className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-md ${
+                    {/* Elevated Floating Product Preview with Ambient Backdrop */}
+                    <div className="relative shrink-0 flex items-center justify-center">
+                      <div
+                        className={`relative h-24 w-24 sm:h-26 sm:w-26 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-105 ${
                           isLightCard
-                            ? "bg-neutral-100 text-neutral-700"
-                            : "bg-white/5 text-neutral-400"
+                            ? "bg-white/90 border border-neutral-200/80 shadow-xs"
+                            : "bg-white/[0.07] backdrop-blur-md border border-white/10 shadow-inner"
                         }`}
                       >
-                        {spotlightTag}
-                      </span>
+                        <img
+                          src={spotlightImg}
+                          alt={spotlightName}
+                          className={`h-full w-full object-contain p-2 ${
+                            isLightCard ? "mix-blend-multiply" : "drop-shadow-lg"
+                          }`}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/models/model1.png";
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Product Image Showcase + Arrow Button (Enlarged with CSS mix-blend-multiply BG removal) */}
-                  <div className="flex items-center gap-3 shrink-0 z-10">
+                  {/* Bottom Action Strip: Quick Explore Button */}
+                  <div className="flex items-center justify-between pt-2 border-t border-white/10 z-10">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                      Explore Boxy Silhouette
+                    </span>
                     <div
-                      className={`relative flex items-center justify-center transition-transform duration-300 group-hover:scale-105 ${
+                      className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 ${
                         isLightCard
-                          ? "h-28 w-28 sm:h-32 sm:w-32 md:h-36 md:w-36"
-                          : "h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-2xl bg-white p-2 shadow-md border border-white/20"
+                          ? "bg-neutral-950 text-white group-hover:bg-[var(--color-primary)] group-hover:scale-110 shadow-xs"
+                          : "bg-white text-neutral-950 group-hover:bg-[var(--color-primary)] group-hover:text-white group-hover:scale-110 shadow-md"
                       }`}
                     >
-                      <img
-                        src={spotlightImg}
-                        alt={spotlightName}
-                        className={`h-full w-full object-contain mix-blend-multiply ${
-                          isLightCard ? "drop-shadow-sm" : ""
-                        }`}
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "/models/model1.png";
-                        }}
-                      />
-                    </div>
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 shrink-0 ${
-                        isLightCard
-                          ? "bg-neutral-900 text-white group-hover:bg-[var(--color-primary)] group-hover:scale-110 shadow-sm"
-                          : "bg-white text-neutral-900 group-hover:bg-[var(--color-primary)] group-hover:text-white group-hover:scale-110 shadow-sm"
-                      }`}
-                    >
-                      <ArrowUpRight size={18} strokeWidth={2.5} />
+                      <ArrowUpRight size={15} strokeWidth={2.5} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </div>
                   </div>
                 </Link>
@@ -752,14 +857,23 @@ const Hero = () => {
         {/* LOWER BENTO SUB-ROW: 3 Micro Bento Cards                   */}
         {/* ========================================================= */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 mt-4 md:mt-5">
-          {/* Sub-Card 1: "More Products / Archived Drops" */}
-          <Link
-            to="/new-arrivals"
-            className="group bg-white rounded-[26px] border border-neutral-200/90 p-4 sm:p-5 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] flex items-center justify-between gap-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+          {/* Sub-Card 1: "More Products / Archived Drops" - Smooth scrolls to Lookbook carousel */}
+          <a
+            href="#archived-drops"
+            onClick={(e) => {
+              e.preventDefault();
+              const el = document.getElementById("archived-drops");
+              if (el) {
+                el.scrollIntoView({ behavior: "smooth" });
+              } else {
+                navigate("/new-arrivals");
+              }
+            }}
+            className="group bg-white rounded-[28px] md:rounded-[30px] border border-neutral-200/90 hover:border-neutral-400 p-4 sm:p-5 shadow-[0_6px_20px_-2px_rgba(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-between gap-4 cursor-pointer"
           >
             <div>
               <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-xs font-black uppercase tracking-tight text-neutral-900">
+                <span className="text-xs font-black uppercase tracking-tight text-neutral-950">
                   Archived Catalog
                 </span>
                 <Heart size={13} className="text-rose-500 fill-rose-500" />
@@ -790,26 +904,26 @@ const Hero = () => {
                 </div>
               ))}
             </div>
-          </Link>
+          </a>
 
           {/* Sub-Card 2: "12k+ Community • ★ 4.9 Reviews" */}
-          <div className="bg-white rounded-[26px] border border-neutral-200/90 p-4 sm:p-5 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] flex items-center justify-between gap-4">
+          <div className="bg-white rounded-[28px] md:rounded-[30px] border border-neutral-200/90 hover:border-neutral-400 p-4 sm:p-5 shadow-[0_6px_20px_-2px_rgba(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               {/* Member Initials Avatar Cluster (No external image links) */}
               <div className="flex items-center -space-x-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-neutral-900 text-white text-[11px] font-black shadow-xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-neutral-950 text-white text-[11px] font-black shadow-xs ring-1 ring-black/5">
                   RA
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[var(--color-primary)] text-white text-[11px] font-black shadow-xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[var(--color-primary)] text-white text-[11px] font-black shadow-xs ring-1 ring-black/5">
                   SK
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-neutral-700 text-amber-300 text-[11px] font-black shadow-xs">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-neutral-800 text-amber-300 text-[11px] font-black shadow-xs ring-1 ring-black/5">
                   JD
                 </div>
               </div>
 
               <div>
-                <p className="text-sm font-black text-neutral-900 tracking-tight leading-none">
+                <p className="text-sm font-black text-neutral-950 tracking-tight leading-none">
                   12k+ Community
                 </p>
                 <div className="flex items-center gap-1 mt-1 text-[11px] font-bold text-amber-500">
@@ -828,7 +942,7 @@ const Hero = () => {
           {/* Sub-Card 3: "Hot Drop Radar" */}
           <Link
             to="/new-arrivals"
-            className="group bg-white rounded-[26px] border border-neutral-200/90 p-4 sm:p-5 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.03)] flex items-center justify-between gap-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+            className="group bg-white rounded-[28px] md:rounded-[30px] border border-neutral-200/90 hover:border-neutral-400 p-4 sm:p-5 shadow-[0_6px_20px_-2px_rgba(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-between gap-4"
           >
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
@@ -840,12 +954,12 @@ const Hero = () => {
                   Worldwide
                 </span>
               </div>
-              <p className="text-xs font-black uppercase tracking-tight text-neutral-900 group-hover:text-[var(--color-primary)] transition-colors">
+              <p className="text-xs font-black uppercase tracking-tight text-neutral-950 group-hover:text-[var(--color-primary)] transition-colors">
                 Drop 04 Ships in 24 Hours
               </p>
             </div>
 
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 group-hover:bg-neutral-950 group-hover:text-white group-hover:rotate-45 transition-all duration-200 shadow-2xs">
               <ArrowUpRight size={15} strokeWidth={2.5} />
             </div>
           </Link>
@@ -854,10 +968,10 @@ const Hero = () => {
 
       {/* Trust & Guarantee Strip */}
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 mt-5">
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-neutral-200/80 py-3 px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-neutral-700">
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl border border-neutral-200/90 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.02)] hover:shadow-md transition-all py-3.5 px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-neutral-800">
           <div className="flex items-center gap-2.5">
             <Zap size={16} className="text-[var(--color-primary)] shrink-0" />
-            <span className="text-xs font-bold uppercase tracking-wider truncate">
+            <span className="text-xs font-black uppercase tracking-wider truncate">
               Fast 24-48h Dispatch
             </span>
           </div>
@@ -866,7 +980,7 @@ const Hero = () => {
               size={16}
               className="text-[var(--color-primary)] shrink-0"
             />
-            <span className="text-xs font-bold uppercase tracking-wider truncate">
+            <span className="text-xs font-black uppercase tracking-wider truncate">
               280+ GSM Combed Cotton
             </span>
           </div>
@@ -875,7 +989,7 @@ const Hero = () => {
               size={16}
               className="text-[var(--color-primary)] shrink-0"
             />
-            <span className="text-xs font-bold uppercase tracking-wider truncate">
+            <span className="text-xs font-black uppercase tracking-wider truncate">
               14-Day Easy Exchange
             </span>
           </div>
@@ -884,7 +998,7 @@ const Hero = () => {
               size={16}
               className="text-[var(--color-primary)] shrink-0"
             />
-            <span className="text-xs font-bold uppercase tracking-wider truncate">
+            <span className="text-xs font-black uppercase tracking-wider truncate">
               100% Original Streetwear
             </span>
           </div>

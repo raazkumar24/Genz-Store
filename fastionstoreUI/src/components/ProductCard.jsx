@@ -3,40 +3,35 @@ import { Link } from "react-router-dom";
 import { Badge, Card } from "./ui";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import { ShoppingBag, Check, Heart } from "lucide-react";
+import { ShoppingCart, Check, Heart } from "lucide-react";
 
 // Simple color mapper for swatches
 const colorMap = {
   black: "#111111",
-  white: "#ffffff",
-  swanwhite: "#f8f9fa",
-  red: "#ef4444",
-  blue: "#3b82f6",
-  green: "#22c55e",
-  yellow: "#eab308",
-  pink: "#ec4899",
-  purple: "#a855f7",
-  orange: "#f97316",
-  gray: "#6b7280",
-  grey: "#6b7280",
-  brown: "#92400e",
-  navy: "#1e3a8a",
-  olive: "#4d7c0f",
-  cyan: "#06b6d4",
-  teal: "#14b8a6",
-  emerald: "#10b981",
-  lime: "#84cc16",
-  indigo: "#6366f1",
-  violet: "#8b5cf6",
-  fuchsia: "#d946ef",
-  rose: "#f43f5e",
-  amber: "#f59e0b",
-  sky: "#0284c7",
-  "wine red": "#600404",
-  gold: "#ffd700",
-  silver: "#c0c0c0",
-  beige: "#f5f5dc",
-  cream: "#fffdd0",
+  white: "#FFFFFF",
+  swanwhite: "#FFFFFF",
+  red: "#EF4444",
+  crimson: "#EF4444",
+  "crimson red": "#EF4444",
+  wine: "#EF4444",
+  "wine red": "#EF4444",
+  brown: "#78350F",
+  coffee: "#78350F",
+  mocha: "#78350F",
+  blue: "#2563EB",
+  sky: "#2563EB",
+  "sky blue": "#2563EB",
+  navy: "#1E3A8A",
+  green: "#22C55E",
+  olive: "#4D7C0F",
+  yellow: "#EAB308",
+  pink: "#EC4899",
+  purple: "#A855F7",
+  orange: "#F97316",
+  gray: "#6B7280",
+  grey: "#6B7280",
+  beige: "#D4B996",
+  cream: "#D4B996",
 };
 
 const ProductCard = ({ product, highlight: highlightProp = false }) => {
@@ -304,7 +299,7 @@ const ProductCard = ({ product, highlight: highlightProp = false }) => {
               {showAdded ? (
                 <Check size={14} strokeWidth={2.5} />
               ) : (
-                <ShoppingBag size={14} />
+                <ShoppingCart size={14} />
               )}
             </button>
           </div>
