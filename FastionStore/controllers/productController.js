@@ -91,6 +91,59 @@ const COLOR_HEX_MAP = {
   mocha: "#78350F",
 };
 
+// Canonical Streetwear Palette definitions (guarantees each color appears at most ONCE)
+export const CANONICAL_PALETTES = [
+  { key: "black", name: "Black", hex: "#111111", keywords: ["black", "noir", "dark", "jet", "pitch"] },
+  { key: "white", name: "White", hex: "#FFFFFF", keywords: ["white", "ivory", "snow", "swanwhite"] },
+  { key: "blue", name: "Blue", hex: "#2563EB", keywords: ["blue", "navy", "cobalt", "cyan", "teal", "indigo", "sky", "denim"] },
+  { key: "red", name: "Red", hex: "#EF4444", keywords: ["red", "crimson", "wine", "maroon", "burgundy", "ruby", "scarlet", "cherry"] },
+  { key: "brown", name: "Brown", hex: "#78350F", keywords: ["brown", "coffee", "mocha", "chocolate", "espresso", "cocoa"] },
+  { key: "green", name: "Green", hex: "#4D7C0F", keywords: ["green", "olive", "sage", "forest", "emerald", "lime", "mint"] },
+  { key: "grey", name: "Grey", hex: "#6B7280", keywords: ["grey", "gray", "charcoal", "slate", "ash", "silver"] },
+  { key: "beige", name: "Beige", hex: "#D4B996", keywords: ["beige", "cream", "khaki", "sand", "tan", "nude", "wheat"] },
+  { key: "orange", name: "Orange", hex: "#F97316", keywords: ["orange", "rust", "tangerine", "peach", "coral"] },
+  { key: "purple", name: "Purple", hex: "#A855F7", keywords: ["purple", "lavender", "violet", "lilac", "plum"] },
+  { key: "yellow", name: "Yellow", hex: "#EAB308", keywords: ["yellow", "mustard", "amber", "gold"] },
+  { key: "pink", name: "Pink", hex: "#EC4899", keywords: ["pink", "rose", "fuchsia", "magenta"] },
+];
+
+/**
+ * Normalizes any freeform variant color string (e.g. "Giyu - BLACK", "Solo Leveling - BLACK", "Luffy - WHITE")
+ * to its canonical base color family so duplicate circles are NEVER created.
+ */
+export function canonicalizeColor(colorInput) {
+  if (!colorInput) return null;
+  const str = String(colorInput).trim().toLowerCase();
+
+  // 1. Direct keyword match in canonical palettes
+  for (const palette of CANONICAL_PALETTES) {
+    if (palette.key === str || palette.keywords.some((kw) => str.includes(kw))) {
+      return palette;
+    }
+  }
+
+  // 2. Substring matching in COLOR_HEX_MAP
+  for (const [key, hex] of Object.entries(COLOR_HEX_MAP)) {
+    if (str.includes(key)) {
+      return {
+        key,
+        name: key.charAt(0).toUpperCase() + key.slice(1),
+        hex,
+        keywords: [key],
+      };
+    }
+  }
+
+  // 3. Fallback clean word
+  const cleanWord = str.split(/[^a-zA-Z0-9#]+/)[0] || str;
+  return {
+    key: cleanWord.toLowerCase(),
+    name: cleanWord.charAt(0).toUpperCase() + cleanWord.slice(1),
+    hex: resolveColorHex(str),
+    keywords: [cleanWord.toLowerCase()],
+  };
+}
+
 // Smart Hex Resolver: supports exact match, hex strings, and substring keywords
 function resolveColorHex(colorInput) {
   if (!colorInput) return "#111111";
@@ -124,7 +177,8 @@ function resolveColorHex(colorInput) {
 
 /**
  * Controller: Get dynamic popular color palette from live products
- * Returns the most frequent colors with hex codes, product counts, and clean labels
+ * Groups variants into canonical color families so each color (Black, White, Blue, etc.)
+ * appears EXACTLY ONCE with clean labels and aggregated drop counts.
  */
 export const getPopularColors = async (req, res) => {
   try {
@@ -138,51 +192,60 @@ export const getPopularColors = async (req, res) => {
       products = inMemoryProducts;
     }
 
-    // Count product occurrences per color
-    const colorCounts = {};
+    // Map each product to its canonical colors (1 count per product per canonical color)
+    const counts = {};
+    for (const p of CANONICAL_PALETTES) {
+      counts[p.key] = 0;
+    }
+
     for (const product of products) {
       if (Array.isArray(product.variants)) {
         const productColors = new Set();
         for (const variant of product.variants) {
           if (variant.color) {
-            const cleanColor = String(variant.color).trim().toLowerCase();
-            productColors.add(cleanColor);
+            const canonical = canonicalizeColor(variant.color);
+            if (canonical && canonical.key) {
+              productColors.add(canonical.key);
+            }
           }
         }
-        for (const color of productColors) {
-          colorCounts[color] = (colorCounts[color] || 0) + 1;
+        for (const cKey of productColors) {
+          counts[cKey] = (counts[cKey] || 0) + 1;
         }
       }
     }
 
-    // Format into structured array sorted by count
-    const sorted = Object.entries(colorCounts)
-      .map(([color, count]) => {
-        const name = color.charAt(0).toUpperCase() + color.slice(1);
-        const hex = resolveColorHex(color);
-        return {
-          name,
-          color,
-          filter: color,
-          hex,
-          count,
-        };
-      })
+    // Build the list of active canonical colors
+    const activeColors = CANONICAL_PALETTES
+      .filter((p) => (counts[p.key] || 0) > 0)
+      .map((p) => ({
+        name: p.name,
+        color: p.key,
+        filter: p.key,
+        hex: p.hex,
+        count: counts[p.key],
+      }))
       .sort((a, b) => b.count - a.count);
 
-    if (sorted.length === 0) {
-      // Curated default streetwear palette fallback
-      return res.json([
-        { name: "Pitch Black", color: "black", filter: "black", hex: "#111111", count: 14 },
-        { name: "Cobalt Blue", color: "blue", filter: "blue", hex: "#2563EB", count: 8 },
-        { name: "Sunset Orange", color: "orange", filter: "orange", hex: "#F97316", count: 6 },
-        { name: "Acid Lime", color: "lime", filter: "lime", hex: "#84CC16", count: 5 },
-        { name: "Signal Crimson", color: "red", filter: "red", hex: "#EF4444", count: 7 },
-        { name: "Military Olive", color: "olive", filter: "olive", hex: "#4D7C0F", count: 4 },
-      ]);
+    // If fewer than 8, pad with curated defaults so Bento card has 8 distinct circles, NEVER duplicate!
+    const resultList = [...activeColors];
+    const seen = new Set(resultList.map((c) => c.color));
+
+    for (const p of CANONICAL_PALETTES) {
+      if (resultList.length >= 8) break;
+      if (!seen.has(p.key)) {
+        resultList.push({
+          name: p.name,
+          color: p.key,
+          filter: p.key,
+          hex: p.hex,
+          count: counts[p.key] || 0,
+        });
+        seen.add(p.key);
+      }
     }
 
-    return res.json(sorted.slice(0, 8));
+    return res.json(resultList.slice(0, 8));
   } catch (error) {
     console.error("Error in getPopularColors:", error);
     res.status(500).json({ message: "Failed to fetch popular colors" });
@@ -206,11 +269,19 @@ export const getAllProducts = async (req, res) => {
 
     let filtered = products;
 
-    // 1. Color filter
+    // 1. Color filter (matches canonical family as well as substring)
     if (color && color !== "all") {
       const c = color.toLowerCase().trim();
       filtered = filtered.filter((p) =>
-        p.variants && p.variants.some((v) => String(v.color || "").toLowerCase().includes(c))
+        p.variants && p.variants.some((v) => {
+          const vStr = String(v.color || "").toLowerCase().trim();
+          const canonical = canonicalizeColor(vStr);
+          return (
+            vStr.includes(c) ||
+            c.includes(vStr) ||
+            (canonical && canonical.key === c)
+          );
+        })
       );
     }
 
@@ -397,7 +468,7 @@ export const updateProduct = async (req, res) => {
       updatedProduct = await Product.findByIdAndUpdate(
         productId,
         { $set: updateData },
-        { returnDocument: 'after', runValidators: true }
+        { new: true, returnDocument: 'after' }
       );
     } catch (dbErr) {
       // ignore db error
