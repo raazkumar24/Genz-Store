@@ -18,9 +18,14 @@ const PromoBanner = () => {
 
   // Find all products that have at least one variant marked on sale
   const saleProducts = useMemo(() => {
-    if (!products || !Array.isArray(products) || products.length === 0) return [];
-    return products.filter((p) =>
-      p.variants && p.variants.some((v) => v.isSale || (v.salePrice && Number(v.salePrice) > 0))
+    if (!products || !Array.isArray(products) || products.length === 0)
+      return [];
+    return products.filter(
+      (p) =>
+        p.variants &&
+        p.variants.some(
+          (v) => v.isSale || (v.salePrice && Number(v.salePrice) > 0),
+        ),
     );
   }, [products]);
 
@@ -33,14 +38,24 @@ const PromoBanner = () => {
 
   // Extract the exact sale variant
   const saleVariant = useMemo(() => {
-    if (!saleProduct || !saleProduct.variants || saleProduct.variants.length === 0) return null;
-    
+    if (
+      !saleProduct ||
+      !saleProduct.variants ||
+      saleProduct.variants.length === 0
+    )
+      return null;
+
     const explicitSaleWithImg = saleProduct.variants.find(
-      (v) => (v.isSale || (v.salePrice && Number(v.salePrice) > 0)) && Array.isArray(v.images) && v.images.length > 0
+      (v) =>
+        (v.isSale || (v.salePrice && Number(v.salePrice) > 0)) &&
+        Array.isArray(v.images) &&
+        v.images.length > 0,
     );
     if (explicitSaleWithImg) return explicitSaleWithImg;
 
-    const explicitSale = saleProduct.variants.find((v) => v.isSale || (v.salePrice && Number(v.salePrice) > 0));
+    const explicitSale = saleProduct.variants.find(
+      (v) => v.isSale || (v.salePrice && Number(v.salePrice) > 0),
+    );
     if (explicitSale) return explicitSale;
 
     return saleProduct.variants[0];
@@ -49,7 +64,11 @@ const PromoBanner = () => {
   // Extract the image string from variant's images array
   const saleImage = useMemo(() => {
     if (saleVariant) {
-      if (Array.isArray(saleVariant.images) && saleVariant.images.length > 0 && saleVariant.images[0]) {
+      if (
+        Array.isArray(saleVariant.images) &&
+        saleVariant.images.length > 0 &&
+        saleVariant.images[0]
+      ) {
         return saleVariant.images[0];
       }
       if (saleVariant.image) {
@@ -63,30 +82,30 @@ const PromoBanner = () => {
   }, [saleVariant, saleProduct]);
 
   // Price calculations
-  const originalPrice = saleVariant?.price || (saleProduct?.price || 1499);
-  const salePrice = saleVariant?.salePrice && Number(saleVariant.salePrice) > 0
-    ? Number(saleVariant.salePrice)
-    : originalPrice ? Math.round(originalPrice * 0.75) : 399;
+  const originalPrice = saleVariant?.price || saleProduct?.price || 1499;
+  const salePrice =
+    saleVariant?.salePrice && Number(saleVariant.salePrice) > 0
+      ? Number(saleVariant.salePrice)
+      : originalPrice
+        ? Math.round(originalPrice * 0.75)
+        : 399;
 
-  const discountPercent = originalPrice > salePrice 
-    ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) 
-    : 28;
+  const discountPercent =
+    originalPrice > salePrice
+      ? Math.round(((originalPrice - salePrice) / originalPrice) * 100)
+      : 28;
 
   const productName = saleProduct?.name || "TOMIOKA GIYU OVERSIZED TEE";
   const productUrl = saleProduct ? `/products/${saleProduct._id}` : "/sale";
 
   return (
-    <section className="relative w-full py-8 md:py-12 bg-white overflow-hidden">
+    <section className="relative w-full py-8 md:py-12 bg-[#0D0D0D] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Main Vault Container - Sharp & Borderless (rounded-none bg-[#0D0D0D]) */}
-        <div className="relative rounded-none bg-[#0D0D0D] text-white p-6 sm:p-10 md:p-14 lg:p-16 border border-neutral-800">
-          
+        <div className="relative rounded-none bg-[#0D0D0D] text-white p-6 sm:p-10 md:p-14 lg:p-16">
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14">
-            
             {/* Left Side: Typography & Copy */}
             <div className="max-w-2xl text-left flex-1 space-y-5">
-              
               {/* Top Pill / Badge (NO //) */}
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none border border-[#FF3B00]/40 bg-[#FF3B00]/10">
                 <span className="text-[10px] md:text-[11px] font-mono font-bold uppercase tracking-widest text-[#FF3B00]">
@@ -112,7 +131,9 @@ const PromoBanner = () => {
               </div>
 
               <p className="text-xs sm:text-sm text-neutral-400 font-medium leading-relaxed max-w-xl">
-                Archival release of our #1 Bestseller: {productName} 280 GSM Heavyweight Streetwear Tee. Once this batch sells out, the screenprint plates are retired forever.
+                Archival release of our #1 Bestseller: {productName} 280 GSM
+                Heavyweight Streetwear Tee. Once this batch sells out, the
+                screenprint plates are retired forever.
               </p>
 
               {/* Technical Specifications Grid */}
@@ -211,7 +232,6 @@ const PromoBanner = () => {
                 </div>
               </Link>
             </div>
-
           </div>
         </div>
       </div>

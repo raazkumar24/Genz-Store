@@ -55,7 +55,7 @@ function AppContent() {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAFAFA] selection:bg-[var(--color-primary)] selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#F4F4F0] selection:bg-[var(--color-primary)] selection:text-white">
       <ScrollToTop />
       {!isAdminRoute && (
         <div className="sticky top-0 z-50 shrink-0">

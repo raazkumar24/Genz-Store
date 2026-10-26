@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  X, 
-  RotateCcw, 
-  ArrowUpDown, 
+import {
+  X,
+  RotateCcw,
+  ArrowUpDown,
   ChevronDown,
   SlidersHorizontal,
-  Check
+  Check,
 } from "lucide-react";
 
 // Standard Streetwear Color Options with Hex codes
@@ -83,7 +83,10 @@ export const matchesColorFamily = (vColor, target) => {
 
   const vWords = v.split(/[\s-_]+/);
   const tWords = t.split(/[\s-_]+/);
-  return vWords.some((vw) => tWords.includes(vw)) || tWords.some((tw) => vWords.includes(tw));
+  return (
+    vWords.some((vw) => tWords.includes(vw)) ||
+    tWords.some((tw) => vWords.includes(tw))
+  );
 };
 
 /**
@@ -111,7 +114,9 @@ export const applyProductFilters = (products = [], filters = {}) => {
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase();
       const matchedVariant = product.variants?.some((v) => {
-        const vText = [v.color, v.size, ...(v.keywords || [])].join(" ").toLowerCase();
+        const vText = [v.color, v.size, ...(v.keywords || [])]
+          .join(" ")
+          .toLowerCase();
         return vText.includes(q);
       });
 
@@ -120,7 +125,9 @@ export const applyProductFilters = (products = [], filters = {}) => {
         product.description,
         product.gender,
         product.brand,
-        Array.isArray(product.collection) ? product.collection.join(" ") : product.collection,
+        Array.isArray(product.collection)
+          ? product.collection.join(" ")
+          : product.collection,
       ]
         .filter(Boolean)
         .join(" ")
@@ -131,7 +138,7 @@ export const applyProductFilters = (products = [], filters = {}) => {
 
     // 2. Category / Silhouette Filter
     if (category && category !== "all") {
-      const catLower = category.toLowerCase();
+      const catLower = category.toLowerCase().trim();
       const collections = Array.isArray(product.collection)
         ? product.collection.map((c) => String(c).toLowerCase())
         : [String(product.collection || "").toLowerCase()];
@@ -139,16 +146,95 @@ export const applyProductFilters = (products = [], filters = {}) => {
       const pName = String(product.name || "").toLowerCase();
 
       let match = false;
-      if (catLower === "men" && (pGender === "men" || pGender === "unisex")) match = true;
-      else if (catLower === "women" && (pGender === "women" || pGender === "unisex")) match = true;
-      else if (catLower.includes("oversized") || catLower.includes("tee")) {
-        if (collections.some((c) => c.includes("oversized") || c.includes("tee")) || pName.includes("oversized") || pName.includes("tee")) match = true;
-      } else if (catLower.includes("hoodie")) {
-        if (collections.some((c) => c.includes("hoodie") || c.includes("sweatshirt")) || pName.includes("hoodie")) match = true;
-      } else if (catLower.includes("cargo") || catLower.includes("bottom")) {
-        if (collections.some((c) => c.includes("cargo") || c.includes("baggy") || c.includes("pant")) || pName.includes("cargo") || pName.includes("pant")) match = true;
+      if (catLower === "women" || catLower === "womens") {
+        // Exclude strictly Men items
+        const isExplicitMenTitle =
+          /\b(men|man|mens|men's|mans)\b/i.test(pName) &&
+          !/\b(women|woman|womens|women's)\b/i.test(pName);
+        if (pGender !== "men" && !isExplicitMenTitle) {
+          const hasWomenCollection = collections.some(
+            (c) =>
+              c === "women" ||
+              c === "womens" ||
+              c === "womenswear" ||
+              c === "female",
+          );
+          const hasWomenInName = /\b(women|woman|womens|women's)\b/i.test(pName);
+          if (pGender === "women" || hasWomenCollection || hasWomenInName) {
+            match = true;
+          }
+        }
+      } else if (catLower === "men" || catLower === "mens") {
+        // Exclude strictly Women items
+        const isExplicitWomenTitle =
+          /\b(women|woman|womens|women's)\b/i.test(pName);
+        if (pGender !== "women" && !isExplicitWomenTitle) {
+          const hasMenCollection = collections.some(
+            (c) =>
+              c === "men" ||
+              c === "mens" ||
+              c === "menswear" ||
+              c === "male",
+          );
+          const hasMenInName = /\b(men|man|mens|men's|mans)\b/i.test(pName);
+          if (
+            pGender === "men" ||
+            pGender === "unisex" ||
+            hasMenCollection ||
+            hasMenInName
+          ) {
+            match = true;
+          }
+        }
+      } else if (catLower.includes("oversized") || catLower.includes("tee")) {
+        if (
+          collections.some(
+            (c) => c.includes("oversized") || c.includes("tee"),
+          ) ||
+          pName.includes("oversized") ||
+          pName.includes("tee")
+        )
+          match = true;
+      } else if (catLower.includes("hoodie") || catLower.includes("sweatshirt")) {
+        if (
+          collections.some(
+            (c) => c.includes("hoodie") || c.includes("sweatshirt"),
+          ) ||
+          pName.includes("hoodie") ||
+          pName.includes("sweatshirt")
+        )
+          match = true;
+      } else if (
+        catLower.includes("cargo") ||
+        catLower.includes("bottom") ||
+        catLower.includes("pant") ||
+        catLower.includes("trouser")
+      ) {
+        if (
+          collections.some(
+            (c) =>
+              c.includes("cargo") ||
+              c.includes("baggy") ||
+              c.includes("pant") ||
+              c.includes("trouser"),
+          ) ||
+          pName.includes("cargo") ||
+          pName.includes("pant") ||
+          pName.includes("trouser")
+        )
+          match = true;
       } else {
-        match = collections.some((c) => c.includes(catLower) || catLower.includes(c)) || pName.includes(catLower.replace(/-/g, " "));
+        // Exact token match or word boundary to prevent substring bugs like 'women'.includes('men')
+        match =
+          collections.some((c) => {
+            if (c === catLower) return true;
+            const cWords = c.split(/[\s-_]+/);
+            const catWords = catLower.split(/[\s-_]+/);
+            return (
+              cWords.some((w) => catWords.includes(w)) ||
+              catWords.some((w) => cWords.includes(w))
+            );
+          }) || pName.includes(catLower.replace(/-/g, " "));
       }
 
       if (!match) return false;
@@ -157,8 +243,49 @@ export const applyProductFilters = (products = [], filters = {}) => {
     // 3. Gender Filter
     if (gender && gender !== "all") {
       const pGender = String(product.gender || "").toLowerCase();
-      const targetGender = gender.toLowerCase();
-      if (pGender !== "unisex" && pGender !== targetGender) return false;
+      const targetGender = gender.toLowerCase().trim();
+      const pName = String(product.name || "").toLowerCase();
+      const collections = Array.isArray(product.collection)
+        ? product.collection.map((c) => String(c).toLowerCase())
+        : [String(product.collection || "").toLowerCase()];
+
+      if (targetGender === "women" || targetGender === "womens") {
+        if (pGender === "men") return false;
+        const isExplicitMenTitle =
+          /\b(men|man|mens|men's|mans)\b/i.test(pName) &&
+          !/\b(women|woman|womens|women's)\b/i.test(pName);
+        if (isExplicitMenTitle) return false;
+        const hasWomen =
+          pGender === "women" ||
+          collections.some(
+            (c) =>
+              c === "women" ||
+              c === "womens" ||
+              c === "womenswear" ||
+              c === "female",
+          ) ||
+          /\b(women|woman|womens|women's)\b/i.test(pName);
+        if (!hasWomen) return false;
+      } else if (targetGender === "men" || targetGender === "mens") {
+        if (pGender === "women") return false;
+        const isExplicitWomenTitle =
+          /\b(women|woman|womens|women's)\b/i.test(pName);
+        if (isExplicitWomenTitle) return false;
+        const hasMen =
+          pGender === "men" ||
+          pGender === "unisex" ||
+          collections.some(
+            (c) =>
+              c === "men" ||
+              c === "mens" ||
+              c === "menswear" ||
+              c === "male",
+          ) ||
+          /\b(men|man|mens|men's|mans)\b/i.test(pName);
+        if (!hasMen) return false;
+      } else {
+        if (pGender !== "unisex" && pGender !== targetGender) return false;
+      }
     }
 
     // 4. Price Filter
@@ -190,26 +317,35 @@ export const applyProductFilters = (products = [], filters = {}) => {
     if (size && size !== "all") {
       const hasSize = product.variants?.some((v) => {
         const vSize = String(v.size || "").toUpperCase();
-        return vSize === size.toUpperCase() && (inStockOnly ? v.stock > 0 : true);
+        return (
+          vSize === size.toUpperCase() && (inStockOnly ? v.stock > 0 : true)
+        );
       });
       if (!hasSize) return false;
     }
 
     // 6. Color Filter
     if (color && color !== "all") {
-      const hasColor = product.variants?.some((v) => matchesColorFamily(v.color, color));
+      const hasColor = product.variants?.some((v) =>
+        matchesColorFamily(v.color, color),
+      );
       if (!hasColor) return false;
     }
 
     // 7. In-Stock Only Filter
     if (inStockOnly) {
-      const hasStock = (product.variants || []).some((v) => v.stock > 0) || (product.stock && product.stock > 0);
+      const hasStock =
+        (product.variants || []).some((v) => v.stock > 0) ||
+        (product.stock && product.stock > 0);
       if (!hasStock) return false;
     }
 
     // 8. On-Sale Only Filter
     if (onSaleOnly) {
-      const hasSale = (product.variants || []).some((v) => v.isSale || (v.salePrice && v.salePrice > 0)) || product.isSale;
+      const hasSale =
+        (product.variants || []).some(
+          (v) => v.isSale || (v.salePrice && v.salePrice > 0),
+        ) || product.isSale;
       if (!hasSale) return false;
     }
 
@@ -232,11 +368,19 @@ export const applyProductFilters = (products = [], filters = {}) => {
         const sTarget = size.toUpperCase().trim();
         targetVariant =
           product.variants.find((v) => {
-            const vSize = String(v.size || "").toUpperCase().trim();
-            return matchesColor(v.color, color) && vSize === sTarget && (inStockOnly ? v.stock > 0 : true);
+            const vSize = String(v.size || "")
+              .toUpperCase()
+              .trim();
+            return (
+              matchesColor(v.color, color) &&
+              vSize === sTarget &&
+              (inStockOnly ? v.stock > 0 : true)
+            );
           }) ||
           product.variants.find((v) => {
-            const vSize = String(v.size || "").toUpperCase().trim();
+            const vSize = String(v.size || "")
+              .toUpperCase()
+              .trim();
             return matchesColor(v.color, color) && vSize === sTarget;
           });
       }
@@ -245,9 +389,10 @@ export const applyProductFilters = (products = [], filters = {}) => {
       if (!targetVariant) {
         targetVariant =
           product.variants.find((v) => {
-            return matchesColor(v.color, color) && (inStockOnly ? v.stock > 0 : true);
-          }) ||
-          product.variants.find((v) => matchesColor(v.color, color));
+            return (
+              matchesColor(v.color, color) && (inStockOnly ? v.stock > 0 : true)
+            );
+          }) || product.variants.find((v) => matchesColor(v.color, color));
       }
     }
     // 2. If size filter is active without color filter
@@ -255,11 +400,15 @@ export const applyProductFilters = (products = [], filters = {}) => {
       const sTarget = size.toUpperCase().trim();
       targetVariant =
         product.variants.find((v) => {
-          const vSize = String(v.size || "").toUpperCase().trim();
+          const vSize = String(v.size || "")
+            .toUpperCase()
+            .trim();
           return vSize === sTarget && (inStockOnly ? v.stock > 0 : true);
         }) ||
         product.variants.find((v) => {
-          const vSize = String(v.size || "").toUpperCase().trim();
+          const vSize = String(v.size || "")
+            .toUpperCase()
+            .trim();
           return vSize === sTarget;
         });
     }
@@ -268,11 +417,15 @@ export const applyProductFilters = (products = [], filters = {}) => {
       const q = searchQuery.trim().toLowerCase();
       targetVariant =
         product.variants.find((v) => {
-          const vText = [v.color, v.size, ...(v.keywords || [])].join(" ").toLowerCase();
+          const vText = [v.color, v.size, ...(v.keywords || [])]
+            .join(" ")
+            .toLowerCase();
           return vText.includes(q) && (inStockOnly ? v.stock > 0 : true);
         }) ||
         product.variants.find((v) => {
-          const vText = [v.color, v.size, ...(v.keywords || [])].join(" ").toLowerCase();
+          const vText = [v.color, v.size, ...(v.keywords || [])]
+            .join(" ")
+            .toLowerCase();
           return vText.includes(q);
         });
     }
@@ -280,16 +433,21 @@ export const applyProductFilters = (products = [], filters = {}) => {
     else if (onSaleOnly) {
       targetVariant =
         product.variants.find((v) => {
-          return (v.isSale || (v.salePrice && v.salePrice > 0)) && (inStockOnly ? v.stock > 0 : true);
+          return (
+            (v.isSale || (v.salePrice && v.salePrice > 0)) &&
+            (inStockOnly ? v.stock > 0 : true)
+          );
         }) ||
-        product.variants.find((v) => v.isSale || (v.salePrice && v.salePrice > 0));
+        product.variants.find(
+          (v) => v.isSale || (v.salePrice && v.salePrice > 0),
+        );
     }
 
     // Default fallback: in-stock variant or first variant
     if (!targetVariant) {
       targetVariant = inStockOnly
-        ? (product.variants.find((v) => v.stock > 0) || product.variants[0])
-        : (product.variants.find((v) => v.stock > 0) || product.variants[0]);
+        ? product.variants.find((v) => v.stock > 0) || product.variants[0]
+        : product.variants.find((v) => v.stock > 0) || product.variants[0];
     }
 
     return {
@@ -302,14 +460,26 @@ export const applyProductFilters = (products = [], filters = {}) => {
   // Sorting
   if (sortBy === "price-asc") {
     result.sort((a, b) => {
-      const priceA = a.displayVariant?.isSale && a.displayVariant?.salePrice ? a.displayVariant.salePrice : (a.displayVariant?.price || a.price || 0);
-      const priceB = b.displayVariant?.isSale && b.displayVariant?.salePrice ? b.displayVariant.salePrice : (b.displayVariant?.price || b.price || 0);
+      const priceA =
+        a.displayVariant?.isSale && a.displayVariant?.salePrice
+          ? a.displayVariant.salePrice
+          : a.displayVariant?.price || a.price || 0;
+      const priceB =
+        b.displayVariant?.isSale && b.displayVariant?.salePrice
+          ? b.displayVariant.salePrice
+          : b.displayVariant?.price || b.price || 0;
       return priceA - priceB;
     });
   } else if (sortBy === "price-desc") {
     result.sort((a, b) => {
-      const priceA = a.displayVariant?.isSale && a.displayVariant?.salePrice ? a.displayVariant.salePrice : (a.displayVariant?.price || a.price || 0);
-      const priceB = b.displayVariant?.isSale && b.displayVariant?.salePrice ? b.displayVariant.salePrice : (b.displayVariant?.price || b.price || 0);
+      const priceA =
+        a.displayVariant?.isSale && a.displayVariant?.salePrice
+          ? a.displayVariant.salePrice
+          : a.displayVariant?.price || a.price || 0;
+      const priceB =
+        b.displayVariant?.isSale && b.displayVariant?.salePrice
+          ? b.displayVariant.salePrice
+          : b.displayVariant?.price || b.price || 0;
       return priceB - priceA;
     });
   } else if (sortBy === "name-asc") {
@@ -346,7 +516,11 @@ const ProductFilters = ({
     if (filters.category && filters.category !== "all") count++;
     if (filters.gender && filters.gender !== "all") count++;
     if (filters.priceRange && filters.priceRange !== "all") count++;
-    if (filters.minPrice > 0 || (filters.maxPrice && filters.maxPrice < Infinity)) count++;
+    if (
+      filters.minPrice > 0 ||
+      (filters.maxPrice && filters.maxPrice < Infinity)
+    )
+      count++;
     if (filters.size && filters.size !== "all") count++;
     if (filters.color && filters.color !== "all") count++;
     if (filters.inStockOnly) count++;
@@ -371,11 +545,13 @@ const ProductFilters = ({
               return (
                 <button
                   key={tab.id}
-                  onClick={() => onFilterChange({ ...filters, category: tab.id })}
+                  onClick={() =>
+                    onFilterChange({ ...filters, category: tab.id })
+                  }
                   className={`px-4 py-2 rounded-none text-xs font-mono font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer shrink-0 ${
                     isActive
                       ? "bg-black text-white shadow-xs"
-                      : "bg-[#F3F4F0] text-neutral-700 hover:bg-neutral-200 hover:text-black"
+                      : "bg-[#F4F4F0] text-neutral-700 hover:bg-neutral-200 hover:text-black"
                   }`}
                 >
                   {tab.label}
@@ -412,10 +588,15 @@ const ProductFilters = ({
 
           {/* Sort Dropdown */}
           <div className="relative flex items-center shrink-0">
-            <ArrowUpDown size={12} className="absolute left-3 text-neutral-400 pointer-events-none" />
+            <ArrowUpDown
+              size={12}
+              className="absolute left-3 text-neutral-400 pointer-events-none"
+            />
             <select
               value={filters.sortBy || "latest"}
-              onChange={(e) => onFilterChange({ ...filters, sortBy: e.target.value })}
+              onChange={(e) =>
+                onFilterChange({ ...filters, sortBy: e.target.value })
+              }
               className="appearance-none rounded-none bg-white pl-8 pr-7 py-2 text-xs font-mono font-bold uppercase tracking-wider text-neutral-800 border border-neutral-300 focus:outline-none focus:border-black cursor-pointer"
             >
               {SORT_OPTIONS.map((opt) => (
@@ -424,7 +605,10 @@ const ProductFilters = ({
                 </option>
               ))}
             </select>
-            <ChevronDown size={12} className="absolute right-2 text-neutral-400 pointer-events-none" />
+            <ChevronDown
+              size={12}
+              className="absolute right-2 text-neutral-400 pointer-events-none"
+            />
           </div>
         </div>
       </div>
@@ -451,7 +635,8 @@ const ProductFilters = ({
 
           {filters.priceRange && filters.priceRange !== "all" && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-900 text-white text-[11px] font-bold uppercase">
-              {PRICE_PRESETS.find((p) => p.id === filters.priceRange)?.label || "Price"}
+              {PRICE_PRESETS.find((p) => p.id === filters.priceRange)?.label ||
+                "Price"}
               <button
                 type="button"
                 onClick={() => removeFilter("priceRange")}
@@ -462,13 +647,18 @@ const ProductFilters = ({
             </span>
           )}
 
-          {(filters.minPrice > 0 || (filters.maxPrice && filters.maxPrice < Infinity)) && (
+          {(filters.minPrice > 0 ||
+            (filters.maxPrice && filters.maxPrice < Infinity)) && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-neutral-900 text-white text-[11px] font-bold uppercase">
               ₹{filters.minPrice || 0} - ₹{filters.maxPrice || "Max"}
               <button
                 type="button"
                 onClick={() => {
-                  onFilterChange({ ...filters, minPrice: 0, maxPrice: Infinity });
+                  onFilterChange({
+                    ...filters,
+                    minPrice: 0,
+                    maxPrice: Infinity,
+                  });
                 }}
                 className="hover:text-red-400 ml-1 cursor-pointer"
               >
@@ -590,7 +780,8 @@ const ProductFilters = ({
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
                     {PRICE_PRESETS.map((preset) => {
-                      const isSelected = (filters.priceRange || "all") === preset.id;
+                      const isSelected =
+                        (filters.priceRange || "all") === preset.id;
                       return (
                         <button
                           key={preset.id}
@@ -634,7 +825,8 @@ const ProductFilters = ({
                   </div>
                   <div className="grid grid-cols-6 gap-2">
                     {FILTER_SIZES.map((sz) => {
-                      const isSelected = (filters.size || "all").toUpperCase() === sz;
+                      const isSelected =
+                        (filters.size || "all").toUpperCase() === sz;
                       return (
                         <button
                           key={sz}
@@ -676,7 +868,9 @@ const ProductFilters = ({
                   </div>
                   <div className="grid grid-cols-4 gap-2">
                     {FILTER_COLORS.map((clr) => {
-                      const isSelected = (filters.color || "all").toLowerCase() === clr.name.toLowerCase();
+                      const isSelected =
+                        (filters.color || "all").toLowerCase() ===
+                        clr.name.toLowerCase();
                       return (
                         <button
                           key={clr.name}
@@ -707,21 +901,35 @@ const ProductFilters = ({
                 {/* Toggles */}
                 <div className="space-y-2 border-t border-neutral-100 pt-3">
                   <label className="flex items-center justify-between p-2.5 rounded-xl bg-neutral-50 border border-neutral-200 cursor-pointer">
-                    <span className="text-xs font-bold text-neutral-800">In-Stock Drops Only</span>
+                    <span className="text-xs font-bold text-neutral-800">
+                      In-Stock Drops Only
+                    </span>
                     <input
                       type="checkbox"
                       checked={Boolean(filters.inStockOnly)}
-                      onChange={(e) => onFilterChange({ ...filters, inStockOnly: e.target.checked })}
+                      onChange={(e) =>
+                        onFilterChange({
+                          ...filters,
+                          inStockOnly: e.target.checked,
+                        })
+                      }
                       className="h-4 w-4 rounded accent-neutral-900 cursor-pointer"
                     />
                   </label>
 
                   <label className="flex items-center justify-between p-2.5 rounded-xl bg-neutral-50 border border-neutral-200 cursor-pointer">
-                    <span className="text-xs font-bold text-neutral-800">On-Sale Drops Only</span>
+                    <span className="text-xs font-bold text-neutral-800">
+                      On-Sale Drops Only
+                    </span>
                     <input
                       type="checkbox"
                       checked={Boolean(filters.onSaleOnly)}
-                      onChange={(e) => onFilterChange({ ...filters, onSaleOnly: e.target.checked })}
+                      onChange={(e) =>
+                        onFilterChange({
+                          ...filters,
+                          onSaleOnly: e.target.checked,
+                        })
+                      }
                       className="h-4 w-4 rounded accent-[var(--color-primary)] cursor-pointer"
                     />
                   </label>

@@ -427,6 +427,7 @@ export const addProduct = async (req, res) => {
       inMemoryProducts.unshift(product.toObject());
       return res.status(201).json({ message: 'Product added successfully 🎉', product });
     } catch (dbErr) {
+      console.warn("MongoDB Product save warning, kept in memory store:", dbErr.message);
       inMemoryProducts.unshift(productPayload);
       return res.status(201).json({ message: 'Product added successfully 🎉', product: productPayload });
     }

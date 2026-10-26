@@ -19,7 +19,6 @@ const LOOKBOOK_TAGS = [
  */
 const ProductGallery = ({
   displayImages,
-  activeImage,
   setActiveImage,
   productName,
   onOpenLightbox,

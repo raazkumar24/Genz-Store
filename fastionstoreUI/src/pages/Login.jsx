@@ -85,7 +85,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-[var(--color-bg)] p-4 sm:p-6 py-12 relative overflow-hidden">
+    <div className="flex flex-col min-h-screen items-center justify-center bg-[#F4F4F0] p-4 sm:p-6 py-12 relative overflow-hidden">
       {/* Background Subtle Ambient Gradients */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-20">
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,var(--color-text)_1px,transparent_0)] bg-[length:32px_32px]" />
@@ -109,13 +109,12 @@ const Login = () => {
                 Member Access
               </span>
               <h1
-                className="text-3xl md:text-4xl font-black uppercase tracking-tight text-neutral-900 leading-tight"
+                className="text-3xl md:text-4xl font-black uppercase tracking-tight text-neutral-950 leading-tight"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Welcome{" "}
-                <span className="text-[var(--color-primary)]">Back</span>
+                Welcome <span className="text-outline-primary ml-1">Back</span>
               </h1>
-              <p className="mt-1.5 text-xs sm:text-sm text-neutral-500 font-medium">
+              <p className="mt-1.5 text-xs sm:text-sm text-neutral-600 font-medium">
                 Sign in to manage your drops, wishlist, and exclusive member
                 perks.
               </p>

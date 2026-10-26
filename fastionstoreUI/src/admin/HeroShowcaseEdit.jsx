@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Flame,
   Search,
@@ -12,12 +11,11 @@ import {
   Tag,
   Plus,
   Trash2,
-  ChevronLeft,
-  ChevronRight,
   Eye,
-  Sparkle,
   Image as ImageIcon,
   Compass,
+  Upload,
+  Link as LinkIcon,
 } from "lucide-react";
 import { useProducts } from "../context/ProductContext";
 import { useToast } from "../context/ToastContext";
@@ -28,7 +26,6 @@ import {
   DEFAULT_ARCHIVED_CATALOG,
   DEFAULT_HERO_SLIDES,
   DEFAULT_HERO_SPOTLIGHT,
-  DEFAULT_TACTICAL_DROP,
 } from "../services/heroShowcaseService";
 
 const BADGE_PRESETS = [
@@ -39,6 +36,14 @@ const BADGE_PRESETS = [
   "TACTICAL RIPSTOP CARGO",
   "OVERSIZED BOX FIT",
   "LIMITED ARCHIVAL DROP",
+];
+
+const MODEL_PRESETS = [
+  { name: "Model 1 (Studio Gray Tee)", path: "/models/model1.png" },
+  { name: "Model 2 (Brown Relaxed)", path: "/models/model2.png" },
+  { name: "Model 3 (Blue Streetwear)", path: "/models/model3.png" },
+  { name: "Model 4 (Black Boxy)", path: "/models/model4.png" },
+  { name: "Squad Look (5 Models)", path: "/models/squad_5_models.png" },
 ];
 
 const LOOKBOOK_PRESETS = {
@@ -115,11 +120,12 @@ const LOOKBOOK_PRESETS = {
 };
 
 const HeroShowcaseEdit = () => {
-  const { products, loading } = useProducts();
+  const { products } = useProducts();
   const { addToast } = useToast();
+  const fileInputRef = useRef(null);
 
-  // Active studio tab: "lookbook" | "slides" | "spotlight"
-  const [activeTab, setActiveTab] = useState("lookbook");
+  // Active studio tab: "slides" (Default) | "lookbook" | "spotlight"
+  const [activeTab, setActiveTab] = useState("slides");
 
   // Master Configuration State
   const [masterConfig, setMasterConfig] = useState(getHeroMasterConfig);
@@ -226,6 +232,62 @@ const HeroShowcaseEdit = () => {
     });
   };
 
+  // Add a new slide to Hero Left Slider
+  const handleAddSlide = () => {
+    const currentSlides = masterConfig.slides || DEFAULT_HERO_SLIDES;
+    const nextNum = String(currentSlides.length + 1).padStart(2, "0");
+    const newSlide = {
+      id: `slide-${Date.now()}`,
+      number: nextNum,
+      badge: `DROP ${nextNum} - 2026`,
+      tag: "OVERSIZED FIT",
+      title: "Heavyweight Boxy Streetwear Silhouette.",
+      specHeadline: "Studio Relaxed Cut",
+      specDetail: "280 GSM combed organic cotton with relaxed drop-shoulder cut and anti-fade reactive dye.",
+      primaryCta: `Explore Drop ${nextNum}`,
+      primaryLink: "/new-arrivals",
+      accentBadge: "100% Supima Cotton",
+      stats: "280 GSM • Heavy Combed",
+      image: `/models/model${((currentSlides.length) % 4) + 1}.png`,
+    };
+    const updated = [...currentSlides, newSlide];
+    setMasterConfig((prev) => ({ ...prev, slides: updated }));
+    setSelectedSlideIndex(currentSlides.length);
+    addToast(`New Hero Slide ${nextNum} added!`, "success");
+  };
+
+  // Remove current slide from Hero Left Slider
+  const handleRemoveSlide = (idx) => {
+    const currentSlides = masterConfig.slides || DEFAULT_HERO_SLIDES;
+    if (currentSlides.length <= 1) {
+      addToast("Hero banner me kam se kam 1 slide honi chahiye.", "warning");
+      return;
+    }
+    const updated = currentSlides.filter((_, i) => i !== idx);
+    setMasterConfig((prev) => ({ ...prev, slides: updated }));
+    setSelectedSlideIndex((prev) => Math.max(0, Math.min(prev, updated.length - 1)));
+    addToast("Hero slide delete ho gayi.", "info");
+  };
+
+  // Model image direct upload (FileReader converts to Base64, saved in localStorage - no DB needed!)
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 3.5 * 1024 * 1024) {
+      addToast("Image size 3.5MB se kam hona chahiye browser storage ke liye.", "warning");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result;
+      if (dataUrl) {
+        handleSlideChange("image", dataUrl);
+        addToast("Model image updated! Save button click karke publish karein.", "success");
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   // Update Spotlight Bento Field
   const handleSpotlightChange = (field, val) => {
     setMasterConfig((prev) => ({
@@ -237,16 +299,6 @@ const HeroShowcaseEdit = () => {
     }));
   };
 
-  // Update Tactical Drop Field
-  const handleTacticalChange = (field, val) => {
-    setMasterConfig((prev) => ({
-      ...prev,
-      tactical: {
-        ...(prev.tactical || DEFAULT_TACTICAL_DROP),
-        [field]: val,
-      },
-    }));
-  };
 
   // Filter products for Spotlight Picker
   const filteredProducts = useMemo(() => {
@@ -411,39 +463,39 @@ const HeroShowcaseEdit = () => {
       <div className="flex items-center gap-2 p-1.5 bg-gray-100 rounded-2xl max-w-full overflow-x-auto hide-scrollbar border border-gray-200/80">
         <button
           type="button"
-          onClick={() => setActiveTab("lookbook")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
-            activeTab === "lookbook"
-              ? "bg-white text-gray-900 shadow-xs"
+          onClick={() => setActiveTab("slides")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+            activeTab === "slides"
+              ? "bg-white text-gray-900 shadow-xs border border-gray-200/80"
               : "text-gray-500 hover:text-gray-900"
           }`}
         >
-          <Layers size={15} />
-          <span>Archived Lookbook ("Winter Drops")</span>
-          <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">
-            Screenshot
+          <Flame size={15} className="text-[#FF3B00]" />
+          <span>Hero Banner & Model (Left Slider)</span>
+          <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded bg-orange-100 text-[#FF3B00]">
+            Main Stage
           </span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveTab("slides")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
-            activeTab === "slides"
-              ? "bg-white text-gray-900 shadow-xs"
+          onClick={() => setActiveTab("lookbook")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+            activeTab === "lookbook"
+              ? "bg-white text-gray-900 shadow-xs border border-gray-200/80"
               : "text-gray-500 hover:text-gray-900"
           }`}
         >
-          <Flame size={15} />
-          <span>Hero Editorial Slides</span>
+          <Layers size={15} />
+          <span>Archived Lookbook ("Winter Drops")</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveTab("spotlight")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer shrink-0 whitespace-nowrap ${
             activeTab === "spotlight"
-              ? "bg-white text-gray-900 shadow-xs"
+              ? "bg-white text-gray-900 shadow-xs border border-gray-200/80"
               : "text-gray-500 hover:text-gray-900"
           }`}
         >
@@ -734,65 +786,250 @@ const HeroShowcaseEdit = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 2: HERO EDITORIAL SLIDES                                              */}
+      {/* TAB 1: HERO EDITORIAL SLIDES & MODEL IMAGE STUDIO                         */}
       {/* ========================================================================= */}
       {activeTab === "slides" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Form: Slide selector & properties */}
+          {/* Left Column: Slide Selection & Form Controls */}
           <div className="lg:col-span-7 space-y-6">
-            {/* Slide Index Tabs */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
-              <span className="text-xs font-black uppercase tracking-wider text-gray-900 block mb-3">
-                Select Slide To Edit
-              </span>
-              <div className="grid grid-cols-3 gap-2">
-                {(masterConfig.slides || DEFAULT_HERO_SLIDES).map((slide, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setSelectedSlideIndex(idx)}
-                    className={`py-3 px-3 rounded-2xl text-left border transition-all cursor-pointer ${
-                      selectedSlideIndex === idx
-                        ? "bg-neutral-900 text-white border-neutral-900 shadow-sm"
-                        : "bg-gray-50 text-neutral-700 border-gray-200 hover:bg-gray-100"
-                    }`}
-                  >
-                    <span className="block text-[10px] font-black uppercase tracking-widest opacity-70">
-                      Slide {slide.number || `0${idx + 1}`}
-                    </span>
-                    <span className="block text-xs font-bold truncate mt-0.5">
-                      {slide.tag || `Drop 0${idx + 1}`}
-                    </span>
-                  </button>
-                ))}
+            {/* 1. Slide Selection Bar with Add / Delete Buttons */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+                  <Flame size={15} className="text-[#FF3B00]" />
+                  Select Slide To Edit ({(masterConfig.slides || DEFAULT_HERO_SLIDES).length} Slides)
+                </span>
+                <button
+                  type="button"
+                  onClick={handleAddSlide}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-900 hover:bg-black text-white text-[11px] font-black uppercase tracking-wider transition cursor-pointer shadow-xs"
+                >
+                  <Plus size={13} />
+                  Add Slide
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                {(masterConfig.slides || DEFAULT_HERO_SLIDES).map((slide, idx) => {
+                  const isSelected = selectedSlideIndex === idx;
+                  return (
+                    <div
+                      key={slide.id || idx}
+                      className={`relative p-3 rounded-2xl border transition-all text-left flex flex-col justify-between cursor-pointer ${
+                        isSelected
+                          ? "bg-neutral-900 text-white border-neutral-900 shadow-md ring-2 ring-neutral-900/20"
+                          : "bg-gray-50 text-neutral-700 border-gray-200 hover:bg-gray-100"
+                      }`}
+                      onClick={() => setSelectedSlideIndex(idx)}
+                    >
+                      <div className="flex items-center justify-between gap-1 mb-1">
+                        <span
+                          className={`text-[10px] font-mono font-black uppercase tracking-wider ${
+                            isSelected ? "text-neutral-300" : "text-neutral-500"
+                          }`}
+                        >
+                          SLIDE {slide.number || `0${idx + 1}`}
+                        </span>
+                        {(masterConfig.slides || DEFAULT_HERO_SLIDES).length > 1 && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveSlide(idx);
+                            }}
+                            className={`p-1 rounded-md transition ${
+                              isSelected
+                                ? "text-neutral-400 hover:text-red-400 hover:bg-neutral-800"
+                                : "text-neutral-400 hover:text-red-600 hover:bg-gray-200"
+                            }`}
+                            title="Delete this slide"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        )}
+                      </div>
+                      <span className="text-xs font-black truncate block">
+                        {slide.tag || `Drop 0${idx + 1}`}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Slide Configuration Form */}
+            {/* 2. Model Cutout Image Studio (File Upload + Presets + URL) */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-2">
+                    <ImageIcon size={15} className="text-[#FF3B00]" />
+                    Slide 0{selectedSlideIndex + 1} Model Image
+                  </h2>
+                  <p className="text-[11px] text-gray-500 font-medium mt-0.5">
+                    Model ki transparent cutout photo upload karein ya preset select karein.
+                  </p>
+                </div>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Zero Database • Instant Local
+                </span>
+              </div>
+
+              {/* Direct File Upload Button */}
+              <div className="p-4 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/70 hover:bg-white hover:border-black transition-all flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-xl bg-black text-white flex items-center justify-center shrink-0">
+                    <Upload size={20} />
+                  </div>
+                  <div>
+                    <span className="text-xs font-black uppercase text-gray-900 block">
+                      Upload Model Photo From Computer
+                    </span>
+                    <span className="text-[11px] text-gray-500 font-medium">
+                      PNG/JPG/WEBP (Recommended transparent background, under 3.5MB)
+                    </span>
+                  </div>
+                </div>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-4 py-2 rounded-xl bg-black hover:bg-[#FF3B00] text-white text-xs font-black uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-xs flex items-center gap-1.5"
+                >
+                  <Upload size={13} />
+                  <span>Choose Image File</span>
+                </button>
+              </div>
+
+              {/* 1-Click Preset Model Cutouts */}
+              <div>
+                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                  Or Quick Select Studio Model Presets:
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                  {MODEL_PRESETS.map((m) => {
+                    const isSelected = activeSlide.image === m.path;
+                    return (
+                      <button
+                        key={m.path}
+                        type="button"
+                        onClick={() => handleSlideChange("image", m.path)}
+                        className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
+                          isSelected
+                            ? "bg-black text-white border-black shadow-sm ring-2 ring-black/20"
+                            : "bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-800"
+                        }`}
+                      >
+                        <div className="h-14 w-full rounded-lg bg-white/80 border border-gray-200 flex items-center justify-center overflow-hidden p-1">
+                          <img
+                            src={m.path}
+                            alt=""
+                            className="h-full w-auto object-contain drop-shadow-sm"
+                          />
+                        </div>
+                        <span className="text-[10px] font-bold truncate max-w-full">
+                          {m.name.split(" ")[0]} {m.name.split(" ")[1]}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Manual URL Input */}
+              <div>
+                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  Or Image URL / Relative Path
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={activeSlide.image || ""}
+                    onChange={(e) => handleSlideChange("image", e.target.value)}
+                    placeholder="e.g. /models/model1.png or https://images.unsplash.com/..."
+                    className="w-full px-3.5 py-2 pl-9 rounded-xl border border-gray-300 focus:border-black text-xs font-mono bg-white"
+                  />
+                  <LinkIcon size={14} className="absolute left-3 top-3 text-gray-400" />
+                </div>
+              </div>
+
+              {/* Product Catalog Image Picker */}
+              {products && products.length > 0 && (
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                    Or Pick Cutout From Store Products:
+                  </label>
+                  <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar py-1">
+                    {products.slice(0, 8).map((p) => {
+                      const pImg =
+                        p.variants?.[0]?.images?.[0] ||
+                        p.image ||
+                        "/models/model1.png";
+                      return (
+                        <button
+                          key={p._id}
+                          type="button"
+                          onClick={() => handleSlideChange("image", pImg)}
+                          className="h-12 w-12 rounded-xl border border-gray-200 bg-white p-1 shrink-0 hover:border-black hover:scale-105 transition cursor-pointer"
+                          title={p.name}
+                        >
+                          <img
+                            src={pImg}
+                            alt=""
+                            className="h-full w-full object-contain"
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 3. Left-Side Editorial Content & Text Typography */}
             <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
               <h2 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-2">
-                <Flame size={15} className="text-amber-500" />
-                Slide 0{selectedSlideIndex + 1} Content & Specs
+                <Flame size={15} className="text-[#FF3B00]" />
+                Left-Side Streetwear Editorial Content
               </h2>
 
-              <div className="space-y-3">
+              <div className="space-y-3.5">
+                {/* Badge & Flame Tag Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                      Badge Text
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                      Top Badge Text
                     </label>
                     <input
                       type="text"
                       value={activeSlide.badge || ""}
                       onChange={(e) => handleSlideChange("badge", e.target.value)}
-                      placeholder="e.g. DROP 04 // 2026"
+                      placeholder="e.g. DROP 04 - 2026"
                       className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase"
                     />
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {["DROP 04 - 2026", "NEW SEASON", "LIMITED RELEASE", "EXCLUSIVE DROP"].map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => handleSlideChange("badge", preset)}
+                          className="text-[9px] font-mono px-2 py-0.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer"
+                        >
+                          {preset}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                      Category Tag
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                      Flame Category Tag
                     </label>
                     <input
                       type="text"
@@ -801,25 +1038,52 @@ const HeroShowcaseEdit = () => {
                       placeholder="e.g. OVERSIZED FIT"
                       className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase"
                     />
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {["OVERSIZED FIT", "TECHNICAL FLEECE", "STREET ESSENTIALS", "SIGNATURE FIT"].map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => handleSlideChange("tag", preset)}
+                          className="text-[9px] font-mono px-2 py-0.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer"
+                        >
+                          {preset}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
+                {/* Main Big Headline */}
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                    Main Headline Title
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                    Main Headline Title (Big Streetwear Heading)
                   </label>
                   <input
                     type="text"
                     value={activeSlide.title || ""}
                     onChange={(e) => handleSlideChange("title", e.target.value)}
                     placeholder="e.g. Heavyweight Boxy Streetwear."
-                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-sm font-black"
+                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-sm font-black text-gray-950"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
+                {/* Spec Number & Spec Headline */}
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                  <div className="sm:col-span-3">
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                      Number
+                    </label>
+                    <input
+                      type="text"
+                      value={activeSlide.number || "01"}
+                      onChange={(e) => handleSlideChange("number", e.target.value)}
+                      placeholder="01"
+                      className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-mono font-black"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-9">
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
                       Spec Headline
                     </label>
                     <input
@@ -830,10 +1094,27 @@ const HeroShowcaseEdit = () => {
                       className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
                     />
                   </div>
+                </div>
 
+                {/* Spec Detail Description */}
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                    Spec Detail Description
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={activeSlide.specDetail || ""}
+                    onChange={(e) => handleSlideChange("specDetail", e.target.value)}
+                    placeholder="e.g. 280 GSM combed organic cotton with relaxed drop-shoulder cut and anti-fade reactive dye."
+                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-medium leading-relaxed"
+                  />
+                </div>
+
+                {/* Fabric Stats & Floating Accent Badge */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                      Fabric Stats
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                      Fabric Stats (Bottom Bar)
                     </label>
                     <input
                       type="text"
@@ -843,38 +1124,39 @@ const HeroShowcaseEdit = () => {
                       className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                      Floating Model Accent Pill
+                    </label>
+                    <input
+                      type="text"
+                      value={activeSlide.accentBadge || ""}
+                      onChange={(e) => handleSlideChange("accentBadge", e.target.value)}
+                      placeholder="e.g. 100% Supima Cotton"
+                      className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                    Spec Detail Description
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={activeSlide.specDetail || ""}
-                    onChange={(e) => handleSlideChange("specDetail", e.target.value)}
-                    placeholder="Technical fabric details..."
-                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-medium"
-                  />
-                </div>
-
+                {/* Primary CTA Button Text & Link */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                      Primary CTA Text
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                      Primary CTA Button Text
                     </label>
                     <input
                       type="text"
                       value={activeSlide.primaryCta || ""}
                       onChange={(e) => handleSlideChange("primaryCta", e.target.value)}
-                      placeholder="e.g. View All Products"
+                      placeholder="e.g. Explore Drop 04"
                       className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                      Primary CTA Link
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
+                      Destination Link
                     </label>
                     <input
                       type="text"
@@ -883,90 +1165,139 @@ const HeroShowcaseEdit = () => {
                       placeholder="e.g. /new-arrivals"
                       className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-mono"
                     />
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {[
+                        { label: "New Arrivals", url: "/new-arrivals" },
+                        { label: "Oversized Tees", url: "/collections/oversized-tees" },
+                        { label: "Hoodies", url: "/collections/hoodies" },
+                        { label: "Cargos", url: "/collections/cargos" },
+                        { label: "Sale", url: "/sale" },
+                      ].map((item) => (
+                        <button
+                          key={item.url}
+                          type="button"
+                          onClick={() => handleSlideChange("primaryLink", item.url)}
+                          className="text-[9px] font-mono px-2 py-0.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer"
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                    Model Hero Image URL / Path
-                  </label>
-                  <input
-                    type="text"
-                    value={activeSlide.image || ""}
-                    onChange={(e) => handleSlideChange("image", e.target.value)}
-                    placeholder="e.g. /models/model1.png"
-                    className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-mono"
-                  />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Slide Preview */}
+          {/* Right Column: High-Fidelity Storefront Hero Preview */}
           <div className="lg:col-span-5 sticky top-6 space-y-4">
             <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
               <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
                 <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
                   <Eye size={14} className="text-emerald-500" />
-                  Hero Slide 0{selectedSlideIndex + 1} Preview
+                  Hero Slider Live Preview (Slide 0{selectedSlideIndex + 1})
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                  Live View
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400">
+                  Storefront View
                 </span>
               </div>
 
-              {/* Mini Slide Card */}
-              <div className="relative rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 p-5 text-white min-h-[300px] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-[9px] font-black uppercase tracking-wider">
-                      {activeSlide.badge || "NEW SEASON"}
+              {/* Exact Storefront Hero Stage Preview */}
+              <div className="relative rounded-none border border-neutral-300 bg-white p-5 shadow-sm min-h-[380px] flex flex-col justify-between overflow-hidden">
+                {/* Top Row: Badges & Indicators */}
+                <div className="flex items-center justify-between gap-2 z-10">
+                  <div className="flex items-center gap-1.5">
+                    <span className="px-2 py-0.5 bg-neutral-100 text-neutral-900 text-[9px] font-mono font-bold uppercase tracking-wider border border-neutral-200">
+                      {activeSlide.badge || "DROP 04 - 2026"}
                     </span>
-                    <span className="text-[10px] font-bold text-neutral-400 uppercase">
-                      {activeSlide.tag}
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-black text-white text-[9px] font-mono font-black uppercase tracking-wider">
+                      <Flame size={10} className="text-[#FF3B00] fill-[#FF3B00]" />
+                      {activeSlide.tag || "OVERSIZED FIT"}
                     </span>
                   </div>
-                  <h3
-                    className="text-lg font-black uppercase tracking-tight leading-tight text-white"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    {activeSlide.title || "Streetwear Drop"}
-                  </h3>
-                  <p className="text-xs text-neutral-300 mt-2 line-clamp-2">
-                    {activeSlide.specDetail}
-                  </p>
+
+                  <div className="flex items-center gap-1">
+                    {(masterConfig.slides || DEFAULT_HERO_SLIDES).map((_, idx) => (
+                      <span
+                        key={idx}
+                        className={`h-1 transition-all ${
+                          idx === selectedSlideIndex ? "w-4 bg-black" : "w-1.5 bg-neutral-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
 
-                <div className="flex items-end justify-between pt-4 border-t border-white/10">
-                  <div>
-                    <span className="text-[10px] font-bold text-amber-400 uppercase block">
-                      {activeSlide.stats}
-                    </span>
-                    <span className="text-xs font-bold underline mt-1 block">
-                      {activeSlide.primaryCta} ↗
-                    </span>
+                {/* Middle Content + Cutout */}
+                <div className="grid grid-cols-12 gap-3 items-center my-3 z-10">
+                  {/* Left Editorial Copy */}
+                  <div className="col-span-7 space-y-2">
+                    <h3
+                      className="text-lg sm:text-xl font-black uppercase tracking-tight text-neutral-950 leading-tight"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
+                      {activeSlide.title || "Heavyweight Boxy Streetwear."}
+                    </h3>
+
+                    <div className="flex items-start gap-2 pt-1 border-l-2 border-neutral-300 pl-2.5">
+                      <span className="text-sm font-black text-neutral-300 font-mono">
+                        {activeSlide.number || "01"}
+                      </span>
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-wider text-neutral-950 font-mono">
+                          {activeSlide.specHeadline || "Clear Silhouettes"}
+                        </p>
+                        <p className="text-[9px] text-neutral-600 line-clamp-2 leading-relaxed">
+                          {activeSlide.specDetail || "280 GSM combed organic cotton with relaxed drop-shoulder cut."}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-1.5 pt-2">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-black text-white text-[9px] font-mono font-black uppercase tracking-wider">
+                        <span>{activeSlide.primaryCta || "Explore Drop"}</span>
+                        <ArrowUpRight size={10} strokeWidth={2.5} />
+                      </span>
+                      <span className="inline-flex items-center px-2 py-1.5 border border-black bg-white text-black text-[9px] font-mono font-bold uppercase tracking-wider">
+                        Archive Sale
+                      </span>
+                    </div>
                   </div>
-                  <div className="h-20 w-20 rounded-xl overflow-hidden bg-white/5 border border-white/10 shrink-0">
+
+                  {/* Right Cutout Showcase */}
+                  <div className="col-span-5 relative h-48 flex items-center justify-center">
                     <img
-                      src={activeSlide.image}
+                      src={activeSlide.image || "/models/model1.png"}
                       alt=""
-                      className="h-full w-full object-cover"
+                      className="h-full w-auto max-h-full max-w-full object-contain object-bottom drop-shadow-lg select-none"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = "/models/model1.png";
                       }}
                     />
+                    <div className="absolute bottom-1 right-1 bg-white/95 border border-neutral-200 px-1.5 py-0.5 text-[8px] font-mono font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1 shadow-xs">
+                      <span className="h-1.5 w-1.5 bg-emerald-500" />
+                      {activeSlide.accentBadge || "100% Cotton"}
+                    </div>
                   </div>
+                </div>
+
+                {/* Bottom Bar: Stats */}
+                <div className="pt-2 border-t border-neutral-200/80 flex items-center justify-between text-[9px] font-mono text-neutral-500 font-bold uppercase tracking-wider z-10">
+                  <span>{activeSlide.stats || "280 GSM • Heavy Combed"}</span>
+                  <span className="text-[#FF3B00]">GENZ ARCHIVE // DROP</span>
                 </div>
               </div>
 
+              {/* Publish Changes Button */}
               <button
                 type="button"
                 onClick={handleSave}
-                className="mt-4 w-full py-3 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
+                disabled={saving}
+                className="mt-4 w-full py-3.5 rounded-2xl bg-black hover:bg-[#FF3B00] text-white text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-md flex items-center justify-center gap-2 active:scale-98 disabled:opacity-50"
               >
                 <Check size={16} strokeWidth={3} className="text-emerald-400" />
-                <span>Save Slide Changes</span>
+                <span>{saving ? "Publishing Changes..." : "Publish To Homepage Storefront"}</span>
               </button>
             </div>
           </div>
@@ -1060,6 +1391,24 @@ const HeroShowcaseEdit = () => {
                   />
                   <Search size={13} className="absolute left-2.5 top-2.5 text-gray-400" />
                 </div>
+              </div>
+
+              {/* Category Filter Pills */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {["all", "tee", "hoodie", "cargo"].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSpotlightCategoryFilter(cat)}
+                    className={`px-2.5 py-1 text-[11px] font-mono font-bold uppercase rounded-lg border transition-all cursor-pointer ${
+                      spotlightCategoryFilter === cat
+                        ? "bg-neutral-900 text-white border-neutral-900"
+                        : "bg-neutral-50 text-neutral-600 border-neutral-200 hover:bg-neutral-100"
+                    }`}
+                  >
+                    {cat === "all" ? "All Drops" : cat.toUpperCase()}
+                  </button>
+                ))}
               </div>
 
               {/* Product Grid */}

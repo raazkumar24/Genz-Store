@@ -9,23 +9,19 @@ import { useProducts } from "../context/ProductContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { useToast } from "../context/ToastContext";
-import { Button, Badge, BackButton } from "../components/ui";
+import { Button, BackButton } from "../components/ui";
 import {
   Heart,
   ShoppingBag,
-  ShoppingCart,
   X,
   ShieldCheck,
   RotateCcw,
   Ruler,
-  Plus,
-  Minus,
   Share2,
   MapPin,
   CheckCircle2,
   Zap,
   Check,
-  Flame,
   Layers,
   Eye,
   Star,
@@ -35,21 +31,6 @@ import ProductAccordion from "../components/ProductAccordion";
 import ProductGallery from "../components/ProductGallery";
 import SimilarProducts from "../components/SimilarProducts";
 
-const StarSVG = ({ size = 14, className = "" }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-  </svg>
-);
 
 const uniqueValues = (items, key) => [
   ...new Set(items.map((item) => item[key]).filter(Boolean)),
@@ -163,16 +144,6 @@ const ProductDetails = () => {
     }
   }, [product, variants, variantId, sizeParam]);
 
-  const sizes = useMemo(() => {
-    const allSizes = [];
-    variants.forEach((v) => {
-      if (v.size) {
-        v.size.split(",").forEach((s) => allSizes.push(s.trim()));
-      }
-    });
-    return [...new Set(allSizes)].filter(Boolean);
-  }, [variants]);
-
   const colors = useMemo(() => uniqueValues(variants, "color"), [variants]);
 
   // Current selected variant
@@ -183,27 +154,6 @@ const ProductDetails = () => {
         .map((s) => s.trim())
         .includes(selectedSize) && v.color === selectedColor,
   );
-
-  const availableColorsForSize = variants
-    .filter((v) =>
-      (v.size || "")
-        .split(",")
-        .map((s) => s.trim())
-        .includes(selectedSize),
-    )
-    .map((v) => v.color);
-
-  const availableSizesForColor = useMemo(() => {
-    const s = [];
-    variants
-      .filter((v) => v.color === selectedColor)
-      .forEach((v) => {
-        if (v.size) {
-          v.size.split(",").forEach((sz) => s.push(sz.trim()));
-        }
-      });
-    return s;
-  }, [variants, selectedColor]);
 
   // Helper to find representative image for a specific color variant
   const getColorVariantImage = (colorName) => {
@@ -351,7 +301,7 @@ const ProductDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-[80vh] items-center justify-center bg-[#F3F4F0] text-neutral-600">
+      <div className="flex min-h-[80vh] items-center justify-center bg-[#F4F4F0] text-neutral-600">
         <div className="flex items-center gap-3 font-black text-sm uppercase tracking-wider">
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-900 border-t-transparent"></div>
           <span>Loading drop details...</span>
@@ -362,7 +312,7 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="min-h-[80vh] bg-[#F3F4F0] flex flex-col items-center justify-center px-6 py-16 text-center">
+      <div className="min-h-[80vh] bg-[#F4F4F0] flex flex-col items-center justify-center px-6 py-16 text-center">
         <h1
           className="text-3xl font-black text-neutral-900 uppercase"
           style={{ fontFamily: "var(--font-heading)" }}
@@ -393,28 +343,25 @@ const ProductDetails = () => {
   const originalPrice = selectedVariant?.price || variants[0]?.price || 0;
   const isSaleActive =
     selectedVariant?.isSale && selectedVariant?.salePrice > 0;
-  const discountPercent =
-    isSaleActive && originalPrice > currentPrice
-      ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
-      : 0;
 
   const savingsAmount =
     isSaleActive && originalPrice > currentPrice
       ? originalPrice - currentPrice
       : 0;
 
-  const isAlreadyInCart = useMemo(() => {
-    if (!product) return false;
-    if (selectedVariant?._id) {
-      return isInCart(product._id, selectedVariant._id);
-    }
-    return (cartItems || []).some(
-      (item) => item.productId === product._id && item.size === selectedSize,
-    );
-  }, [cartItems, product, selectedVariant, selectedSize, isInCart]);
+  // Check if current variant or size is already in cart
+  const isAlreadyInCart = Boolean(
+    product &&
+      (selectedVariant?._id
+        ? isInCart(product._id, selectedVariant._id)
+        : (cartItems || []).some(
+            (item) =>
+              item.productId === product._id && item.size === selectedSize,
+          )),
+  );
 
   return (
-    <div className="bg-[#F3F4F0] min-h-screen relative overflow-hidden">
+    <div className="bg-[#F4F4F0] min-h-screen relative overflow-hidden">
       {/* Background Subtle Grid Accent */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />

@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 
 const variantSchema = new mongoose.Schema({
+  _id: { type: String, default: () => new mongoose.Types.ObjectId().toString() },
   size: { type: String, required: true },
   color: { type: String, required: true },
   price: { type: Number, required: true },
-  salePrice: { type: Number, default: '' },
+  salePrice: { type: Number, default: 0 },
   isSale: { type: Boolean, default: false },
   isTrending: { type: Boolean, default: false },
   isNewArrival: { type: Boolean, default: false },
@@ -14,6 +15,7 @@ const variantSchema = new mongoose.Schema({
 });
 
 const productSchema = new mongoose.Schema({
+  _id: { type: String, default: () => new mongoose.Types.ObjectId().toString() },
   name: { type: String, required: true },
   description: { type: String, default: '' },
   brand: { type: String, default: '' },

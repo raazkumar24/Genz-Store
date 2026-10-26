@@ -100,9 +100,19 @@ export const createCollection = async (req, res) => {
       return res.status(400).json({ message: "Collection name and image are required" });
     }
 
-    const generatedSlug = slug 
+    let generatedSlug = slug 
       ? slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
       : name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+    // Prevent duplicate slug crash in MongoDB
+    try {
+      const existing = await Collection.findOne({ slug: generatedSlug });
+      if (existing || inMemoryCollections.some(c => c.slug === generatedSlug)) {
+        generatedSlug = `${generatedSlug}-${Date.now().toString().slice(-4)}`;
+      }
+    } catch {
+      // ignore
+    }
 
     const generatedLink = link || `/collections/${generatedSlug}`;
 
@@ -125,6 +135,7 @@ export const createCollection = async (req, res) => {
       inMemoryCollections.push(newCollection.toObject());
       return res.status(201).json({ message: "Collection created successfully", collection: newCollection });
     } catch (dbErr) {
+      console.warn("MongoDB Collection save warning, kept in memory store:", dbErr.message);
       inMemoryCollections.push(collectionData);
       return res.status(201).json({ message: "Collection created successfully", collection: collectionData });
     }

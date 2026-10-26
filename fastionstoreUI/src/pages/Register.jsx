@@ -99,7 +99,7 @@ const Register = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-[var(--color-bg)] p-4 sm:p-6 py-12 relative overflow-hidden">
+    <div className="flex flex-col min-h-screen items-center justify-center bg-[#F4F4F0] p-4 sm:p-6 py-12 relative overflow-hidden">
       {/* Ambient background styling */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-20">
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,var(--color-text)_1px,transparent_0)] bg-[length:32px_32px]" />
@@ -157,17 +157,17 @@ const Register = () => {
         <div className="lg:col-span-7 p-6 sm:p-10 md:p-12 flex flex-col justify-between">
           <div>
             <div className="mb-6">
-              <span className="inline-flex items-center gap-1.5 rounded-none bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-3">
-                <UserPlus size={12} strokeWidth={3} />
+              <span className="inline-flex items-center gap-1.5 rounded-none bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-widest mb-3">
+                <UserPlus size={12} strokeWidth={3} className="text-[var(--color-primary)]" />
                 New Membership
               </span>
               <h1
-                className="text-3xl md:text-4xl font-black uppercase tracking-tight text-neutral-900 leading-tight"
+                className="text-3xl md:text-4xl font-black uppercase tracking-tight text-neutral-950 leading-tight"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Create <span className="text-[var(--color-primary)]">Account</span>
+                Create <span className="text-outline-primary ml-1">Account</span>
               </h1>
-              <p className="mt-1.5 text-xs sm:text-sm text-neutral-500 font-medium">
+              <p className="mt-1.5 text-xs sm:text-sm text-neutral-600 font-medium">
                 Lock in your details to secure upcoming limited drops.
               </p>
             </div>

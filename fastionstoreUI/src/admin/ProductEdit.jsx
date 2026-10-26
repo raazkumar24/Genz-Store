@@ -3,10 +3,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
 import { updateProduct, createProduct } from "../services/productService";
 import { useToast } from "../context/ToastContext";
-import { BackButton, Badge, Button, Card } from "../components/ui";
+import { BackButton, Badge, Card } from "../components/ui";
 import {
   Save,
-  ArrowLeft,
   Image as ImageIcon,
   FileText,
   Tag,
@@ -14,16 +13,12 @@ import {
   Loader2,
   UploadCloud,
   X,
-  PlusCircle,
   Trash2,
   Layers,
   Plus,
   Copy,
-  CheckCircle2,
   AlertCircle,
-  HelpCircle,
   Package,
-  Eye,
   SlidersHorizontal,
   Scissors,
   Check,
@@ -485,7 +480,7 @@ const ProductEdit = () => {
       payload.append("productDetails", JSON.stringify(productDetails));
 
       const variantsForJson = variants.map((v) => {
-        const { imageFiles, image, imageFile, ...rest } = v;
+        const { imageFiles: _imageFiles, image: _image, imageFile: _imageFile, ...rest } = v;
         if (typeof rest.keywords === "string") {
           rest.keywords = rest.keywords
             .split(",")

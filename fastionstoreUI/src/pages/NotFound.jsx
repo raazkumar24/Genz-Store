@@ -2,7 +2,7 @@ import { Badge, Button, BackButton } from "../components/ui";
 
 const NotFound = () => {
     return (
-        <section className="flex min-h-screen flex-col items-center justify-center bg-[var(--color-bg)] px-6 text-center relative overflow-hidden">
+        <section className="flex min-h-screen flex-col items-center justify-center bg-[#F4F4F0] px-6 text-center relative overflow-hidden">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none whitespace-nowrap z-0">
                 <h1 className="text-[30vw] font-black uppercase tracking-tighter" style={{ fontFamily: "var(--font-heading)" }}>
                     404

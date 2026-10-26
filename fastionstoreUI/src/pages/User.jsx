@@ -34,7 +34,7 @@ const User = () => {
     };
 
     return (
-        <section className="min-h-screen bg-[var(--color-bg)] px-4 py-8 sm:px-6 lg:px-8 relative overflow-hidden">
+        <section className="min-h-screen bg-[#F4F4F0] px-4 py-8 sm:px-6 lg:px-8 relative overflow-hidden">
 
             {/* Subtle dot grid background */}
             <div className="absolute inset-0 z-0 opacity-[0.025] pointer-events-none">
@@ -49,10 +49,10 @@ const User = () => {
 
                 {/* ── Page Header ── */}
                 <div className="mb-10">
-                    <Badge variant="primary" className="mb-4 px-3 py-1 inline-flex items-center gap-2">
-                        <UserIcon size={14} />
-                        My Account
-                    </Badge>
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-none bg-neutral-900 text-white px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-widest shadow-xs">
+                        <UserIcon size={13} className="text-[var(--color-primary)]" />
+                        <span>MY ACCOUNT</span>
+                    </div>
                     <h1
                         className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 tracking-tight break-words"
                         style={{ fontFamily: 'var(--font-heading)' }}

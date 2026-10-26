@@ -8,7 +8,6 @@ import {
   X,
   Copy,
   Heart,
-  ShoppingBag,
   ShoppingCart,
   Package,
   Trash2,
@@ -46,7 +45,7 @@ function playToastChime(type) {
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.22);
     }
-  } catch (e) {
+  } catch (_e) {
     // Audio autoplay restrictions or offline, fail gracefully
   }
 }

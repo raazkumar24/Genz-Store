@@ -173,7 +173,7 @@ export const CartProvider = ({ children }) => {
     syncTimeout.current = setTimeout(async () => {
       try {
         await syncCartAPI(items);
-      } catch (e) {
+      } catch (_e) {
         // silent — localStorage already saved
       }
     }, 800);
@@ -269,6 +269,10 @@ export const CartProvider = ({ children }) => {
       return next;
     });
 
+    if (updatedItems) {
+      debouncedSync(updatedItems);
+    }
+
     addToast(`"${name.slice(0, 28)}" cart mein add ho gaya`, "cart", {
       icon: "cart",
       title: "Cart Updated",
@@ -339,7 +343,6 @@ export const CartProvider = ({ children }) => {
     const targetVariant = variantId ? String(variantId).trim() : null;
 
     let itemColor = color;
-    let itemPrice = 0;
 
     setCartItems((prev) =>
       prev.map((item) => {
@@ -354,7 +357,6 @@ export const CartProvider = ({ children }) => {
           const maxStock = Number(item.maxStock) || 99;
           const validQty = Math.min(nextQty, maxStock);
           itemColor = item.color;
-          itemPrice = item.price;
           return { ...item, quantity: validQty };
         }
         return item;

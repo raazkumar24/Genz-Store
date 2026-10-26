@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import ProductCard from "../components/ProductCard";
 import { useProducts } from "../context/ProductContext";
 import { useToast } from "../context/ToastContext";
-import { Card, BackButton } from "../components/ui";
+import { Card, BackButton, ProductSkeleton } from "../components/ui";
 import { 
   Flame, 
   Layers, 
@@ -19,20 +19,6 @@ import {
   ChevronUp
 } from "lucide-react";
 import ProductFilters, { applyProductFilters } from "../components/ProductFilters";
-
-const ProductSkeleton = () => (
-  <Card className="animate-pulse p-4 rounded-none bg-white border border-neutral-100 shadow-2xs">
-    <div className="aspect-square md:aspect-[4/5] w-full rounded-none bg-neutral-200" />
-    <div className="mt-4 space-y-3">
-      <div className="h-4 w-3/4 rounded-none bg-neutral-200" />
-      <div className="h-3 w-1/2 rounded-none bg-neutral-200" />
-      <div className="flex items-center justify-between pt-2">
-        <div className="h-5 w-20 rounded-none bg-neutral-200" />
-        <div className="h-8 w-24 rounded-none bg-neutral-200" />
-      </div>
-    </div>
-  </Card>
-);
 
 const initialFilters = {
   searchQuery: "",
@@ -396,9 +382,7 @@ const Sale = () => {
         {/* Products Grid */}
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <ProductSkeleton key={i} />
-            ))}
+            <ProductSkeleton count={8} />
           </div>
         ) : filteredProducts.length === 0 ? (
           <Card className="flex flex-col items-center justify-center py-16 text-center rounded-none bg-neutral-900 border border-neutral-800 p-8 shadow-xs">

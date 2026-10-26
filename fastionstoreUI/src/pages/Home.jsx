@@ -12,21 +12,7 @@ import { SlidersHorizontal, ArrowLeft, RefreshCw } from "lucide-react";
 import ProductFilters, {
   applyProductFilters,
 } from "../components/ProductFilters";
-
-// Loading skeleton for products to show before data is fetched
-const ProductSkeleton = () => (
-  <div className="animate-pulse rounded-none border border-neutral-200/80 bg-white p-3 space-y-3">
-    <div className="aspect-[4/5] w-full rounded-none bg-neutral-200/60" />
-    <div className="space-y-2 pt-1">
-      <div className="h-3.5 w-3/4 rounded-none bg-neutral-200/60" />
-      <div className="h-3 w-1/2 rounded-none bg-neutral-200/60" />
-      <div className="flex items-center justify-between pt-2">
-        <div className="h-5 w-16 rounded-none bg-neutral-200/60" />
-        <div className="h-8 w-8 rounded-none bg-neutral-200/60" />
-      </div>
-    </div>
-  </div>
-);
+import { ProductSkeleton } from "../components/ui";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -121,7 +107,7 @@ const Home = () => {
   }, [products, filters]);
 
   return (
-    <div className="relative w-full min-h-screen bg-[#F3F4F0] flex flex-col">
+    <div className="relative w-full min-h-screen bg-[#F4F4F0] flex flex-col">
       {/* Subtle Grid Background Accent */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />

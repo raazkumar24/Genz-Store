@@ -7,7 +7,7 @@ export const WishlistProvider = ({ children }) => {
     try {
       const saved = localStorage.getItem("genz_wishlist");
       return saved ? JSON.parse(saved) : [];
-    } catch (e) {
+    } catch (_e) {
       return [];
     }
   });
@@ -17,8 +17,8 @@ export const WishlistProvider = ({ children }) => {
   useEffect(() => {
     try {
       localStorage.setItem("genz_wishlist", JSON.stringify(wishlist));
-    } catch (e) {
-      console.error("Failed to save wishlist to localStorage", e);
+    } catch (_e) {
+      console.error("Failed to save wishlist to localStorage", _e);
     }
   }, [wishlist]);
 

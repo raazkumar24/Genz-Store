@@ -2,24 +2,9 @@ import React, { useMemo, useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
 import ProductCard from "../components/ProductCard";
-import { Badge, Card, Button, BackButton } from "../components/ui";
+import { Card, Button, BackButton, ProductSkeleton } from "../components/ui";
 import { SlidersHorizontal } from "lucide-react";
 import ProductFilters, { applyProductFilters } from "../components/ProductFilters";
-
-// Loading skeleton
-const ProductSkeleton = () => (
-  <Card className="animate-pulse p-4 rounded-none bg-white border border-neutral-100">
-    <div className="aspect-square md:aspect-[4/5] w-full rounded-none bg-neutral-200" />
-    <div className="mt-4 space-y-3">
-      <div className="h-4 w-3/4 rounded-none bg-neutral-200" />
-      <div className="h-3 w-1/2 rounded-none bg-neutral-200" />
-      <div className="flex items-center justify-between pt-2">
-        <div className="h-5 w-20 rounded-none bg-neutral-200" />
-        <div className="h-8 w-24 rounded-none bg-neutral-200" />
-      </div>
-    </div>
-  </Card>
-);
 
 const Collection = () => {
   const { collectionName } = useParams();
@@ -29,16 +14,6 @@ const Collection = () => {
   const displayTitle = collectionName 
     ? collectionName.charAt(0).toUpperCase() + collectionName.slice(1).replace(/-/g, ' ')
     : "Collection";
-
-  const collectionPills = [
-    { label: "All Drops", path: "/new-arrivals" },
-    { label: "Oversized Tees", path: "/collections/oversized-tees" },
-    { label: "Baggy Cargos", path: "/collections/cargos" },
-    { label: "Hoodies & Sweats", path: "/collections/hoodies" },
-    { label: "Men's Collection", path: "/collections/men" },
-    { label: "Women's Fits", path: "/collections/women" },
-    { label: "Clearance Sale", path: "/sale" },
-  ];
 
   const initialFilters = {
     searchQuery: "",
@@ -116,7 +91,7 @@ const Collection = () => {
   }, [baseCollectionProducts, filters]);
 
   return (
-    <div className="relative w-full min-h-screen bg-[#F3F4F0] flex flex-col overflow-hidden">
+    <div className="relative w-full min-h-screen bg-[#F4F4F0] flex flex-col overflow-hidden">
       {/* Background Pattern */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
@@ -148,37 +123,24 @@ const Collection = () => {
               <span className="text-[var(--color-primary)]">{displayTitle}</span>
             </nav>
 
-            <Badge variant="primary" className="mb-3 px-3 py-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider rounded-none">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-none bg-neutral-900 text-white px-3.5 py-1 text-[11px] font-mono font-bold uppercase tracking-widest shadow-xs">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-primary)] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--color-primary)]" />
               </span>
-              Streetwear Drop
-            </Badge>
+              <span>CURATED STREETWEAR DROP</span>
+            </div>
 
             <h1
-              className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-neutral-900 break-words max-w-full"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight text-neutral-950 break-words max-w-full"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {displayTitle} <span className="text-outline-primary ml-1">Collection</span>
             </h1>
             
-            <p className="mt-2.5 max-w-xl text-xs sm:text-sm text-neutral-500 font-medium md:text-base leading-relaxed">
+            <p className="mt-2.5 max-w-xl text-xs sm:text-sm text-neutral-600 font-medium md:text-base leading-relaxed">
               Heavyweight pure combed cotton, boxy drop-shoulder silhouettes, and signature {displayTitle.toLowerCase()} aesthetics.
             </p>
-
-            {/* Quick Collection Navigation Pills */}
-            <div className="mt-6 flex flex-wrap justify-center gap-2 max-w-2xl">
-              {collectionPills.map((pill, idx) => (
-                <Link
-                  key={idx}
-                  to={pill.path}
-                  className="px-3.5 py-1.5 rounded-none bg-[#f8f8f7] border border-neutral-200/90 text-[11px] font-black uppercase tracking-wider text-neutral-700 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-colors shadow-2xs"
-                >
-                  {pill.label}
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       </section>

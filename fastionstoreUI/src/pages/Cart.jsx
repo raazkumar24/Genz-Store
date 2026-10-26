@@ -55,7 +55,7 @@ const Cart = () => {
   // Empty cart state
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-[#F3F4F0] flex flex-col items-center justify-center px-4 py-16 text-center relative overflow-hidden">
+      <div className="min-h-screen bg-[#F4F4F0] flex flex-col items-center justify-center px-4 py-16 text-center relative overflow-hidden">
         {/* Background Subtle Grid Accent */}
         <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
           <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
@@ -69,13 +69,18 @@ const Cart = () => {
           <div className="flex h-20 w-20 items-center justify-center rounded-none bg-[#F5F6F1] border border-neutral-200/80 text-neutral-800 mb-5 shadow-xs">
             <ShoppingBag size={34} />
           </div>
+
+          <div className="inline-flex items-center gap-2 rounded-none bg-neutral-900 text-white px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-widest mb-3 shadow-xs">
+            <span>BAG ROTATION</span>
+          </div>
+
           <h1
-            className="text-2xl sm:text-3xl font-black text-neutral-900 uppercase tracking-tight"
+            className="text-2xl sm:text-3xl font-black text-neutral-950 uppercase tracking-tight"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            Your Cart is Empty
+            Your Bag <span className="text-outline-primary ml-1">is Empty</span>
           </h1>
-          <p className="mt-2 text-xs sm:text-sm text-neutral-500 font-medium max-w-sm leading-relaxed">
+          <p className="mt-2 text-xs sm:text-sm text-neutral-600 font-medium max-w-sm leading-relaxed">
             You haven't added any streetwear drops to your bag yet. Check our new arrivals and drop-shoulder silhouettes!
           </p>
           <Link
@@ -93,7 +98,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F3F4F0] px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-16 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F4F4F0] px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-16 relative overflow-hidden">
       {/* Background Subtle Grid Accent */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
         <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
@@ -103,7 +108,7 @@ const Cart = () => {
         {/* Back Button */}
         <div className="mb-4 flex items-center justify-between">
           <BackButton size="sm" />
-          <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-mono">
             CHECKOUT - BAG
           </span>
         </div>
@@ -111,20 +116,27 @@ const Cart = () => {
         {/* Bento Header */}
         <div className="bg-white rounded-none border border-neutral-200/90 p-6 md:p-8 mb-6 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-row items-center justify-between gap-4">
           <div>
+            <div className="inline-flex items-center gap-2 rounded-none bg-neutral-900 text-white px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-widest mb-2 shadow-xs">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-primary)] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--color-primary)]" />
+              </span>
+              <span>BAG ROTATION [{cartCount}]</span>
+            </div>
             <h1
-              className="text-2xl sm:text-3xl md:text-4xl font-black text-neutral-900 uppercase break-words"
+              className="text-2xl sm:text-3xl md:text-5xl font-black text-neutral-950 uppercase tracking-tight break-words"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Shopping <span className="text-outline-primary ml-1">Bag</span>
             </h1>
-            <p className="mt-1 text-xs sm:text-sm text-neutral-500 font-medium">
+            <p className="mt-1 text-xs sm:text-sm text-neutral-600 font-medium font-mono">
               {cartCount} {cartCount === 1 ? "drop" : "drops"} reserved in your rotation
             </p>
           </div>
 
           <button
             onClick={clearCart}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 hover:text-red-600 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 hover:text-red-600 text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
           >
             <Trash2 size={13} />
             <span>Clear</span>

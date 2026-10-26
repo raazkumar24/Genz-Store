@@ -43,7 +43,7 @@ const SimilarProducts = ({ currentProduct, allProducts }) => {
   if (displayProducts.length === 0) return null;
 
   return (
-    <div className="w-full bg-[#F3F4F0] py-10 md:py-16 border-t border-neutral-200/80">
+    <div className="w-full bg-[#F4F4F0] py-10 md:py-16 border-t border-neutral-200/80">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header Area */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">

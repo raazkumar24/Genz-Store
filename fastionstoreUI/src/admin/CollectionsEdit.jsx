@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Plus,
   Edit3,
@@ -10,13 +9,8 @@ import {
   X,
   Layers,
   Search,
-  ExternalLink,
   Package,
-  ArrowUp,
-  ArrowDown,
   AlertTriangle,
-  Palette,
-  Check,
 } from "lucide-react";
 import {
   fetchAllCollections,
@@ -27,7 +21,7 @@ import {
 } from "../services/collectionService";
 import { useProducts } from "../context/ProductContext";
 import { useToast } from "../context/ToastContext";
-import { Card, Badge, Button } from "../components/ui";
+import { Card } from "../components/ui";
 
 const COLOR_PRESETS = [
   { name: "Sky Blue", value: "bg-[#e0f2fe]", hex: "#e0f2fe", textColor: "text-sky-950" },
@@ -67,7 +61,7 @@ const CollectionsEdit = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
 
-  const loadCollections = async () => {
+  const loadCollections = useCallback(async () => {
     try {
       setLoading(true);
       const data = await fetchAllCollections();
@@ -78,11 +72,11 @@ const CollectionsEdit = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast]);
 
   useEffect(() => {
     loadCollections();
-  }, []);
+  }, [loadCollections]);
 
   // Map product counts to each collection
   const collectionProductCounts = useMemo(() => {

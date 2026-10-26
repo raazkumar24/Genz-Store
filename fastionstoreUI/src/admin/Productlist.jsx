@@ -10,15 +10,11 @@ import {
   Search,
   PackageOpen,
   Package,
-  Layers,
   Eye,
   X,
   AlertTriangle,
-  ArrowUpDown,
-  Filter,
-  CheckCircle2,
 } from "lucide-react";
-import { Card, Badge, Button, Input } from "../components/ui";
+import { Card, Badge } from "../components/ui";
 
 const ProductList = () => {
   const { products, loading, error, removeProduct } = useProducts();

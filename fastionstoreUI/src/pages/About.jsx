@@ -1,14 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { 
-  Flame, Zap, ArrowRight, ShieldCheck, RotateCcw, 
-  Layers, Sparkles, Check, X, Award, Scissors, Compass
+  Flame, Zap, ArrowRight, RotateCcw, 
+  Layers, Sparkles, Check, X, Scissors, Compass
 } from "lucide-react";
 import { Button, BackButton } from "../components/ui";
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] pb-20">
+    <div className="min-h-screen bg-[#F4F4F0] pb-20">
       
       {/* Editorial Hero Header */}
       <section className="relative bg-[#0D0D11] text-white py-16 sm:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-neutral-800">
@@ -88,7 +87,7 @@ const About = () => {
               style={{ fontFamily: "var(--font-heading)" }}
             >
               ANTI-FAST FASHION. <br />
-              <span className="text-neutral-400">UNAPOLOGETIC STRUCTURE.</span>
+              <span className="text-outline-primary ml-1">UNAPOLOGETIC STRUCTURE.</span>
             </h2>
 
             <div className="space-y-4 text-xs sm:text-sm text-neutral-600 font-medium leading-relaxed">

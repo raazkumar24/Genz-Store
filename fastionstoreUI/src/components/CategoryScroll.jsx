@@ -115,7 +115,7 @@ const CategoryScroll = () => {
           });
           setCategories(liveMapped);
         }
-      } catch (err) {
+      } catch (_err) {
         setCategories(defaultCategories);
       }
     };
@@ -124,7 +124,7 @@ const CategoryScroll = () => {
   }, [products]);
 
   return (
-    <section className="w-full bg-[#F3F4F0] py-8 md:py-12 border-b border-neutral-200/80">
+    <section className="w-full bg-[#F4F4F0] py-8 md:py-12 border-b border-neutral-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}

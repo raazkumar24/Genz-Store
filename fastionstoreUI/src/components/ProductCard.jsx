@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import { ShoppingCart, Check, Heart, Star } from "lucide-react";
+import { Check, Heart, Star } from "lucide-react";
 
 // Simple color mapper for swatches
 const colorMap = {
@@ -110,10 +110,6 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
   const productUrl = `/products/${product._id}${
     activeVariant && activeVariant._id ? `?variant=${activeVariant._id}` : ""
   }`;
-
-  const alreadyInCart = activeVariant?._id
-    ? isInCart(product._id, activeVariant._id)
-    : false;
 
   // Active color string
   const activeColorName = activeVariant?.color || colors[0] || "Black";

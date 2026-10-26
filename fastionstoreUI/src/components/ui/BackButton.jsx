@@ -51,8 +51,6 @@ const BackButton = ({
       'bg-transparent text-gray-800 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 active:scale-95',
   };
 
-  const isRoundedFull = variant === 'pill';
-
   return (
     <button
       type="button"

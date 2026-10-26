@@ -64,7 +64,7 @@ const ArchivedCatalogSlider = () => {
   return (
     <section
       id="archived-drops"
-      className="relative w-full bg-white py-10 sm:py-14 md:py-16 overflow-hidden scroll-mt-16"
+      className="relative w-full bg-[#F4F4F0] py-10 sm:py-14 md:py-16 overflow-hidden scroll-mt-16"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         

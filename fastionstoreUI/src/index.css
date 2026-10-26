@@ -3,8 +3,8 @@
 @source "./src";
 
 :root {
-  /* Backgrounds */
-  --color-bg: #F7F7F4; 
+  /* Backgrounds: Standardized warm architectural off-white canvas */
+  --color-bg: #F4F4F0; 
   --color-bg-secondary: #FFFFFF;
   --color-surface: #EFEFEA;
   --color-surface-hover: #E5E5DE;

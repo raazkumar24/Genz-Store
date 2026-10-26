@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { 
   MapPin, Mail, Send, MessageSquare, Clock, 
-  ChevronDown, Check, RotateCcw, ShieldCheck, 
-  Package, Zap, ArrowRight, HelpCircle
+  ChevronDown, Check, RotateCcw, 
+  Zap, ArrowRight, HelpCircle
 } from "lucide-react";
-import { Button, BackButton } from "../components/ui";
+import { BackButton } from "../components/ui";
 import { useToast } from "../context/ToastContext";
 
 const faqs = [
@@ -64,18 +64,23 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] py-8 sm:py-14 px-4 sm:px-6 lg:px-8 pb-24">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <div className="relative w-full min-h-screen bg-[#F4F4F0] py-8 sm:py-14 px-4 sm:px-6 lg:px-8 pb-24 overflow-hidden">
+      {/* Background Subtle Grid Accent */}
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]">
+        <div className="h-full w-full bg-[radial-gradient(circle_at_1px_1px,#000_1px,transparent_0)] bg-[length:32px_32px]" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto space-y-12">
         
         {/* Top Header & Breadcrumb */}
         <div className="flex flex-col items-start gap-4">
           <BackButton fallbackPath="/" className="rounded-none border-neutral-300 hover:border-black" />
           
           <div className="w-full text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-none bg-neutral-950 text-white px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 rounded-none bg-neutral-950 text-white px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-widest shadow-xs">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-primary)]"></span>
               </span>
               <span>CLIENT CONCIERGE DESK</span>
             </div>
@@ -84,7 +89,7 @@ const Contact = () => {
               className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-neutral-950 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              GET IN <span className="text-[var(--color-primary)]">TOUCH</span>
+              GET IN <span className="text-outline-primary ml-1">TOUCH</span>
             </h1>
 
             <p className="text-xs sm:text-sm text-neutral-600 font-mono max-w-xl mx-auto leading-relaxed">

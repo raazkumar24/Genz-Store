@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const collectionSchema = new mongoose.Schema({
+  _id: { type: String, default: () => new mongoose.Types.ObjectId().toString() },
   name: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
   subtitle: { type: String, default: "" },
