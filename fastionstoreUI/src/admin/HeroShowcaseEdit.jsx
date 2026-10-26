@@ -269,21 +269,50 @@ const HeroShowcaseEdit = () => {
     addToast("Hero slide delete ho gayi.", "info");
   };
 
-  // Model image direct upload (FileReader converts to Base64, saved in localStorage - no DB needed!)
+  // Model image direct upload with automatic Canvas compression (Prevents LocalStorage quota limits!)
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 3.5 * 1024 * 1024) {
-      addToast("Image size 3.5MB se kam hona chahiye browser storage ke liye.", "warning");
+    if (file.size > 8 * 1024 * 1024) {
+      addToast("Image size 8MB se kam hona chahiye.", "warning");
       return;
     }
+
     const reader = new FileReader();
     reader.onload = (event) => {
-      const dataUrl = event.target?.result;
-      if (dataUrl) {
-        handleSlideChange("image", dataUrl);
-        addToast("Model image updated! Save button click karke publish karein.", "success");
-      }
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const maxDim = 1200;
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim) {
+            const ratio = Math.min(maxDim / width, maxDim / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // WebP agar supported ho ya PNG with transparency preserve
+          const isPng = file.type === "image/png";
+          const compressedDataUrl = canvas.toDataURL(isPng ? "image/png" : "image/webp", 0.85);
+
+          handleSlideChange("image", compressedDataUrl);
+          addToast("Model image updated & compressed! 'SAVE & PUBLISH' click karein.", "success");
+        } catch (err) {
+          console.error("Image compression error:", err);
+          handleSlideChange("image", event.target?.result);
+          addToast("Model image uploaded! 'SAVE & PUBLISH' click karein.", "success");
+        }
+      };
+      img.onerror = () => {
+        addToast("Invalid image file.", "error");
+      };
+      img.src = event.target?.result;
     };
     reader.readAsDataURL(file);
   };
@@ -397,6 +426,8 @@ const HeroShowcaseEdit = () => {
     setTimeout(() => {
       setSaving(false);
       if (success) {
+        // Guarantee state is 100% in sync with localStorage
+        setMasterConfig(getHeroMasterConfig());
         addToast("Hero & Lookbook Studio updated live across Storefront!", "success");
       } else {
         addToast("Failed to save changes. Please try again.", "error");

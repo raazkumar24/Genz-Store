@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
-import { getHeroMasterConfig } from "../services/heroShowcaseService";
+import {
+  getHeroMasterConfig,
+  HERO_CHANNEL_NAME,
+} from "../services/heroShowcaseService";
 
 /**
  * ArchivedCatalogSlider Component
@@ -19,16 +22,62 @@ const ArchivedCatalogSlider = () => {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  // Listen for live updates from Admin Panel
+  // Listen for live updates from Admin Panel (same-tab, cross-tab, focus, storage)
   useEffect(() => {
-    const handleUpdate = (e) => {
-      const master = e.detail || getHeroMasterConfig();
+    const syncLookbook = (masterInput) => {
+      const master = masterInput || getHeroMasterConfig();
       if (master?.archivedCatalog) {
         setConfig(master.archivedCatalog);
       }
     };
+
+    // 1. Initial check
+    syncLookbook();
+
+    // 2. Same-window event
+    const handleUpdate = (e) => syncLookbook(e.detail);
+
+    // 3. Cross-tab storage event
+    const handleStorage = (e) => {
+      if (e.key === "genz_hero_master_config") {
+        try {
+          syncLookbook(JSON.parse(e.newValue));
+        } catch {
+          syncLookbook();
+        }
+      }
+    };
+
+    // 4. Cross-tab BroadcastChannel
+    let channel;
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        channel = new BroadcastChannel(HERO_CHANNEL_NAME);
+        channel.onmessage = (e) => {
+          if (e.data?.type === "HERO_CONFIG_UPDATED" && e.data?.config) {
+            syncLookbook(e.data.config);
+          }
+        };
+      } catch {}
+    }
+
+    // 5. Window focus
+    const handleFocus = () => syncLookbook();
+
     window.addEventListener("heroConfigUpdated", handleUpdate);
-    return () => window.removeEventListener("heroConfigUpdated", handleUpdate);
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("heroConfigUpdated", handleUpdate);
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("focus", handleFocus);
+      if (channel) {
+        try {
+          channel.close();
+        } catch {}
+      }
+    };
   }, []);
 
   const checkScroll = useCallback(() => {

@@ -4,6 +4,7 @@ import { fetchPopularColors } from "../services/productService";
 import {
   getHeroSpotlightConfig,
   getHeroMasterConfig,
+  HERO_CHANNEL_NAME,
 } from "../services/heroShowcaseService";
 import { useProducts } from "../context/ProductContext";
 
@@ -49,7 +50,7 @@ const Hero = () => {
   const navigate = useNavigate();
   const activeColorFilter = searchParams.get("color")?.toLowerCase() || "";
 
-  // 4. Live Master & Spotlight Config (from Admin panel)
+  // 4. Live Master & Spotlight Config (from Admin panel & LocalStorage)
   const [masterConfig, setMasterConfig] = useState(getHeroMasterConfig);
   const [spotlightConfig, setSpotlightConfig] = useState(
     () => getHeroMasterConfig().spotlight || getHeroSpotlightConfig(),
@@ -57,25 +58,73 @@ const Hero = () => {
 
   const { products } = useProducts();
 
-  // Admin panel updates ke liye live window event listeners
+  // Multi-channel storefront sync (same-tab, cross-tab, window focus, storage)
   useEffect(() => {
-    const handleMasterUpdate = (e) => {
-      const cfg = e.detail || getHeroMasterConfig();
-      setMasterConfig(cfg);
-      if (cfg?.spotlight) {
-        setSpotlightConfig(cfg.spotlight);
+    const syncConfig = (cfgInput) => {
+      const cfg = cfgInput || getHeroMasterConfig();
+      if (cfg) {
+        setMasterConfig(cfg);
+        if (cfg.spotlight) {
+          setSpotlightConfig(cfg.spotlight);
+        }
       }
     };
 
+    // 1. Initial sync on mount
+    syncConfig();
+
+    // 2. Same-window custom events (from admin panel in same tab)
+    const handleMasterUpdate = (e) => syncConfig(e.detail);
     const handleSpotlightUpdate = (e) => {
       setSpotlightConfig(e.detail || getHeroSpotlightConfig());
     };
 
+    // 3. Cross-tab storage event (when admin saves in another tab)
+    const handleStorage = (e) => {
+      if (
+        e.key === "genz_hero_master_config" ||
+        e.key === "genz_hero_spotlight_config"
+      ) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          syncConfig(parsed);
+        } catch {
+          syncConfig();
+        }
+      }
+    };
+
+    // 4. Cross-tab BroadcastChannel for zero-latency instant updates
+    let channel;
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        channel = new BroadcastChannel(HERO_CHANNEL_NAME);
+        channel.onmessage = (e) => {
+          if (e.data?.type === "HERO_CONFIG_UPDATED" && e.data?.config) {
+            syncConfig(e.data.config);
+          }
+        };
+      } catch {}
+    }
+
+    // 5. Window focus (when user switches back to this storefront tab)
+    const handleFocus = () => syncConfig();
+
     window.addEventListener("heroConfigUpdated", handleMasterUpdate);
     window.addEventListener("heroSpotlightUpdated", handleSpotlightUpdate);
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("focus", handleFocus);
+
     return () => {
       window.removeEventListener("heroConfigUpdated", handleMasterUpdate);
       window.removeEventListener("heroSpotlightUpdated", handleSpotlightUpdate);
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("focus", handleFocus);
+      if (channel) {
+        try {
+          channel.close();
+        } catch {}
+      }
     };
   }, []);
 

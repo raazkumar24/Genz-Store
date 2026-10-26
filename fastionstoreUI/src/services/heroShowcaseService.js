@@ -173,14 +173,19 @@ export const getHeroMasterConfig = () => {
   }
 };
 
+export const HERO_CHANNEL_NAME = "genz_hero_channel";
+
 /**
- * Save master configuration and trigger live updates across the storefront
+ * Save master configuration and trigger live updates across the storefront (both same-tab and cross-tab)
  */
 export const saveHeroMasterConfig = (config) => {
   try {
     const current = getHeroMasterConfig();
     const merged = {
-      slides: config.slides || current.slides,
+      slides:
+        Array.isArray(config.slides) && config.slides.length > 0
+          ? config.slides
+          : current.slides || DEFAULT_HERO_SLIDES,
       spotlight: { ...current.spotlight, ...(config.spotlight || {}) },
       tactical: { ...current.tactical, ...(config.tactical || {}) },
       archivedCatalog: {
@@ -195,12 +200,23 @@ export const saveHeroMasterConfig = (config) => {
       JSON.stringify(merged.spotlight)
     );
 
+    // 1. Same-window CustomEvent
     window.dispatchEvent(
       new CustomEvent("heroConfigUpdated", { detail: merged })
     );
     window.dispatchEvent(
       new CustomEvent("heroSpotlightUpdated", { detail: merged.spotlight })
     );
+
+    // 2. Cross-tab BroadcastChannel notification
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const channel = new BroadcastChannel(HERO_CHANNEL_NAME);
+        channel.postMessage({ type: "HERO_CONFIG_UPDATED", config: merged });
+        channel.close();
+      } catch {}
+    }
+
     return true;
   } catch (e) {
     console.error("Error saving hero master config:", e);
@@ -215,6 +231,7 @@ export const resetHeroMasterConfig = () => {
   try {
     localStorage.removeItem(MASTER_STORAGE_KEY);
     localStorage.removeItem(SPOTLIGHT_STORAGE_KEY);
+
     window.dispatchEvent(
       new CustomEvent("heroConfigUpdated", { detail: DEFAULT_MASTER_CONFIG })
     );
@@ -223,6 +240,18 @@ export const resetHeroMasterConfig = () => {
         detail: DEFAULT_HERO_SPOTLIGHT,
       })
     );
+
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const channel = new BroadcastChannel(HERO_CHANNEL_NAME);
+        channel.postMessage({
+          type: "HERO_CONFIG_UPDATED",
+          config: DEFAULT_MASTER_CONFIG,
+        });
+        channel.close();
+      } catch {}
+    }
+
     return true;
   } catch (e) {
     console.error("Error resetting hero master config:", e);

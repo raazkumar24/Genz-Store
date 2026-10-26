@@ -63,7 +63,7 @@ export const HeroSliderCard = ({
         <div className="w-full md:col-span-7 flex flex-col justify-center space-y-3 sm:space-y-4 md:space-y-5 shrink-0">
           <AnimatePresence mode="wait">
             <motion.div
-              key={current}
+              key={`${current}-${slide.id || current}-${slide.title || ""}-${slide.badge || ""}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -118,7 +118,7 @@ export const HeroSliderCard = ({
         <div className="w-full md:col-span-5 relative flex-1 min-h-[170px] max-h-[220px] sm:max-h-[260px] md:max-h-none md:h-[340px] lg:h-[390px] flex items-center justify-center overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
-              key={current}
+              key={`${current}-${slide.id || current}-${slide.image || ""}`}
               initial={{ opacity: 0, scale: 0.94, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 1.02, y: -8 }}
