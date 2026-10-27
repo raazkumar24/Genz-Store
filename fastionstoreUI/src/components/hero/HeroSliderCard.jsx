@@ -10,10 +10,26 @@ import { formatHeroImageUrl } from "../../services/heroShowcaseService";
  * ============================================================================
  * Clean streetwear hero stage:
  * - Solid single color background (#cbb3eb Digital Lilac) - ZERO GRADIENT
- * - Full unclipped headline typography with natural leading
- * - Responsive balanced layout for all viewports
+ * - FIXED height on every viewport, so changing slides never shifts the page
+ * - Heading font auto-scales with title length (full text always visible)
+ * - Image lives in a fixed box with object-contain
  * ============================================================================
  */
+
+// Picks a heading size based on how long the title is, so long titles
+// shrink instead of wrapping into extra lines and growing the container.
+const getTitleSize = (title = "") => {
+  const len = title.length;
+
+  if (len > 45) {
+    return "text-xl sm:text-3xl md:text-4xl lg:text-[2.4rem] xl:text-[2.75rem]";
+  }
+  if (len > 28) {
+    return "text-2xl sm:text-3xl md:text-4xl lg:text-[2.9rem] xl:text-[3.2rem]";
+  }
+  return "text-2xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.75rem]";
+};
+
 export const HeroSliderCard = ({
   slides = [],
   current = 0,
@@ -26,12 +42,14 @@ export const HeroSliderCard = ({
 
   const currentFormatted = String(current + 1).padStart(2, "0");
   const totalFormatted = String(slides.length).padStart(2, "0");
+  const titleSize = getTitleSize(slide.title);
 
   return (
     <div className="w-full bg-[#cbb3eb] border-b border-black/15 relative overflow-hidden">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 relative z-10 flex flex-col justify-between min-h-[520px] md:min-h-[560px] lg:h-[590px] xl:h-[620px]">
+      {/* FIXED height container (no min-h) -> page height never changes */}
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 relative z-10 flex flex-col justify-between h-[780px] sm:h-[760px] md:h-[640px] lg:h-[590px] xl:h-[620px]">
         {/* Top Row: Pill Badges & Slide Number indicator */}
-        <div className="flex items-center justify-between gap-3 z-20 flex-wrap">
+        <div className="flex items-center justify-between gap-3 z-20 flex-wrap shrink-0">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none bg-white text-neutral-950 text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider border border-black/15 shadow-2xs">
               {slide.badge}
@@ -71,10 +89,10 @@ export const HeroSliderCard = ({
           </div>
         </div>
 
-        {/* Middle Stage: Editorial Copy + Floating Product Cutout (Full Width Grid) */}
+        {/* Middle Stage: Editorial Copy + Floating Product Cutout */}
         <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-center flex-1 min-h-0 pt-3 pb-2 sm:pt-4 sm:pb-3 z-10">
           {/* Left Copy Column */}
-          <div className="w-full lg:col-span-7 flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 shrink-0">
+          <div className="w-full lg:col-span-7 flex flex-col justify-start lg:justify-center min-h-0 self-stretch">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${current}-${slide.id || current}-${slide.title || ""}`}
@@ -84,9 +102,9 @@ export const HeroSliderCard = ({
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 className="space-y-3 sm:space-y-4 md:space-y-5"
               >
-                {/* Full Unclipped Heading with Clean Leading */}
+                {/* Full Unclipped Heading, font scales with length */}
                 <h1
-                  className="text-2xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.75rem] font-black uppercase tracking-tight text-neutral-950 leading-[1.04] break-words"
+                  className={`${titleSize} font-black uppercase tracking-tight text-neutral-950 leading-[1.04] break-words`}
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
                   {slide.title}
@@ -128,8 +146,8 @@ export const HeroSliderCard = ({
             </AnimatePresence>
           </div>
 
-          {/* Right Cutout Showcase */}
-          <div className="w-full lg:col-span-5 relative flex-1 min-h-[220px] sm:min-h-[280px] md:h-[340px] lg:h-[420px] xl:h-[460px] flex items-center justify-center overflow-hidden">
+          {/* Right Cutout Showcase: fixed-size box */}
+          <div className="w-full lg:col-span-5 relative h-[340px] sm:h-[280px] md:h-[300px] lg:h-full flex items-center justify-center overflow-hidden shrink-0 lg:shrink">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${current}-${slide.id || current}-${slide.image || ""}`}
@@ -142,7 +160,7 @@ export const HeroSliderCard = ({
                 <img
                   src={formatHeroImageUrl(slide.image)}
                   alt={slide.title}
-                  className="h-full w-auto max-h-full max-w-full object-contain object-bottom select-none pointer-events-none"
+                  className="max-h-full max-w-full w-auto h-auto object-contain object-bottom select-none pointer-events-none"
                 />
 
                 {/* Floating Micro Spec Pill */}
@@ -156,7 +174,7 @@ export const HeroSliderCard = ({
         </div>
 
         {/* Bottom Row: Micro Brand Bar & Slider Arrows */}
-        <div className="flex items-center justify-between pt-4 border-t border-black/15 text-neutral-700 z-20">
+        <div className="flex items-center justify-between pt-4 border-t border-black/15 text-neutral-700 z-20 shrink-0">
           <div className="text-[11px] font-mono font-bold uppercase tracking-widest text-neutral-800">
             <span className="text-neutral-950 font-black">GENZ STUDIO</span>
             <span className="mx-2">•</span>
