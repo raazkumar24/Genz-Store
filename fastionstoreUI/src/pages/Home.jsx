@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import Hero from "../components/hero";
 import ProductCard from "../components/ProductCard";
-import PromoBanner from "../components/PromoBanner";
+// import PromoBanner from "../components/PromoBanner";
 import ArchivedCatalogSlider from "../components/ArchivedCatalogSlider";
 import { useProducts } from "../context/ProductContext";
 import Marquee from "../components/Marquee";
@@ -128,7 +128,7 @@ const Home = () => {
           <Hero />
           <ArchivedCatalogSlider />
           <CategoryScroll />
-          <PromoBanner />
+          {/* <PromoBanner /> */}
         </>
       )}
 
