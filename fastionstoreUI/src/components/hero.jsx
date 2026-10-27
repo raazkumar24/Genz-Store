@@ -35,11 +35,12 @@ import {
  * Main storefront Hero orchestrator component assembling the bento grid:
  *
  * 1. HeroSliderCard: Left 8-col main interactive slider
- * 2. PopularColorsCard: Right top popular colors filter
- * 3. TacticalDropCard: Right middle trending bottomwear card
- * 4. SpotlightDropCard: Right bottom studio garment showcase
- * 5. HeroSubBento: Bottom 3 micro cards (Archived, Reviews, Hot Radar)
- * 6. HeroTrustStrip: Bottom 4-column trust & service guarantees
+ * 2. PopularColorsCard: Right 4-col curated color palette filters
+ * 3. HeroSubBento: Bottom 3 micro cards (Archived Lookbook, Verified Reviews, Hot Radar)
+ * 4. Dual-Drop Studio Showcase:
+ *    - SpotlightDropCard: Curated featured topwear drop (Hoodies / Tees)
+ *    - TacticalDropCard: Trending tactical bottomwear drop (Cargos / Pants)
+ * 5. HeroTrustStrip: Bottom 4-column trust & service guarantees
  * ============================================================================
  */
 const Hero = () => {
