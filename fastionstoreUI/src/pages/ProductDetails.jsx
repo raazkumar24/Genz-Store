@@ -335,18 +335,21 @@ const ProductDetails = () => {
 
   const isAddDisabled = !selectedVariant || selectedVariant.stock === 0;
 
-  const currentPrice =
-    selectedVariant?.isSale && selectedVariant?.salePrice > 0
-      ? selectedVariant.salePrice
-      : selectedVariant?.price || variants[0]?.price || 0;
+  const originalPrice = Number(selectedVariant?.price || variants[0]?.price || 0);
 
-  const originalPrice = selectedVariant?.price || variants[0]?.price || 0;
-  const isSaleActive =
-    selectedVariant?.isSale && selectedVariant?.salePrice > 0;
+  const isSaleActive = Boolean(
+    (selectedVariant?.isSale || (selectedVariant?.salePrice && Number(selectedVariant.salePrice) > 0)) &&
+    Number(selectedVariant?.salePrice) > 0 &&
+    Number(selectedVariant?.salePrice) < originalPrice
+  );
 
-  const savingsAmount =
-    isSaleActive && originalPrice > currentPrice
-      ? originalPrice - currentPrice
+  const currentPrice = isSaleActive ? Number(selectedVariant.salePrice) : originalPrice;
+
+  const savingsAmount = isSaleActive ? originalPrice - currentPrice : 0;
+
+  const discountPercent =
+    isSaleActive && originalPrice > 0
+      ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
       : 0;
 
   // Check if current variant or size is already in cart
@@ -421,6 +424,8 @@ const ProductDetails = () => {
               onOpenLightbox={() => setIsLightboxOpen(true)}
               isWishlisted={Boolean(product && isInWishlist(product._id))}
               onToggleWishlist={() => product && toggleWishlist(product)}
+              isSaleActive={isSaleActive}
+              discountPercent={discountPercent}
             />
           </div>
 
@@ -473,14 +478,14 @@ const ProductDetails = () => {
                   <span className="text-3xl sm:text-4xl font-black text-neutral-950 font-mono">
                     ₹{currentPrice}
                   </span>
-                  {originalPrice > currentPrice && (
+                  {isSaleActive && originalPrice > currentPrice && (
                     <span className="text-base sm:text-lg font-mono text-neutral-400 line-through">
                       ₹{originalPrice}
                     </span>
                   )}
-                  {savingsAmount > 0 && (
+                  {isSaleActive && discountPercent > 0 && (
                     <span className="rounded-none bg-[#FF3B00] text-white px-2 py-0.5 text-xs font-mono font-black uppercase tracking-wider">
-                      SAVE ₹{savingsAmount}
+                      {discountPercent}% OFF • SAVE ₹{savingsAmount}
                     </span>
                   )}
                 </div>

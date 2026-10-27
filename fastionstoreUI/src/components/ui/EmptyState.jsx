@@ -6,8 +6,8 @@ import { ArrowUpRight } from "lucide-react";
  * ============================================================================
  * EmptyState UI Component
  * ============================================================================
- * Jab kisi list me koi data na ho (e.g. Empty Wishlist, Empty Cart, No Search
- * Results, ya No Products Found), tab yeh uniform, stylish streetwear empty state dikhata hai.
+ * Consistent, premium empty state display for empty lists (e.g. Empty Wishlist,
+ * Empty Bag, No Search Results, or Empty Collections).
  *
  * Props:
  * - icon: React node (e.g. <Heart size={32} />, <ShoppingBag size={32} />)

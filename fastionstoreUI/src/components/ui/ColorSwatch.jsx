@@ -4,9 +4,9 @@ import React from "react";
  * ============================================================================
  * ColorSwatch UI Component
  * ============================================================================
- * Color filter ya product variant color swatch dot.
- * White aur light colors ke liye border automatically handle karta hai
- * aur active state par double ring effect deta hai.
+ * Color filter and product variant color swatch indicator.
+ * Automatically adds subtle border for white/light colors
+ * and applies double-ring effect for active selection states.
  *
  * Props:
  * - hex: Color hex code (e.g. "#111111", "#FFFFFF")

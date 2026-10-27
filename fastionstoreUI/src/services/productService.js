@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { API_URL } from './api';
 
-// Admin APIs ke liye token localStorage se bhejte hain.
+// Attach JWT token from localStorage for protected admin APIs
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
 });

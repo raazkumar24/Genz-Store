@@ -24,6 +24,8 @@ const ProductGallery = ({
   onOpenLightbox,
   isWishlisted = false,
   onToggleWishlist,
+  isSaleActive = false,
+  discountPercent = 0,
 }) => {
   if (!displayImages || displayImages.length === 0) return null;
 
@@ -84,8 +86,17 @@ const ProductGallery = ({
                 </button>
               )}
 
-              {/* Top-Right Expand Icon */}
-              <div className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-none bg-white/90 text-neutral-800 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs shadow-xs">
+              {/* Top-Right Dynamic Discount Badge (Only when sale is active) */}
+              {idx === 0 && isSaleActive && discountPercent > 0 && (
+                <div className="absolute top-3 right-3 z-10 pointer-events-none">
+                  <span className="rounded-none bg-[#FF3B00] text-white px-2.5 py-1 text-[10px] font-mono font-black uppercase tracking-wider shadow-sm">
+                    {discountPercent}% OFF
+                  </span>
+                </div>
+              )}
+
+              {/* Bottom-Right Expand Icon */}
+              <div className="absolute bottom-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-none bg-white/90 text-neutral-800 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs shadow-xs">
                 <Maximize2 size={13} strokeWidth={2.4} />
               </div>
             </div>

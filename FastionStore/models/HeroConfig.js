@@ -28,9 +28,11 @@ const heroSpotlightSchema = new mongoose.Schema({
 }, { _id: false });
 
 const tacticalDropSchema = new mongoose.Schema({
-  tag: { type: String, default: "TRENDING BOTTOMWEAR" },
+  tag: { type: String, default: "TRENDING CARGO" },
+  badgeText: { type: String, default: "HEAVYWEIGHT 280 GSM" },
   title: { type: String, default: "SAMFOR PARACHUTE CARGO" },
-  subtitle: { type: String, default: "Raw Ecru • Multi-Pocket Baggy Fit" },
+  subtitle: { type: String, default: "Raw Ecru • Relaxed Fit" },
+  brand: { type: String, default: "GENZ ARCHIVE" },
   image: { type: String, default: "/collections/baggy_pants.png" },
   link: { type: String, default: "/collections/cargos" },
   price: { type: String, default: "479" },

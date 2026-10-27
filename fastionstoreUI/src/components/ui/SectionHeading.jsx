@@ -6,9 +6,9 @@ import { ArrowUpRight } from "lucide-react";
  * ============================================================================
  * SectionHeading UI Component
  * ============================================================================
- * Har page aur section ke header ke liye ek consistent streetwear design.
- * Isme badge, main title (with optional outline accent text), subtitle,
- * aur optional right-side action link shamil hai.
+ * Consistent typography header across pages and streetwear showcase sections.
+ * Supports badges, main titles, outline accent typography, subtitles,
+ * and optional call-to-action navigation links.
  *
  * Props:
  * - badgeText: Small pill text at top (e.g. "HOT RIGHT NOW", "FRESH DROPS")

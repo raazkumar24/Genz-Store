@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Palette, Star, Flame, ArrowUpRight } from "lucide-react";
+import ColorSwatch from "./ui/ColorSwatch";
 import { fetchPopularColors } from "../services/productService";
 import {
   getHeroSpotlightConfig,
@@ -16,6 +18,8 @@ import {
   TacticalDropCard,
   SpotlightDropCard,
   HeroSubBento,
+  ArchivedCatalogMiniCard,
+  VerifiedRadarComboCard,
   HeroTrustStrip,
   heroSlides,
   defaultPopularColors,
@@ -28,8 +32,7 @@ import {
  * ============================================================================
  * Bento-Grid Hero Orchestrator Component
  * ============================================================================
- * Yeh main Hero component hai jo pure Hero section ko assemble karta hai.
- * Sabhi sub-parts ko alag-alag modules me divide kiya gaya hai:
+ * Main storefront Hero orchestrator component assembling the bento grid:
  *
  * 1. HeroSliderCard: Left 8-col main interactive slider
  * 2. PopularColorsCard: Right top popular colors filter
@@ -132,7 +135,7 @@ const Hero = () => {
     };
   }, []);
 
-  // Backend se live popular colors fetch aur sanitize karna
+  // Fetch and sanitize popular colors from backend
   useEffect(() => {
     let isMounted = true;
 
@@ -167,7 +170,7 @@ const Hero = () => {
           }
         }
 
-        // Agar backend colors empty ho to products se derive karein
+        // Derive colors from active catalog products if backend colors are empty
         if (isMounted && products && products.length > 0) {
           const counts = {};
           products.forEach((p) => {
@@ -216,7 +219,7 @@ const Hero = () => {
     };
   }, [products]);
 
-  // Color click handler: toggle karein ya catalog scroll karein
+  // Handle color selection: toggle filter or navigate to catalog view
   const handleColorClick = (colorFilter) => {
     const isCurrentlyActive = activeColorFilter === colorFilter.toLowerCase();
     if (isCurrentlyActive) {
@@ -256,7 +259,7 @@ const Hero = () => {
     return () => clearInterval(timer);
   }, [nextSlide]);
 
-  // Tactical bottomwear cargo product resolve karna
+  // Resolve trending bottomwear cargo product from catalog
   const cargoItem = useMemo(() => {
     if (!products || products.length === 0) return null;
     return (
@@ -275,16 +278,44 @@ const Hero = () => {
     );
   }, [products]);
 
+  const tacticalConfig = masterConfig?.tactical || {};
+
   const cargoImg =
+    tacticalConfig.image ||
     cargoItem?.variants?.[0]?.images?.[0] ||
     cargoItem?.image ||
     "/collections/baggy_pants.png";
-  const cargoName = cargoItem?.name || "Parachute Cargos";
-  const cargoLink = cargoItem
-    ? `/products/${cargoItem._id}`
-    : "/collections/cargos";
 
-  // Spotlight drop product resolve karna (Admin config ke anusaar)
+  const cargoName =
+    tacticalConfig.title || cargoItem?.name || "Parachute Cargos";
+
+  const cargoLink =
+    tacticalConfig.link ||
+    (cargoItem ? `/products/${cargoItem._id}` : "/collections/cargos");
+
+  const cargoBadge =
+    tacticalConfig.badgeText || "HEAVYWEIGHT 280 GSM";
+
+  const cargoTag =
+    tacticalConfig.tag || "TRENDING CARGO";
+
+  const cargoBrand =
+    tacticalConfig.brand || cargoItem?.brand || "GENZ ARCHIVE";
+
+  const cargoPrice =
+    tacticalConfig.price ||
+    cargoItem?.variants?.[0]?.salePrice ||
+    cargoItem?.variants?.[0]?.price ||
+    "479";
+
+  const cargoOriginalPrice =
+    tacticalConfig.originalPrice ||
+    (cargoItem?.variants?.[0]?.salePrice ? cargoItem?.variants?.[0]?.price : "799");
+
+  const cargoSubtitle =
+    tacticalConfig.subtitle || "RAW ECRU • RELAXED FIT";
+
+  // Resolve spotlight showcase product based on admin configuration
   const featuredSpotlightProduct = useMemo(() => {
     if (!products || products.length === 0) return null;
     if (spotlightConfig.productId) {
@@ -386,38 +417,106 @@ const Hero = () => {
   }, [products]);
 
   return (
-    <section className="relative w-full bg-[#F4F4F0] pt-4 md:pt-6 pb-6 md:pb-10 overflow-hidden">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* ========================================================= */}
-        {/* UPPER BENTO GRID: Main Slider (8 cols) + Side Stack (4 cols) */}
-        {/* ========================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5 items-stretch">
-          {/* Main Hero Slider (Left 8 Cols) */}
-          <HeroSliderCard
-            slides={activeSlides}
-            current={current}
-            onSelectSlide={(idx) => setCurrent(idx)}
-            onNextSlide={nextSlide}
-            onPrevSlide={prevSlide}
-          />
+    <div className="relative w-full flex flex-col">
+      {/* 1. Full-Width Edge-to-Edge Hero Slider (NO Box!) */}
+      <HeroSliderCard
+        slides={activeSlides}
+        current={current}
+        onSelectSlide={(idx) => setCurrent(idx)}
+        onNextSlide={nextSlide}
+        onPrevSlide={prevSlide}
+      />
 
-          {/* Right Bento Column Stack (Right 4 Cols) */}
-          <div className="lg:col-span-4 flex flex-col gap-4 md:gap-5 lg:h-[600px] xl:h-[610px] justify-between">
-            {/* 1. Popular Colors Card */}
-            <PopularColorsCard
-              colorsList={colorsList}
-              activeColorFilter={activeColorFilter}
-              onColorClick={handleColorClick}
-            />
+      {/* 2. Full-Width Seamless Quick-Filter & Discovery Toolbar (NO Box!) */}
+      <div className="w-full bg-[#FAFAF8] border-b border-neutral-200/90 py-3.5 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6 flex-wrap">
+          {/* Popular Colors Quick Swatches */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-[11px] font-mono font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+              <Palette size={13} className="text-[#FF3B00]" />
+              POPULAR PALETTES:
+            </span>
+            <div className="flex items-center gap-2">
+              {colorsList.map((color) => {
+                const isActive =
+                  activeColorFilter === color.filter?.toLowerCase();
+                return (
+                  <ColorSwatch
+                    key={color.filter}
+                    hex={color.hex}
+                    name={color.name}
+                    count={color.count}
+                    isActive={isActive}
+                    onClick={() => handleColorClick(color.filter)}
+                  />
+                );
+              })}
+            </div>
+          </div>
 
-            {/* 2. Trending Tactical Bottomwear Card */}
-            <TacticalDropCard
-              cargoImg={cargoImg}
-              cargoName={cargoName}
-              cargoLink={cargoLink}
-            />
+          {/* Social Proof, 24h Worldwide Shipping, & Archive Link */}
+          <div className="flex items-center gap-4 text-[11px] font-mono font-bold text-neutral-600 flex-wrap">
+            <span className="flex items-center gap-1 text-neutral-900">
+              <span className="flex items-center gap-0.5 text-amber-500">
+                <Star size={11} className="fill-amber-400 text-amber-400" />
+                <span className="font-black">4.9/5</span>
+              </span>
+              <span>• 10,400+ VERIFIED HEADS</span>
+            </span>
 
-            {/* 3. Featured Spotlight Drop Card */}
+            <span className="hidden sm:inline text-neutral-300">•</span>
+
+            <span className="flex items-center gap-1 text-[#FF3B00]">
+              <Flame size={12} className="fill-[#FF3B00]" />
+              <span>DROP 04 SHIPS IN 24H</span>
+            </span>
+
+            <span className="hidden sm:inline text-neutral-300">•</span>
+
+            <a
+              href="#archived-drops"
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.getElementById("archived-drops");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+                else navigate("/new-arrivals");
+              }}
+              className="text-neutral-900 hover:text-[#FF3B00] transition-colors flex items-center gap-1 font-black"
+            >
+              <span>ARCHIVED CATALOG (460+ DROPS)</span>
+              <ArrowUpRight size={12} strokeWidth={2.5} />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Curated Dual-Drop Editorial Showcase (Studio Spotlight & Trending Bottomwear) */}
+      <section className="w-full bg-[#F5F5F1] py-8 sm:py-12 border-b border-neutral-200/90">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-5 sm:mb-6">
+            <div>
+              <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-[#FF3B00]">
+                01 - STUDIO CURATED SHOWCASE
+              </span>
+              <h2
+                className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-neutral-950 mt-1"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                FEATURED TOPWEAR & TACTICAL BOTTOMWEAR
+              </h2>
+            </div>
+
+            <Link
+              to="/collections/hoodies"
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-neutral-900 hover:text-[#FF3B00] transition-colors"
+            >
+              <span>EXPLORE ALL DROPS</span>
+              <ArrowUpRight size={14} strokeWidth={2.5} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-stretch">
+            {/* Featured Studio Topwear Drop */}
             <SpotlightDropCard
               spotlightConfig={spotlightConfig}
               spotlightLink={spotlightLink}
@@ -428,21 +527,26 @@ const Hero = () => {
               spotlightTag={spotlightTag}
               brand={featuredSpotlightProduct?.brand}
             />
+
+            {/* Featured Studio Bottomwear Drop */}
+            <TacticalDropCard
+              cargoImg={cargoImg}
+              cargoName={cargoName}
+              cargoLink={cargoLink}
+              brand={cargoBrand}
+              cargoBadge={cargoBadge}
+              cargoTag={cargoTag}
+              cargoPrice={cargoPrice}
+              cargoOriginalPrice={cargoOriginalPrice}
+              cargoSubtitle={cargoSubtitle}
+            />
           </div>
         </div>
+      </section>
 
-        {/* ========================================================= */}
-        {/* LOWER BENTO SUB-ROW: 3 Micro Bento Cards                   */}
-        {/* ========================================================= */}
-        <HeroSubBento
-          productsCount={products?.length || 0}
-          archivedCatalogPreviews={archivedCatalogPreviews}
-        />
-      </div>
-
-      {/* Trust & Guarantee Strip */}
+      {/* 4. Full-Width Trust & Service Guarantee Strip */}
       <HeroTrustStrip />
-    </section>
+    </div>
   );
 };
 

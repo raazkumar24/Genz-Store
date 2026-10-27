@@ -4,8 +4,8 @@ import React from "react";
  * ============================================================================
  * Skeleton & ProductSkeleton UI Components
  * ============================================================================
- * Yeh components data load hone ke dauran modern pulsing placeholder dikhate hain.
- * Har page pe alag se skeleton code likhne ki zaroorat nahi hai.
+ * Shimmering placeholder components displayed during asynchronous data fetching.
+ * Ensures consistent visual feedback across all pages without layout shift.
  * 
  * Props for Skeleton:
  * - className: custom Tailwind classes (height, width, rounded, etc.)

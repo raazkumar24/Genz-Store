@@ -273,9 +273,9 @@ export const CartProvider = ({ children }) => {
       debouncedSync(updatedItems);
     }
 
-    addToast(`"${name.slice(0, 28)}" cart mein add ho gaya`, "cart", {
+    addToast(`"${name.slice(0, 28)}" added to your bag`, "cart", {
       icon: "cart",
-      title: "Cart Updated",
+      title: "Bag Updated",
     });
 
     // Async backend save — fire and forget with debounce
@@ -324,7 +324,7 @@ export const CartProvider = ({ children }) => {
       return next;
     });
 
-    addToast("Cart se remove ho gaya", "info");
+    addToast("Item removed from your bag", "info");
 
     // Backend remove
     removeFromCartAPI({ productId: prodIdStr, variantId, size, color }).catch(() => {});

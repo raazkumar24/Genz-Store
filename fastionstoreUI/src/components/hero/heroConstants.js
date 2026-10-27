@@ -2,8 +2,8 @@
  * ============================================================================
  * Hero Constants & Color Utilities
  * ============================================================================
- * Editorial Streetwear Slides Archive, Canonical Color Palettes,
- * aur hex resolution functions jo Hero bento grid me use hoti hain.
+ * Editorial streetwear slides archive, canonical color palettes,
+ * and hex resolution functions used across the Hero bento grid.
  * ============================================================================
  */
 
@@ -161,7 +161,7 @@ export const CANONICAL_PALETTES = [
 ];
 
 /**
- * Kisi bhi color string (e.g. "Charcoal Grey") ko canonical hex me convert karta hai
+ * Resolves any raw color string (e.g. "Charcoal Grey") to a canonical hex color code
  */
 export const resolveColorHex = (colorString) => {
   if (!colorString) return "#111111";
@@ -188,7 +188,7 @@ export const resolveColorHex = (colorString) => {
 };
 
 /**
- * Color string ko match kar canonical palette object return karta hai
+ * Matches a color string to its corresponding canonical palette object
  */
 export const canonicalizeColor = (colorString) => {
   if (!colorString) return null;

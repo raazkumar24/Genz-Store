@@ -10,10 +10,10 @@ import { BackButton, EmptyState } from "../components/ui";
  * ============================================================================
  * Wishlist / Saved Fits Page
  * ============================================================================
- * User ke save kiye huye streetwear fits ko display karta hai.
- * - EmptyState UI component use hota hai jab koi item save na ho
- * - Bulk "Add All to Bag" action quick cart conversion ke liye
- * - "Clear" button poori wishlist ko reset karne ke liye
+ * Displays saved streetwear items and favorites.
+ * - EmptyState UI component displays when no items are saved
+ * - Bulk "Add All to Bag" action for fast cart conversion
+ * - "Clear" button resets saved wishlist items
  * ============================================================================
  */
 const Wishlist = () => {
@@ -21,7 +21,7 @@ const Wishlist = () => {
   const { addToCart } = useCart();
   const { addToast } = useToast();
 
-  // Sabhi in-stock items ko ek sath cart me add karna
+  // Add all in-stock wishlist items to bag
   const handleAddAllToCart = () => {
     let addedCount = 0;
     wishlist.forEach((product) => {

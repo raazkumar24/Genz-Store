@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
+import { formatHeroImageUrl } from "../../services/heroShowcaseService";
 
 /**
  * ============================================================================
@@ -51,12 +52,12 @@ export const SpotlightDropCard = ({
       </div>
 
       {/* Hero Studio Garment Showcase */}
-      <div className="relative w-full flex-1 min-h-[170px] sm:min-h-[190px] my-3 rounded-none overflow-hidden bg-white border border-neutral-200/50 flex items-center justify-center p-3 group/img shadow-2xs">
+      <div className="relative w-full flex-1 min-h-[150px] max-h-[185px] my-2.5 rounded-none overflow-hidden bg-white border border-neutral-200/50 flex items-center justify-center p-3 group/img shadow-2xs">
         {/* Studio Grid Pattern */}
         <div className="absolute inset-0 bg-[radial-gradient(#0000000c_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none" />
 
         <img
-          src={spotlightImg}
+          src={formatHeroImageUrl(spotlightImg)}
           alt={spotlightName}
           className="h-full w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-108 select-none"
           onError={(e) => {

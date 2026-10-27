@@ -11,7 +11,7 @@ router.get('/', getAllProducts);
 router.get('/popular-colors', getPopularColors);
 router.get('/:id', getProductById);
 
-// 👑 Protected Route: Pehle authentication check hoga, fir role check hoga, aur ant me product save hoga!
+// Protected Admin Routes: Require authenticated admin user
 router.put('/:id', authMiddleware, adminMiddleware, upload.any(), pushToCloudinary, updateProduct);
 router.delete('/:id', authMiddleware, adminMiddleware, deleteProduct);
 router.post('/add', authMiddleware, adminMiddleware, upload.any(), pushToCloudinary, addProduct);

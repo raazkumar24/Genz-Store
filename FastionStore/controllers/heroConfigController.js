@@ -61,9 +61,11 @@ export const DEFAULT_HERO_SPOTLIGHT = {
 };
 
 export const DEFAULT_TACTICAL_DROP = {
-  tag: "TRENDING BOTTOMWEAR",
+  tag: "TRENDING CARGO",
+  badgeText: "HEAVYWEIGHT 280 GSM",
   title: "SAMFOR PARACHUTE CARGO",
-  subtitle: "Raw Ecru • Multi-Pocket Baggy Fit",
+  subtitle: "Raw Ecru • Relaxed Fit",
+  brand: "GENZ ARCHIVE",
   image: "/collections/baggy_pants.png",
   link: "/collections/cargos",
   price: "479",

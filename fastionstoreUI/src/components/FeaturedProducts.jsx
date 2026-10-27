@@ -7,8 +7,8 @@ import { ProductSkeleton } from "./ui";
  * ============================================================================
  * FeaturedProducts Component
  * ============================================================================
- * Homepage pe trending / featured streetwear drops showcase karta hai.
- * Loading ke dauran reusable ProductSkeleton display hota hai.
+ * Showcases trending and featured streetwear drops on the homepage.
+ * Renders reusable ProductSkeleton placeholders during data loading.
  * ============================================================================
  */
 const FeaturedProducts = ({ products, loading }) => {

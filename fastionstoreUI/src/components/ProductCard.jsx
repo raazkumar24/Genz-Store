@@ -69,7 +69,8 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
     product.variants.every((variant) => variant.stock === 0) &&
     product.stock === 0;
 
-  const displayPrice = activeVariant?.price || product.price || 0;
+  // Base retail display price
+  const displayPrice = Number(activeVariant?.price || product.price || 0);
 
   const colors = [
     ...new Set((product.variants || []).map((v) => v.color).filter(Boolean)),
@@ -82,21 +83,51 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
 
   const isHighlight = highlightProp || isProductTrending;
 
-  const isProductSale = activeVariant?.isSale;
-  let salePrice = activeVariant?.salePrice || 0;
-  if (isProductSale && product.variants) {
-    const saleVariants = product.variants.filter(
-      (v) => (v.isSale || (v.salePrice && v.salePrice > 0)) && v.salePrice > 0,
+  // Check if active variant has an active discounted salePrice
+  const isVariantOnSale = Boolean(
+    (activeVariant?.isSale || (activeVariant?.salePrice && Number(activeVariant.salePrice) > 0)) &&
+    Number(activeVariant?.salePrice) > 0 &&
+    Number(activeVariant?.salePrice) < displayPrice
+  );
+
+  // Check if any variant is on sale when no specific variant has been selected
+  const hasAnySaleVariant = Boolean(
+    !selectedVariantId &&
+    (product.variants || []).some(
+      (v) => (v.isSale || (v.salePrice && Number(v.salePrice) > 0)) &&
+             Number(v.salePrice) > 0 &&
+             Number(v.salePrice) < Number(v.price || displayPrice)
+    )
+  );
+
+  let salePrice = 0;
+  if (isVariantOnSale) {
+    salePrice = Number(activeVariant.salePrice);
+  } else if (hasAnySaleVariant) {
+    const saleVariants = (product.variants || []).filter(
+      (v) => (v.isSale || (v.salePrice && Number(v.salePrice) > 0)) &&
+             Number(v.salePrice) > 0 &&
+             Number(v.salePrice) < Number(v.price || displayPrice)
     );
     if (saleVariants.length > 0) {
-      salePrice = Math.min(...saleVariants.map((v) => v.salePrice));
+      salePrice = Math.min(...saleVariants.map((v) => Number(v.salePrice)));
     }
+  } else if (
+    product.isSale &&
+    product.salePrice &&
+    Number(product.salePrice) > 0 &&
+    Number(product.salePrice) < displayPrice
+  ) {
+    salePrice = Number(product.salePrice);
   }
 
-  const discountPercent =
-    isProductSale && salePrice > 0 && displayPrice > salePrice
-      ? Math.round(((displayPrice - salePrice) / displayPrice) * 100)
-      : (product.discountPercent || 20);
+  const isSaleActive = Boolean(salePrice > 0 && displayPrice > salePrice);
+
+  // Dynamically calculate exact discount percentage from actual retail price and sale price.
+  // Never default or fallback to random 20% discount.
+  const discountPercent = isSaleActive
+    ? Math.round(((displayPrice - salePrice) / displayPrice) * 100)
+    : 0;
 
   const primaryImage =
     activeVariant?.images?.length > 0
@@ -159,7 +190,7 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
 
         {/* Top-Left Technical Badges (Compact on mobile so garment artwork stays unobstructed) */}
         <div className="absolute top-2 left-2 md:top-2.5 md:left-2.5 z-20 flex flex-row sm:flex-col items-start gap-1 pointer-events-none max-w-[80%] flex-wrap">
-          {discountPercent > 0 && (
+          {isSaleActive && discountPercent > 0 && (
             <span className="rounded-none bg-[#FF3B00] text-white px-1.5 py-0.5 text-[8px] md:text-[10px] font-black uppercase tracking-wider shadow-2xs">
               {discountPercent}% OFF
             </span>
@@ -305,7 +336,7 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
 
           {/* Price Hierarchy */}
           <div className="flex items-baseline gap-1.5 shrink-0 font-mono">
-            {salePrice > 0 && displayPrice > salePrice ? (
+            {isSaleActive && (
               <>
                 <span className={`text-xs sm:text-sm font-black ${dark ? "text-white" : "text-neutral-950"}`}>
                   ₹{salePrice}
@@ -314,7 +345,8 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
                   ₹{displayPrice}
                 </span>
               </>
-            ) : (
+            )}
+            {!isSaleActive && (
               <span className={`text-xs sm:text-sm font-black ${dark ? "text-white" : "text-neutral-950"}`}>
                 ₹{displayPrice}
               </span>

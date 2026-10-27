@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import {
   getHeroMasterConfig,
   fetchHeroMasterConfig,
+  formatHeroImageUrl,
   HERO_CHANNEL_NAME,
 } from "../services/heroShowcaseService";
 
@@ -213,7 +214,7 @@ const ArchivedCatalogSlider = () => {
                 >
                   {/* Full-bleed Lookbook Lifestyle Photography */}
                   <img
-                    src={card.image}
+                    src={formatHeroImageUrl(card.image)}
                     alt={card.title}
                     className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                     onError={(e) => {

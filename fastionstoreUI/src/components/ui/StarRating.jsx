@@ -5,7 +5,7 @@ import { Star } from "lucide-react";
  * ============================================================================
  * StarRating UI Component
  * ============================================================================
- * Ratings display karne ke liye reusable component (e.g. 4.8 ★, 5 gold stars).
+ * Reusable star rating visualization component (e.g. 4.8 ★, 5 gold stars).
  *
  * Props:
  * - rating: Number (e.g. 4.8 or 5)

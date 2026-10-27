@@ -34,8 +34,8 @@ const productSchema = new mongoose.Schema({
     style: { type: String, default: '' },
     itemDetails: { type: String, default: '' }
   },
-  variants: [variantSchema]   // One-to-Many Relationship!
-}, { timestamps: true }); // Isse hooks automatically create/update time note kar lenge
+  variants: [variantSchema]   // One-to-Many Variant Relationship
+}, { timestamps: true }); // Automatically manages createdAt and updatedAt timestamps
 
 const Product = mongoose.model('Product', productSchema);
 export default Product;

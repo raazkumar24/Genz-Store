@@ -35,7 +35,7 @@ const CartContext = createContext(null);
 
 const CART_STORAGE_KEY = "fashionstore_cart";
 
-// localStorage se cart load karo
+// Load cart items from localStorage
 const loadCartFromStorage = () => {
   try {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
@@ -45,7 +45,7 @@ const loadCartFromStorage = () => {
   }
 };
 
-// cart ko localStorage me save karo
+// Persist cart items to localStorage
 const saveCartToStorage = (items) => {
   try {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
@@ -164,16 +164,15 @@ export const CartProvider = ({ children }) => {
     };
   }, []);
 
-  // Jab bhi cartItems change ho, storage update karo
+  // Sync cart with localStorage and dispatch event whenever items change
   useEffect(() => {
     saveCartToStorage(cartItems);
-    // Navbar cart count update ke liye event dispatch
     window.dispatchEvent(new Event("cartChange"));
   }, [cartItems]);
 
   const { addToast } = useToast();
 
-  // Item add karo — agar same variant aur size pehle se hai to quantity badhao
+  // Add item to bag — increment quantity if matching variant and size exists
   const addToCart = useCallback(
     (product, variant, quantity = 1, selectedSize = "", selectedColor = "") => {
       const itemPrice = Number(
@@ -193,7 +192,7 @@ export const CartProvider = ({ children }) => {
         );
 
         if (existingIndex > -1) {
-          // Pehle se hai — quantity badhao
+          // Item exists: increment quantity
           const updated = [...prev];
           updated[existingIndex] = {
             ...updated[existingIndex],
@@ -202,7 +201,7 @@ export const CartProvider = ({ children }) => {
           return updated;
         }
 
-        // Naya item add karo
+        // Add new item to cart
         return [
           ...prev,
           {
@@ -244,7 +243,7 @@ export const CartProvider = ({ children }) => {
     [addToast],
   );
 
-  // Quantity update karo
+  // Update quantity of an item
   const updateQuantity = useCallback((productId, variantId, size, quantity) => {
     if (quantity < 1) return;
     setCartItems((prev) =>
@@ -266,7 +265,7 @@ export const CartProvider = ({ children }) => {
     }).catch((err) => console.error("Failed to update backend cart", err));
   }, []);
 
-  // Item remove karo
+  // Remove item from bag
   const removeFromCart = useCallback(
     (productId, variantId, size) => {
       setCartItems((prev) =>
@@ -294,7 +293,7 @@ export const CartProvider = ({ children }) => {
     [addToast],
   );
 
-  // Cart saaf karo
+  // Clear entire bag
   const clearCart = useCallback(() => {
     setCartItems([]);
     saveCartToStorage([]);
@@ -313,7 +312,7 @@ export const CartProvider = ({ children }) => {
     0,
   );
 
-  // Kya item already cart mein hai?
+  // Check if item is already in cart
   const isInCart = useCallback(
     (productId, variantId) =>
       cartItems.some(
@@ -340,7 +339,7 @@ export const CartProvider = ({ children }) => {
   );
 };
 
-// Custom hook — components me easily use karo
+// Custom hook to consume Cart context
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {

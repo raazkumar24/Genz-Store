@@ -1,52 +1,106 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
+import { formatHeroImageUrl } from "../../services/heroShowcaseService";
 
 /**
  * ============================================================================
  * TacticalDropCard Component
  * ============================================================================
- * Right bento middle card:
- * Displays trending bottomwear / parachute cargo preview with pricing
- * and quick access button.
+ * Editorial Studio Showcase for Trending Bottomwear / Parachute Cargos.
+ * Symmetrical counterpart to SpotlightDropCard.
  * ============================================================================
  */
 export const TacticalDropCard = ({
   cargoImg,
-  cargoName,
-  cargoLink,
+  cargoName = "Parachute Cargos",
+  cargoLink = "/collections/cargos",
+  brand = "GENZ ARCHIVE",
+  cargoBadge = "HEAVYWEIGHT 280 GSM",
+  cargoTag = "TRENDING CARGO",
+  cargoPrice = "479",
+  cargoOriginalPrice = "799",
+  cargoSubtitle = "RAW ECRU • RELAXED FIT",
 }) => {
   return (
     <Link
-      to={cargoLink || "/collections/cargos"}
-      className="group bg-white rounded-none border border-neutral-200/90 hover:border-black p-4 shadow-xs flex items-center justify-between gap-3 transition-all duration-300"
+      to={cargoLink}
+      className="group relative rounded-none border border-neutral-200/90 bg-white text-neutral-950 p-4 sm:p-5 flex-1 min-h-[300px] flex flex-col justify-between overflow-hidden transition-all duration-300 shadow-xs hover:border-black"
     >
-      <div className="flex items-center gap-3 min-w-0">
-        <div className="h-16 w-16 rounded-none bg-neutral-100 border border-neutral-200/80 p-1 shrink-0 flex items-center justify-center">
-          <img
-            src={cargoImg || "/collections/baggy_pants.png"}
-            alt={cargoName || "Parachute Cargos"}
-            className="h-full w-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = "/collections/baggy_pants.png";
-            }}
-          />
-        </div>
-        <div className="flex flex-col space-y-0.5 min-w-0">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#FF3B00]">
-            • TRENDING BOTTOMWEAR
+      {/* Top Bar: Specs Badge + Tag Pill */}
+      <div className="flex items-center justify-between gap-2 z-10">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider bg-neutral-100 text-neutral-800 border border-neutral-200">
+          <span className="h-1.5 w-1.5 rounded-none bg-[#FF3B00]" />
+          {cargoBadge}
+        </span>
+
+        <span className="text-[11px] font-mono font-black uppercase tracking-wider text-[#FF3B00]">
+          {cargoTag}
+        </span>
+      </div>
+
+      {/* Hero Studio Garment Showcase */}
+      <div className="relative w-full flex-1 min-h-[150px] max-h-[185px] my-2.5 rounded-none overflow-hidden bg-neutral-50 border border-neutral-200/50 flex items-center justify-center p-3 group/img shadow-2xs">
+        {/* Studio Grid Pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(#0000000c_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none" />
+
+        <img
+          src={formatHeroImageUrl(cargoImg || "/collections/baggy_pants.png")}
+          alt={cargoName}
+          className="h-full w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-108 select-none"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/collections/baggy_pants.png";
+          }}
+        />
+
+        {/* Bottom Technical Pill on Image */}
+        <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
+          <span className="px-2 py-0.5 rounded-none bg-neutral-900/90 text-[9px] font-mono font-bold text-white uppercase tracking-wider border border-white/10">
+            BOTTOMWEAR RADAR
           </span>
-          <h2 className="text-xs sm:text-sm font-black uppercase tracking-tight text-neutral-950 group-hover:text-[#FF3B00] transition-colors truncate">
-            {cargoName || "Parachute Cargos"}
-          </h2>
-          <p className="text-[11px] font-mono text-neutral-500 font-medium truncate">
-            ₹479 <span className="line-through text-neutral-400">₹799</span> • Raw Ecru
-          </p>
+        </div>
+
+        <div className="absolute top-2 right-2 z-10 pointer-events-none">
+          <span className="px-1.5 py-0.5 rounded-none bg-black text-[9px] font-mono font-black text-white uppercase tracking-wider">
+            HOT DROP
+          </span>
         </div>
       </div>
 
-      <div className="flex h-8 w-8 items-center justify-center rounded-none bg-black text-white group-hover:bg-[#FF3B00] transition-colors shrink-0 font-bold text-sm">
-        +
+      {/* Product Details Section */}
+      <div className="flex flex-col space-y-1 z-10">
+        <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest truncate">
+          {brand} • UNISEX
+        </p>
+        <h2 className="text-sm sm:text-base font-black uppercase tracking-tight transition-colors line-clamp-1 text-neutral-950 group-hover:text-[#FF3B00]">
+          {cargoName}
+        </h2>
+        <div className="flex items-baseline gap-2.5 pt-0.5">
+          <span className="text-lg sm:text-xl font-mono font-black text-[#FF3B00]">
+            ₹{cargoPrice}
+          </span>
+          {cargoOriginalPrice && (
+            <span className="text-xs font-mono text-neutral-400 line-through">
+              ₹{cargoOriginalPrice}
+            </span>
+          )}
+          {cargoSubtitle && (
+            <span className="text-[11px] font-mono text-neutral-400 font-bold uppercase">
+              {cargoSubtitle}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom Action Strip */}
+      <div className="flex items-center justify-between pt-3 mt-2 border-t border-neutral-200 z-10">
+        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 group-hover:text-[#FF3B00] transition-colors">
+          CLICK TO INSPECT SILHOUETTE
+        </span>
+        <div className="flex h-7 w-7 items-center justify-center rounded-none bg-black text-white group-hover:bg-[#FF3B00] transition-colors">
+          <ArrowUpRight size={14} strokeWidth={2.5} />
+        </div>
       </div>
     </Link>
   );

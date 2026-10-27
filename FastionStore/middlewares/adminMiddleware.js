@@ -1,14 +1,18 @@
-
 const adminMiddleware = (req, res, next) => {
-    // Check karna ki kya user ka role 'admin' hai
-    if (req.user && req.user.role === 'admin') {
-        next(); // Agar admin hai, toh kaam aage badhne do
-    } else {
-        // TEMPORARY FIX: Abhi ke liye testing chal rahi hai, to allow kar do!
-        console.warn("⚠️ Warning: Non-admin user bypassed adminMiddleware for testing!");
-        next();
-        // res.status(403).json({ message: "Access Denied! Sirf Admin hi yeh badlav kar sakta hai. 🛑" });
-    }
+  // Verify that authenticated user has administrator privileges
+  if (req.user && req.user.role === 'admin') {
+    return next();
+  }
+
+  // Allow development mode bypass with audit log if enabled
+  if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
+    console.warn(`[DEV ACCESS] Non-admin (${req.user?.role || 'unauthenticated'}) accessed admin route in development.`);
+    return next();
+  }
+
+  return res.status(403).json({
+    message: "Access denied. Administrator privileges required."
+  });
 };
 
 export default adminMiddleware;

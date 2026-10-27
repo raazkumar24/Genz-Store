@@ -6,12 +6,12 @@ import { Card, Badge, BackButton } from '../components/ui';
 
 /**
  * User Profile Page
- * - Logged-in user ki details dikhata hai (name, email, role)
- * - Admin users ko admin panel ka shortcut bhi milta hai
- * - Logout button se localStorage clear ho jata hai
+ * - Displays authenticated user details (name, email, role)
+ * - Provides admin navigation shortcut for administrative accounts
+ * - Clears session storage upon logout
  */
 const User = () => {
-    // Agar logged in nahi hai to login page pe redirect karo
+    // Redirect unauthenticated visitors to login
     if (!isLoggedIn()) {
         return <Navigate to="/login" replace />;
     }

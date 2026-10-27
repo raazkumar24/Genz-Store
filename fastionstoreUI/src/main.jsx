@@ -6,8 +6,8 @@ import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter> {/* Poore app ko routing capability milti hai */}
-    <App />
+    <BrowserRouter>
+      <App />
     </BrowserRouter>
   </StrictMode>,
 )

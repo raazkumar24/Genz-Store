@@ -2,8 +2,8 @@
  * ============================================================================
  * UI Component Library Index
  * ============================================================================
- * Yeh folder sabhi reusable UI components ko export karta hai.
- * Kisi bhi page ya component me use karne ke liye simple import karein:
+ * Centralized exports for all reusable UI design system components.
+ * Import components directly:
  * 
  * import { Button, Card, Badge, BackButton, Skeleton, EmptyState, SectionHeading, StarRating, ColorSwatch } from "../components/ui";
  * ============================================================================

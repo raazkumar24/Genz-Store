@@ -16,6 +16,7 @@ import {
   Compass,
   Upload,
   Link as LinkIcon,
+  X,
 } from "lucide-react";
 import { useProducts } from "../context/ProductContext";
 import { useToast } from "../context/ToastContext";
@@ -25,10 +26,256 @@ import {
   saveHeroMasterConfig,
   uploadHeroImageFile,
   resetHeroMasterConfig,
+  formatHeroImageUrl,
   DEFAULT_ARCHIVED_CATALOG,
   DEFAULT_HERO_SLIDES,
   DEFAULT_HERO_SPOTLIGHT,
+  DEFAULT_TACTICAL_DROP,
 } from "../services/heroShowcaseService";
+
+/**
+ * ============================================================================
+ * DualImageInput Component
+ * ============================================================================
+ * Provides both local file upload (directly uploaded to backend & cloud)
+ * and direct URL / relative path input with live thumbnail preview & reset.
+ * ============================================================================
+ */
+const DualImageInput = ({
+  label = "Image",
+  value = "",
+  onChange,
+  placeholder = "e.g. /models/model1.png or https://...",
+  helpText = "Upload image file from computer or paste direct URL",
+  presets = null,
+  products = null,
+}) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
+  const { addToast } = useToast();
+
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      addToast("File size should be under 10MB.", "warning");
+      return;
+    }
+
+    setIsUploading(true);
+    addToast("Uploading image to backend/cloud...", "info");
+
+    try {
+      const uploadedUrl = await uploadHeroImageFile(file);
+      if (uploadedUrl) {
+        onChange(uploadedUrl);
+        addToast("Image uploaded successfully! Click 'Save & Publish' to persist.", "success");
+      }
+    } catch (uploadErr) {
+      console.warn("Upload fallback to local compression:", uploadErr);
+      addToast("Backend upload issue. Compressing locally...", "warning");
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const maxDim = 1200;
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+              const ratio = Math.min(maxDim / width, maxDim / height);
+              width = Math.round(width * ratio);
+              height = Math.round(height * ratio);
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            const isPng = file.type === "image/png";
+            const compressed = canvas.toDataURL(isPng ? "image/png" : "image/webp", 0.85);
+            onChange(compressed);
+            addToast("Image attached! Click 'Save & Publish' to persist.", "success");
+          } catch (err) {
+            onChange(event.target?.result);
+            addToast("Image attached! Click 'Save & Publish' to persist.", "success");
+          }
+        };
+        img.src = event.target?.result;
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploading(false);
+      if (e.target) e.target.value = "";
+    }
+  };
+
+  return (
+    <div className="space-y-2.5 p-3.5 rounded-2xl border border-gray-200 bg-white">
+      <div className="flex items-center justify-between">
+        <label className="text-[11px] font-black uppercase tracking-wider text-gray-800 flex items-center gap-1.5">
+          <ImageIcon size={13} className="text-[#FF3B00]" />
+          <span>{label}</span>
+        </label>
+        <span className="text-[9px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-gray-100 text-gray-600 border border-gray-200">
+          Upload + URL
+        </span>
+      </div>
+
+      {helpText && (
+        <p className="text-[10px] text-gray-400 font-medium">
+          {helpText}
+        </p>
+      )}
+
+      {/* Dual Inputs Row: URL input + File Upload Button */}
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+        <div className="sm:col-span-8 relative">
+          <input
+            type="text"
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            className="w-full px-3 py-2 pl-8 pr-8 rounded-xl border border-gray-300 focus:border-black text-xs font-mono bg-white"
+          />
+          <LinkIcon size={13} className="absolute left-2.5 top-2.5 text-gray-400" />
+          {value && (
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="absolute right-2.5 top-2.5 text-gray-400 hover:text-rose-500 cursor-pointer"
+              title="Clear Image"
+            >
+              <X size={13} />
+            </button>
+          )}
+        </div>
+
+        <div className="sm:col-span-4">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleUpload}
+            accept="image/*"
+            disabled={isUploading}
+            className="hidden"
+          />
+          <button
+            type="button"
+            disabled={isUploading}
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full px-3 py-2 rounded-xl bg-neutral-900 hover:bg-[#FF3B00] disabled:bg-gray-400 text-white text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+          >
+            <Upload size={13} className={isUploading ? "animate-bounce" : ""} />
+            <span>{isUploading ? "Uploading..." : "Upload File"}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Live Preview Bar */}
+      <div className="flex items-center gap-3 pt-1">
+        <div className="relative h-12 w-12 rounded-xl border border-neutral-200 bg-neutral-50 overflow-hidden shrink-0 flex items-center justify-center p-1 shadow-2xs">
+          <div className="absolute inset-0 bg-[radial-gradient(#0000000a_1px,transparent_1px)] [background-size:6px_6px] pointer-events-none" />
+          {value ? (
+            <img
+              src={formatHeroImageUrl(value)}
+              alt="Preview"
+              className="h-full w-full object-contain relative z-10 select-none"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/models/model1.png";
+              }}
+            />
+          ) : (
+            <ImageIcon size={16} className="text-gray-300 relative z-10" />
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-bold text-gray-700 truncate">
+            {value
+              ? value.startsWith("data:")
+                ? "Local Compressed Image"
+                : value.split("/").pop() || value
+              : "No image attached"}
+          </p>
+          <p className="text-[10px] text-gray-400 font-mono truncate">
+            {value
+              ? value.length > 45
+                ? `${value.substring(0, 42)}...`
+                : value
+              : "Ready for direct URL or file upload"}
+          </p>
+        </div>
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="text-[10px] font-mono text-rose-600 hover:underline px-2 py-1 rounded bg-rose-50 border border-rose-100 cursor-pointer shrink-0"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* Quick Model Presets if provided */}
+      {presets && presets.length > 0 && (
+        <div className="pt-2 border-t border-gray-100">
+          <p className="text-[10px] font-bold text-gray-500 uppercase mb-1.5">
+            Quick Studio Model Presets:
+          </p>
+          <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar py-1">
+            {presets.map((preset) => {
+              const isSelected = value === preset.path;
+              return (
+                <button
+                  key={preset.path}
+                  type="button"
+                  onClick={() => onChange(preset.path)}
+                  className={`px-2 py-1 rounded-lg border text-[10px] font-bold uppercase transition flex items-center gap-1 shrink-0 cursor-pointer ${
+                    isSelected
+                      ? "bg-black text-white border-black"
+                      : "bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-700"
+                  }`}
+                >
+                  <img src={preset.path} alt="" className="h-4 w-4 object-contain" />
+                  <span className="truncate max-w-[120px]">{preset.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Product Catalog Image Shortcuts if provided */}
+      {products && products.length > 0 && (
+        <div className="pt-2 border-t border-gray-100">
+          <p className="text-[10px] font-bold text-gray-500 uppercase mb-1.5">
+            Or Pick From Store Catalog:
+          </p>
+          <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar py-1">
+            {products.slice(0, 8).map((p) => {
+              const pImg =
+                p.variants?.[0]?.images?.[0] ||
+                p.image ||
+                "/models/model1.png";
+              return (
+                <button
+                  key={p._id}
+                  type="button"
+                  onClick={() => onChange(pImg)}
+                  className="h-10 w-10 rounded-lg border border-gray-200 bg-white p-1 shrink-0 hover:border-black hover:scale-105 transition cursor-pointer"
+                  title={p.name}
+                >
+                  <img src={pImg} alt="" className="h-full w-full object-contain" />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const BADGE_PRESETS = [
   "HEAVYWEIGHT 240 GSM TEE",
@@ -138,6 +385,7 @@ const HeroShowcaseEdit = () => {
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(0);
   const [spotlightSearchTerm, setSpotlightSearchTerm] = useState("");
   const [spotlightCategoryFilter, setSpotlightCategoryFilter] = useState("all");
+  const [tacticalSearchTerm, setTacticalSearchTerm] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -271,13 +519,13 @@ const HeroShowcaseEdit = () => {
   const handleRemoveSlide = (idx) => {
     const currentSlides = masterConfig.slides || DEFAULT_HERO_SLIDES;
     if (currentSlides.length <= 1) {
-      addToast("Hero banner me kam se kam 1 slide honi chahiye.", "warning");
+      addToast("Hero banner must have at least 1 slide.", "warning");
       return;
     }
     const updated = currentSlides.filter((_, i) => i !== idx);
     setMasterConfig((prev) => ({ ...prev, slides: updated }));
     setSelectedSlideIndex((prev) => Math.max(0, Math.min(prev, updated.length - 1)));
-    addToast("Hero slide delete ho gayi.", "info");
+    addToast("Hero slide removed.", "info");
   };
 
   // Model image upload directly to backend / Cloudinary with fallback compression
@@ -285,7 +533,7 @@ const HeroShowcaseEdit = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
-      addToast("Image size 10MB se kam hona chahiye.", "warning");
+      addToast("Image file size must be under 10MB.", "warning");
       return;
     }
 
@@ -442,6 +690,91 @@ const HeroShowcaseEdit = () => {
     addToast(`Selected "${product.name}" for Hero Spotlight!`, "info");
   };
 
+  // Filter bottomwear cargo products for Tactical Drop Picker
+  const cargoProducts = useMemo(() => {
+    if (!products || products.length === 0) return [];
+    return products.filter((p) => {
+      const text = [p.name, ...(p.category || []), ...(p.collection || [])]
+        .join(" ")
+        .toLowerCase();
+      const isCargo =
+        text.includes("cargo") ||
+        text.includes("pant") ||
+        text.includes("baggy") ||
+        text.includes("jogger") ||
+        text.includes("jean");
+      const matchesSearch =
+        !tacticalSearchTerm.trim() ||
+        text.includes(tacticalSearchTerm.toLowerCase().trim());
+      return isCargo && matchesSearch;
+    });
+  }, [products, tacticalSearchTerm]);
+
+  // Tactical Drop Preview Properties
+  const tacticalPreviewImage =
+    masterConfig.tactical?.image ||
+    cargoProducts[0]?.variants?.[0]?.images?.[0] ||
+    cargoProducts[0]?.image ||
+    "/collections/baggy_pants.png";
+
+  const tacticalPreviewTitle =
+    masterConfig.tactical?.title ||
+    cargoProducts[0]?.name ||
+    "SAMFOR PANT FOR MEN CASUAL FEEL CARGO JOGGERS FOR MEN";
+
+  const tacticalPreviewPrice =
+    masterConfig.tactical?.price ||
+    cargoProducts[0]?.variants?.[0]?.salePrice ||
+    cargoProducts[0]?.variants?.[0]?.price ||
+    "479";
+
+  const tacticalPreviewOriginalPrice =
+    masterConfig.tactical?.originalPrice ||
+    (cargoProducts[0]?.variants?.[0]?.salePrice
+      ? cargoProducts[0]?.variants?.[0]?.price
+      : "799");
+
+  // Update Tactical Drop Field
+  const handleTacticalChange = (field, val) => {
+    setMasterConfig((prev) => ({
+      ...prev,
+      tactical: {
+        ...(prev.tactical || DEFAULT_TACTICAL_DROP),
+        [field]: val,
+      },
+    }));
+  };
+
+  // Select a product from store inventory for Tactical Bottomwear
+  const handleSelectProductForTactical = (product) => {
+    const img =
+      product.variants?.[0]?.images?.[0] ||
+      product.image ||
+      "/collections/baggy_pants.png";
+    const price =
+      product.variants?.[0]?.salePrice || product.variants?.[0]?.price || 479;
+    const origPrice = product.variants?.[0]?.salePrice
+      ? product.variants?.[0]?.price
+      : 799;
+
+    setMasterConfig((prev) => ({
+      ...prev,
+      tactical: {
+        ...(prev.tactical || DEFAULT_TACTICAL_DROP),
+        title: product.name,
+        price: String(price),
+        originalPrice: String(origPrice),
+        brand: product.brand || "GENZ ARCHIVE",
+        image: img,
+        link: `/products/${product._id}`,
+        badgeText: "HEAVYWEIGHT 280 GSM",
+        tag: "TRENDING CARGO",
+        subtitle: "RAW ECRU • RELAXED FIT",
+      },
+    }));
+    addToast(`Selected "${product.name}" for Bottomwear Tactical Drop!`, "info");
+  };
+
   // Save changes to backend database & publish
   const handleSave = async () => {
     setSaving(true);
@@ -559,7 +892,10 @@ const HeroShowcaseEdit = () => {
           }`}
         >
           <Shirt size={15} />
-          <span>Right Bento Spotlight Drop</span>
+          <span>01 - Featured Studio Drops (Topwear & Tactical)</span>
+          <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded bg-orange-100 text-[#FF3B00]">
+            2-Column
+          </span>
         </button>
       </div>
 
@@ -736,31 +1072,13 @@ const HeroShowcaseEdit = () => {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-[10px] font-bold text-gray-600 uppercase mb-1">
-                        Model / Lifestyle Image URL
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={card.image || ""}
-                          onChange={(e) => handleLookbookCardChange(idx, "image", e.target.value)}
-                          placeholder="https://images.unsplash.com/..."
-                          className="flex-1 px-3 py-1.5 rounded-lg border border-gray-300 focus:border-black text-xs font-mono bg-white"
-                        />
-                        <div className="h-8 w-8 rounded-lg overflow-hidden bg-gray-200 border border-gray-300 shrink-0">
-                          <img
-                            src={card.image}
-                            alt=""
-                            className="h-full w-full object-cover"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "/models/model1.png";
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    <DualImageInput
+                      label="Card Image"
+                      value={card.image || ""}
+                      onChange={(newUrl) => handleLookbookCardChange(idx, "image", newUrl)}
+                      placeholder="https://images.unsplash.com/... or /models/model1.png"
+                      helpText="Upload photo from device or paste direct image URL"
+                    />
                   </div>
                 ))}
               </div>
@@ -925,7 +1243,7 @@ const HeroShowcaseEdit = () => {
                     Slide 0{selectedSlideIndex + 1} Model Image
                   </h2>
                   <p className="text-[11px] text-gray-500 font-medium mt-0.5">
-                    Model ki transparent cutout photo upload karein ya preset select karein.
+                    Upload a transparent model cutout photo or select a studio preset.
                   </p>
                 </div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -933,124 +1251,15 @@ const HeroShowcaseEdit = () => {
                 </span>
               </div>
 
-              {/* Direct File Upload Button */}
-              <div className="p-4 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/70 hover:bg-white hover:border-black transition-all flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-xl bg-black text-white flex items-center justify-center shrink-0">
-                    <Upload size={20} />
-                  </div>
-                  <div>
-                    <span className="text-xs font-black uppercase text-gray-900 block">
-                      Upload Model Photo From Computer
-                    </span>
-                    <span className="text-[11px] text-gray-500 font-medium">
-                      PNG/JPG/WEBP (Auto-saved to cloud backend for all visitors)
-                    </span>
-                  </div>
-                </div>
-
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                  disabled={isUploadingImage}
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  disabled={isUploadingImage}
-                  onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 rounded-xl bg-black hover:bg-[#FF3B00] disabled:bg-gray-400 text-white text-xs font-black uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-xs flex items-center gap-1.5"
-                >
-                  <Upload size={13} className={isUploadingImage ? "animate-bounce" : ""} />
-                  <span>{isUploadingImage ? "Uploading to Cloud..." : "Choose Image File"}</span>
-                </button>
-              </div>
-
-              {/* 1-Click Preset Model Cutouts */}
-              <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
-                  Or Quick Select Studio Model Presets:
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-                  {MODEL_PRESETS.map((m) => {
-                    const isSelected = activeSlide.image === m.path;
-                    return (
-                      <button
-                        key={m.path}
-                        type="button"
-                        onClick={() => handleSlideChange("image", m.path)}
-                        className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                          isSelected
-                            ? "bg-black text-white border-black shadow-sm ring-2 ring-black/20"
-                            : "bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-800"
-                        }`}
-                      >
-                        <div className="h-14 w-full rounded-lg bg-white/80 border border-gray-200 flex items-center justify-center overflow-hidden p-1">
-                          <img
-                            src={m.path}
-                            alt=""
-                            className="h-full w-auto object-contain drop-shadow-sm"
-                          />
-                        </div>
-                        <span className="text-[10px] font-bold truncate max-w-full">
-                          {m.name.split(" ")[0]} {m.name.split(" ")[1]}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Manual URL Input */}
-              <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1">
-                  Or Image URL / Relative Path
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={activeSlide.image || ""}
-                    onChange={(e) => handleSlideChange("image", e.target.value)}
-                    placeholder="e.g. /models/model1.png or https://images.unsplash.com/..."
-                    className="w-full px-3.5 py-2 pl-9 rounded-xl border border-gray-300 focus:border-black text-xs font-mono bg-white"
-                  />
-                  <LinkIcon size={14} className="absolute left-3 top-3 text-gray-400" />
-                </div>
-              </div>
-
-              {/* Product Catalog Image Picker */}
-              {products && products.length > 0 && (
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-                    Or Pick Cutout From Store Products:
-                  </label>
-                  <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar py-1">
-                    {products.slice(0, 8).map((p) => {
-                      const pImg =
-                        p.variants?.[0]?.images?.[0] ||
-                        p.image ||
-                        "/models/model1.png";
-                      return (
-                        <button
-                          key={p._id}
-                          type="button"
-                          onClick={() => handleSlideChange("image", pImg)}
-                          className="h-12 w-12 rounded-xl border border-gray-200 bg-white p-1 shrink-0 hover:border-black hover:scale-105 transition cursor-pointer"
-                          title={p.name}
-                        >
-                          <img
-                            src={pImg}
-                            alt=""
-                            className="h-full w-full object-contain"
-                          />
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              <DualImageInput
+                label="Slide Model Cutout Photo"
+                value={activeSlide.image || ""}
+                onChange={(newUrl) => handleSlideChange("image", newUrl)}
+                placeholder="e.g. /models/model1.png or https://..."
+                helpText="Upload a transparent model cutout from computer or paste direct image URL"
+                presets={MODEL_PRESETS}
+                products={products}
+              />
             </div>
 
             {/* 3. Left-Side Editorial Content & Text Typography */}
@@ -1366,300 +1575,743 @@ const HeroShowcaseEdit = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 3: RIGHT BENTO SPOTLIGHT & TACTICAL                                   */}
+      {/* TAB 3: 01 - FEATURED STUDIO DROPS (TOPWEAR & TACTICAL BOTTOMWEAR)         */}
       {/* ========================================================================= */}
       {activeTab === "spotlight" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Form: Spotlight Controls */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Quick Fast Switchers */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
-              <span className="text-xs font-black uppercase tracking-wider text-gray-900 block mb-3 flex items-center gap-1.5">
-                <Sliders size={14} className="text-[var(--color-primary)]" />
-                1-Click Category Drop Switchers
+        <div className="space-y-6">
+          {/* Top Editorial Banner */}
+          <div className="bg-neutral-900 text-white rounded-3xl p-5 sm:p-6 border border-neutral-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <span className="text-[10px] font-mono font-bold tracking-widest text-[#FF3B00] uppercase">
+                01 - STUDIO CURATED SHOWCASE
               </span>
-              <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleSpotlightChange("targetCategory", "tee");
-                    handleSpotlightChange("badgeText", "HEAVYWEIGHT 240 GSM TEE");
-                    addToast("Set to Heavyweight T-Shirt Drop", "info");
-                  }}
-                  className={`flex flex-col items-start p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-                    masterConfig.spotlight?.targetCategory === "tee"
-                      ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
-                      : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  <Shirt size={16} className="mb-1" />
-                  <span className="text-xs font-black uppercase tracking-wider">T-Shirt Drop</span>
-                  <span className="text-[10px] opacity-70">240 GSM Boxy</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleSpotlightChange("targetCategory", "hoodie");
-                    handleSpotlightChange("badgeText", "HEAVYWEIGHT 380 GSM HOODIE");
-                    addToast("Set to Heavyweight Hoodie Drop", "info");
-                  }}
-                  className={`flex flex-col items-start p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-                    masterConfig.spotlight?.targetCategory === "hoodie"
-                      ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
-                      : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  <Flame size={16} className="mb-1" />
-                  <span className="text-xs font-black uppercase tracking-wider">Hoodie Drop</span>
-                  <span className="text-[10px] opacity-70">380 GSM Fleece</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleSpotlightChange("targetCategory", "cargo");
-                    handleSpotlightChange("badgeText", "TACTICAL RIPSTOP CARGO");
-                    addToast("Set to Parachute Cargos Drop", "info");
-                  }}
-                  className={`flex flex-col items-start p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-                    masterConfig.spotlight?.targetCategory === "cargo"
-                      ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
-                      : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  <Layers size={16} className="mb-1" />
-                  <span className="text-xs font-black uppercase tracking-wider">Cargo Drop</span>
-                  <span className="text-[10px] opacity-70">Ripstop Baggy</span>
-                </button>
-              </div>
+              <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white mt-0.5">
+                FEATURED TOPWEAR & TACTICAL BOTTOMWEAR
+              </h2>
+              <p className="text-xs text-neutral-400 mt-1 max-w-2xl">
+                Configure both signature editorial drops side-by-side. Both cards support local image file upload (auto-synced to cloud backend) and direct URL input.
+              </p>
             </div>
 
-            {/* Product Picker from Inventory */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <h2 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
-                  <Search size={14} className="text-[var(--color-primary)]" />
-                  Select Store Product Drop
-                </h2>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={spotlightSearchTerm}
-                    onChange={(e) => setSpotlightSearchTerm(e.target.value)}
-                    placeholder="Search product..."
-                    className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-gray-200 focus:border-black w-44"
-                  />
-                  <Search size={13} className="absolute left-2.5 top-2.5 text-gray-400" />
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#FF3B00] hover:bg-orange-600 text-white text-xs font-black uppercase tracking-wider transition-all cursor-pointer shadow-md disabled:opacity-50 shrink-0"
+            >
+              <Check size={15} strokeWidth={3} />
+              <span>{saving ? "Publishing..." : "Save & Publish Drops"}</span>
+            </button>
+          </div>
+
+          {/* 2-Column Side-by-Side Drop Editors */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            {/* =================================================================== */}
+            {/* COLUMN 1: DROP 01 - TOPWEAR SPOTLIGHT (HOODIE / OVERSIZED TEE)       */}
+            {/* =================================================================== */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <span className="h-6 w-6 rounded-lg bg-neutral-900 text-white flex items-center justify-center text-xs font-black">
+                    01
+                  </span>
+                  <h3 className="text-xs font-black uppercase tracking-wider text-gray-900">
+                    Drop 01: Topwear Spotlight
+                  </h3>
                 </div>
+                <span className="text-[10px] font-mono font-bold uppercase text-neutral-400">
+                  Left Card
+                </span>
               </div>
 
-              {/* Category Filter Pills */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {["all", "tee", "hoodie", "cargo"].map((cat) => (
+              {/* Quick Drop Category Switchers */}
+              <div>
+                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                  1-Click Category Drop Preset:
+                </label>
+                <div className="grid grid-cols-3 gap-2">
                   <button
-                    key={cat}
                     type="button"
-                    onClick={() => setSpotlightCategoryFilter(cat)}
-                    className={`px-2.5 py-1 text-[11px] font-mono font-bold uppercase rounded-lg border transition-all cursor-pointer ${
-                      spotlightCategoryFilter === cat
-                        ? "bg-neutral-900 text-white border-neutral-900"
-                        : "bg-neutral-50 text-neutral-600 border-neutral-200 hover:bg-neutral-100"
+                    onClick={() => {
+                      handleSpotlightChange("targetCategory", "hoodie");
+                      handleSpotlightChange("badgeText", "HEAVYWEIGHT 380 GSM");
+                      handleSpotlightChange("tagPill", "SIGNATURE FIT");
+                      addToast("Set to Heavyweight Hoodie Drop", "info");
+                    }}
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                      masterConfig.spotlight?.targetCategory === "hoodie"
+                        ? "border-neutral-900 bg-neutral-900 text-white shadow-xs"
+                        : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
                     }`}
                   >
-                    {cat === "all" ? "All Drops" : cat.toUpperCase()}
+                    <Flame size={14} className="mb-1 text-[#FF3B00]" />
+                    <span className="text-[11px] font-black uppercase block">Hoodie Drop</span>
+                    <span className="text-[9px] opacity-70">380 GSM</span>
                   </button>
-                ))}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSpotlightChange("targetCategory", "tee");
+                      handleSpotlightChange("badgeText", "HEAVYWEIGHT 240 GSM TEE");
+                      handleSpotlightChange("tagPill", "DROP SPOTLIGHT");
+                      addToast("Set to Heavyweight T-Shirt Drop", "info");
+                    }}
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                      masterConfig.spotlight?.targetCategory === "tee"
+                        ? "border-neutral-900 bg-neutral-900 text-white shadow-xs"
+                        : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <Shirt size={14} className="mb-1" />
+                    <span className="text-[11px] font-black uppercase block">T-Shirt Drop</span>
+                    <span className="text-[9px] opacity-70">240 GSM</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSpotlightChange("targetCategory", "custom");
+                      handleSpotlightChange("badgeText", "LIMITED ARCHIVAL DROP");
+                      handleSpotlightChange("tagPill", "NEW DROP");
+                      addToast("Set to Custom Archival Drop", "info");
+                    }}
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                      masterConfig.spotlight?.targetCategory === "custom"
+                        ? "border-neutral-900 bg-neutral-900 text-white shadow-xs"
+                        : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <Layers size={14} className="mb-1" />
+                    <span className="text-[11px] font-black uppercase block">Custom Drop</span>
+                    <span className="text-[9px] opacity-70">Archive</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Product Grid */}
-              <div className="max-h-60 overflow-y-auto space-y-2 pr-1 divide-y divide-gray-100">
-                {filteredProducts.slice(0, 10).map((prod) => {
-                  const isSelected =
-                    masterConfig.spotlight?.productId === prod._id ||
-                    (!masterConfig.spotlight?.productId && selectedProduct?._id === prod._id);
-                  const img =
-                    prod.variants?.[0]?.images?.[0] || prod.image || "/models/model1.png";
-                  const price = prod.variants?.[0]?.salePrice || prod.variants?.[0]?.price || 1499;
+              {/* Product Picker from Inventory */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
+                    Or Select Product From Inventory:
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={spotlightSearchTerm}
+                      onChange={(e) => setSpotlightSearchTerm(e.target.value)}
+                      placeholder="Filter..."
+                      className="pl-7 pr-2.5 py-1 text-[11px] rounded-lg border border-gray-200 focus:border-black w-32"
+                    />
+                    <Search size={12} className="absolute left-2 top-2 text-gray-400" />
+                  </div>
+                </div>
 
-                  return (
-                    <button
-                      key={prod._id}
-                      type="button"
-                      onClick={() => handleSelectProductForSpotlight(prod)}
-                      className={`w-full flex items-center justify-between p-2.5 rounded-xl transition text-left cursor-pointer ${
-                        isSelected
-                          ? "bg-neutral-900 text-white"
-                          : "hover:bg-gray-50 text-neutral-800"
-                      }`}
+                <div className="max-h-44 overflow-y-auto space-y-1.5 pr-1 divide-y divide-gray-100 border border-gray-100 rounded-xl p-2 bg-gray-50/50">
+                  {filteredProducts.slice(0, 8).map((prod) => {
+                    const isSelected =
+                      masterConfig.spotlight?.productId === prod._id ||
+                      (!masterConfig.spotlight?.productId && selectedProduct?._id === prod._id);
+                    const img =
+                      prod.variants?.[0]?.images?.[0] || prod.image || "/models/model1.png";
+                    const price = prod.variants?.[0]?.salePrice || prod.variants?.[0]?.price || 1499;
+
+                    return (
+                      <button
+                        key={prod._id}
+                        type="button"
+                        onClick={() => handleSelectProductForSpotlight(prod)}
+                        className={`w-full flex items-center justify-between p-2 rounded-lg transition text-left cursor-pointer ${
+                          isSelected
+                            ? "bg-neutral-900 text-white"
+                            : "hover:bg-white text-neutral-800"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="h-8 w-8 rounded overflow-hidden bg-white border border-gray-200 shrink-0 p-0.5">
+                            <img src={img} alt="" className="h-full w-full object-contain" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[11px] font-bold truncate">{prod.name}</p>
+                            <p className={`text-[9px] ${isSelected ? "text-neutral-300" : "text-gray-400"}`}>
+                              ₹{price}
+                            </p>
+                          </div>
+                        </div>
+                        {isSelected && <Check size={14} className="text-emerald-400 shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Topwear Dual Image Input (File Upload + URL) */}
+              <DualImageInput
+                label="Drop 01 Showcase Image"
+                value={masterConfig.spotlight?.customImage || ""}
+                onChange={(url) => handleSpotlightChange("customImage", url)}
+                placeholder={spotlightPreviewImage}
+                helpText="Upload garment PNG cutout from computer or paste direct image URL"
+                products={products}
+              />
+
+              {/* Topwear Text Fields */}
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Card Theme
+                    </label>
+                    <select
+                      value={masterConfig.spotlight?.cardTheme || "dark"}
+                      onChange={(e) => handleSpotlightChange("cardTheme", e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold bg-white"
                     >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-10 w-10 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
-                          <img src={img} alt="" className="h-full w-full object-contain" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold truncate">{prod.name}</p>
-                          <p className={`text-[10px] ${isSelected ? "text-neutral-300" : "text-gray-400"}`}>
-                            ₹{price}
-                          </p>
-                        </div>
-                      </div>
-                      {isSelected && <Check size={16} className="text-emerald-400 shrink-0 mr-2" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                      <option value="dark">Noir Black (Store Default)</option>
+                      <option value="light">Studio White Paper</option>
+                    </select>
+                  </div>
 
-            {/* Custom Overrides & Badge Details */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
-              <h2 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
-                <Tag size={14} className="text-[var(--color-primary)]" />
-                Card Style & Custom Overrides
-              </h2>
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Specs Badge Text
+                    </label>
+                    <input
+                      type="text"
+                      value={masterConfig.spotlight?.badgeText || ""}
+                      onChange={(e) => handleSpotlightChange("badgeText", e.target.value)}
+                      placeholder="e.g. HEAVYWEIGHT 380 GSM"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase bg-white"
+                    />
+                  </div>
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                    Card Theme
-                  </label>
-                  <select
-                    value={masterConfig.spotlight?.cardTheme || "dark"}
-                    onChange={(e) => handleSpotlightChange("cardTheme", e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
-                  >
-                    <option value="dark">Dark Minimal Noir (Recommended)</option>
-                    <option value="light">Clean Light Paper</option>
-                  </select>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Right Tag Pill
+                    </label>
+                    <input
+                      type="text"
+                      value={masterConfig.spotlight?.tagPill || ""}
+                      onChange={(e) => handleSpotlightChange("tagPill", e.target.value)}
+                      placeholder="e.g. SIGNATURE FIT"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      value={masterConfig.spotlight?.customPrice || ""}
+                      onChange={(e) => handleSpotlightChange("customPrice", e.target.value)}
+                      placeholder={String(spotlightPreviewPrice)}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold bg-white font-mono"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                    Badge Preset
-                  </label>
-                  <select
-                    value={masterConfig.spotlight?.badgeText || BADGE_PRESETS[0]}
-                    onChange={(e) => handleSpotlightChange("badgeText", e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
-                  >
-                    {BADGE_PRESETS.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                    Custom Title Override
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                    Headline Title Override
                   </label>
                   <input
                     type="text"
                     value={masterConfig.spotlight?.title || ""}
                     onChange={(e) => handleSpotlightChange("title", e.target.value)}
-                    placeholder={selectedProduct?.name || "Leave empty to use product name"}
-                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                    placeholder={selectedProduct?.name || "TAGAS HOODIE FOR MEN SWEATSHIRT"}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-black uppercase bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-600 uppercase mb-1">
-                    Custom Price Override (₹)
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                    Subtitle Spec Detail
                   </label>
                   <input
-                    type="number"
-                    value={masterConfig.spotlight?.customPrice || ""}
-                    onChange={(e) => handleSpotlightChange("customPrice", e.target.value)}
-                    placeholder="Leave empty for auto"
-                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold"
+                    type="text"
+                    value={masterConfig.spotlight?.subtitle || ""}
+                    onChange={(e) => handleSpotlightChange("subtitle", e.target.value)}
+                    placeholder="e.g. 280 GSM • RELAXED CUT"
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase bg-white"
                   />
+                </div>
+              </div>
+            </div>
+
+            {/* =================================================================== */}
+            {/* COLUMN 2: DROP 02 - TACTICAL BOTTOMWEAR (PARACHUTE CARGOS / JOGGERS) */}
+            {/* =================================================================== */}
+            <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <span className="h-6 w-6 rounded-lg bg-[#FF3B00] text-white flex items-center justify-center text-xs font-black">
+                    02
+                  </span>
+                  <h3 className="text-xs font-black uppercase tracking-wider text-gray-900">
+                    Drop 02: Tactical Bottomwear
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono font-bold uppercase text-neutral-400">
+                  Right Card
+                </span>
+              </div>
+
+              {/* Quick Cargo Drop Presets */}
+              <div>
+                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                  1-Click Bottomwear Preset:
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleTacticalChange("title", "SAMFOR PANT FOR MEN CASUAL FEEL CARGO JOGGERS");
+                      handleTacticalChange("badgeText", "HEAVYWEIGHT 280 GSM");
+                      handleTacticalChange("tag", "TRENDING CARGO");
+                      handleTacticalChange("price", "479");
+                      handleTacticalChange("originalPrice", "799");
+                      handleTacticalChange("subtitle", "RAW ECRU • RELAXED FIT");
+                      handleTacticalChange("brand", "GENZ ARCHIVE");
+                      handleTacticalChange("image", "/collections/baggy_pants.png");
+                      handleTacticalChange("link", "/collections/cargos");
+                      addToast("Applied Parachute Cargos Drop Preset", "info");
+                    }}
+                    className="p-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-left transition-all cursor-pointer"
+                  >
+                    <Layers size={14} className="mb-1 text-[#FF3B00]" />
+                    <span className="text-[11px] font-black uppercase block">Parachute</span>
+                    <span className="text-[9px] text-gray-500">₹479 • Ecru</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleTacticalChange("title", "TACTICAL RIPSTOP MULTI-POCKET PANTS");
+                      handleTacticalChange("badgeText", "320 GSM RIPSTOP");
+                      handleTacticalChange("tag", "TACTICAL DROP");
+                      handleTacticalChange("price", "699");
+                      handleTacticalChange("originalPrice", "1199");
+                      handleTacticalChange("subtitle", "MIDNIGHT NOIR • TACTICAL FIT");
+                      handleTacticalChange("brand", "GENZ ARCHIVE");
+                      handleTacticalChange("link", "/collections/cargos");
+                      addToast("Applied Tactical Ripstop Preset", "info");
+                    }}
+                    className="p-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-left transition-all cursor-pointer"
+                  >
+                    <Flame size={14} className="mb-1 text-neutral-800" />
+                    <span className="text-[11px] font-black uppercase block">Ripstop</span>
+                    <span className="text-[9px] text-gray-500">₹699 • Noir</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleTacticalChange("title", "WIDE-LEG SKATER DENIM BAGGY JEANS");
+                      handleTacticalChange("badgeText", "14 OZ RIGID DENIM");
+                      handleTacticalChange("tag", "ARCHIVE DENIM");
+                      handleTacticalChange("price", "899");
+                      handleTacticalChange("originalPrice", "1499");
+                      handleTacticalChange("subtitle", "VINTAGE WASH • OVERSIZED HEM");
+                      handleTacticalChange("brand", "GENZ ARCHIVE");
+                      handleTacticalChange("link", "/collections/cargos");
+                      addToast("Applied Skater Baggy Denim Preset", "info");
+                    }}
+                    className="p-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-left transition-all cursor-pointer"
+                  >
+                    <Tag size={14} className="mb-1 text-blue-600" />
+                    <span className="text-[11px] font-black uppercase block">Baggy Jeans</span>
+                    <span className="text-[9px] text-gray-500">₹899 • Denim</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Bottomwear Product Picker from Inventory */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
+                    Or Select Cargo From Inventory:
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={tacticalSearchTerm}
+                      onChange={(e) => setTacticalSearchTerm(e.target.value)}
+                      placeholder="Filter cargos..."
+                      className="pl-7 pr-2.5 py-1 text-[11px] rounded-lg border border-gray-200 focus:border-black w-32"
+                    />
+                    <Search size={12} className="absolute left-2 top-2 text-gray-400" />
+                  </div>
+                </div>
+
+                <div className="max-h-44 overflow-y-auto space-y-1.5 pr-1 divide-y divide-gray-100 border border-gray-100 rounded-xl p-2 bg-gray-50/50">
+                  {cargoProducts.slice(0, 8).map((prod) => {
+                    const img =
+                      prod.variants?.[0]?.images?.[0] || prod.image || "/collections/baggy_pants.png";
+                    const price = prod.variants?.[0]?.salePrice || prod.variants?.[0]?.price || 479;
+
+                    return (
+                      <button
+                        key={prod._id}
+                        type="button"
+                        onClick={() => handleSelectProductForTactical(prod)}
+                        className="w-full flex items-center justify-between p-2 rounded-lg transition text-left cursor-pointer hover:bg-white text-neutral-800"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="h-8 w-8 rounded overflow-hidden bg-white border border-gray-200 shrink-0 p-0.5">
+                            <img src={img} alt="" className="h-full w-full object-contain" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[11px] font-bold truncate">{prod.name}</p>
+                            <p className="text-[9px] text-gray-400">₹{price}</p>
+                          </div>
+                        </div>
+                        <Plus size={14} className="text-gray-400 shrink-0" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Tactical Dual Image Input (File Upload + URL) */}
+              <DualImageInput
+                label="Drop 02 Cargo Showcase Image"
+                value={masterConfig.tactical?.image || ""}
+                onChange={(url) => handleTacticalChange("image", url)}
+                placeholder="/collections/baggy_pants.png"
+                helpText="Upload bottomwear PNG cutout from computer or paste direct image URL"
+                products={cargoProducts.length > 0 ? cargoProducts : products}
+              />
+
+              {/* Tactical Text Fields */}
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Specs Badge Text
+                    </label>
+                    <input
+                      type="text"
+                      value={masterConfig.tactical?.badgeText || "HEAVYWEIGHT 280 GSM"}
+                      onChange={(e) => handleTacticalChange("badgeText", e.target.value)}
+                      placeholder="e.g. HEAVYWEIGHT 280 GSM"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Right Tag Pill
+                    </label>
+                    <input
+                      type="text"
+                      value={masterConfig.tactical?.tag || "TRENDING CARGO"}
+                      onChange={(e) => handleTacticalChange("tag", e.target.value)}
+                      placeholder="e.g. TRENDING CARGO"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase bg-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Sale Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      value={masterConfig.tactical?.price || "479"}
+                      onChange={(e) => handleTacticalChange("price", e.target.value)}
+                      placeholder="479"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold bg-white font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Strike Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      value={masterConfig.tactical?.originalPrice || "799"}
+                      onChange={(e) => handleTacticalChange("originalPrice", e.target.value)}
+                      placeholder="799"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold bg-white font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Brand / Studio
+                    </label>
+                    <input
+                      type="text"
+                      value={masterConfig.tactical?.brand || "GENZ ARCHIVE"}
+                      onChange={(e) => handleTacticalChange("brand", e.target.value)}
+                      placeholder="GENZ ARCHIVE"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase bg-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                    Cargo Headline Title
+                  </label>
+                  <input
+                    type="text"
+                    value={masterConfig.tactical?.title || "SAMFOR PANT FOR MEN CASUAL FEEL CARGO JOGGERS"}
+                    onChange={(e) => handleTacticalChange("title", e.target.value)}
+                    placeholder="SAMFOR PANT FOR MEN CASUAL FEEL CARGO JOGGERS"
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-black uppercase bg-white"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Subtitle Spec Detail
+                    </label>
+                    <input
+                      type="text"
+                      value={masterConfig.tactical?.subtitle || "RAW ECRU • RELAXED FIT"}
+                      onChange={(e) => handleTacticalChange("subtitle", e.target.value)}
+                      placeholder="RAW ECRU • RELAXED FIT"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-bold uppercase bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 uppercase mb-1">
+                      Destination Link
+                    </label>
+                    <input
+                      type="text"
+                      value={masterConfig.tactical?.link || "/collections/cargos"}
+                      onChange={(e) => handleTacticalChange("link", e.target.value)}
+                      placeholder="/collections/cargos"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-black text-xs font-mono bg-white"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Live Bento Preview */}
-          <div className="lg:col-span-5 sticky top-6 space-y-4">
-            <div className="bg-white rounded-3xl border border-gray-200 p-5 shadow-xs">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+          {/* ========================================================================= */}
+          {/* LIVE STOREFRONT PREVIEW: EXACT 2-COLUMN SHOWCASE REPLICA                  */}
+          {/* ========================================================================= */}
+          <div className="bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-gray-100 gap-2">
+              <div>
                 <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
-                  <Eye size={14} className="text-emerald-500" />
-                  Hero Bento Card Preview
+                  <Eye size={15} className="text-emerald-500" />
+                  Live Storefront 2-Column Showcase Preview
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                  {masterConfig.spotlight?.cardTheme === "light" ? "Light Card" : "Dark Card"}
-                </span>
+                <p className="text-[11px] text-gray-400 font-medium">
+                  Exact visual replica of the homepage section.
+                </p>
               </div>
 
-              {/* Bento Card */}
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-black hover:bg-[#FF3B00] text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-xs disabled:opacity-50"
+              >
+                <Check size={14} className="text-emerald-400" />
+                <span>{saving ? "Publishing..." : "Save Showcase Changes"}</span>
+              </button>
+            </div>
+
+            {/* 2-Column Editorial Preview Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-stretch pt-2">
+              {/* Drop 01: Spotlight Card Preview */}
               {(() => {
                 const isLight = masterConfig.spotlight?.cardTheme === "light";
+                const badge = masterConfig.spotlight?.badgeText || "HEAVYWEIGHT 380 GSM";
+                const tag = masterConfig.spotlight?.tagPill || "SIGNATURE FIT";
+                const title = masterConfig.spotlight?.title || spotlightPreviewTitle;
+                const price = masterConfig.spotlight?.customPrice || spotlightPreviewPrice;
+                const subtitle = masterConfig.spotlight?.subtitle || "280 GSM • RELAXED CUT";
+                const img = masterConfig.spotlight?.customImage || spotlightPreviewImage;
+
                 return (
                   <div
-                    className={`rounded-[26px] p-5 border transition-all ${
+                    className={`relative rounded-none border p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-all shadow-xs ${
                       isLight
-                        ? "bg-neutral-50 text-neutral-900 border-neutral-200"
+                        ? "bg-white text-neutral-950 border-neutral-200"
                         : "bg-neutral-950 text-white border-neutral-800"
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-2 mb-3">
+                    {/* Top Bar */}
+                    <div className="flex items-center justify-between gap-2 z-10">
                       <span
-                        className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider ${
                           isLight
-                            ? "bg-neutral-200 text-neutral-800"
+                            ? "bg-neutral-100 text-neutral-800 border border-neutral-200"
                             : "bg-white/10 text-neutral-200 border border-white/10"
                         }`}
                       >
-                        {masterConfig.spotlight?.badgeText || "HEAVYWEIGHT DROP"}
+                        <span className="h-1.5 w-1.5 rounded-none bg-[#FF3B00]" />
+                        {badge}
                       </span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-primary)]">
-                        Signature Drop
+                      <span className="text-[11px] font-mono font-black uppercase tracking-wider text-[#FF3B00]">
+                        {tag}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <h4
-                          className="text-base font-black uppercase tracking-tight leading-tight"
-                          style={{ fontFamily: "var(--font-heading)" }}
-                        >
-                          {spotlightPreviewTitle}
-                        </h4>
-                        <p className="text-xs text-neutral-400 mt-1 line-clamp-1">
-                          {masterConfig.spotlight?.subtitle || "Drop shoulder & double-needle ribbed hem."}
-                        </p>
-                        <p className="text-lg font-black tracking-tight mt-2 text-emerald-400">
-                          ₹{spotlightPreviewPrice}
-                        </p>
+                    {/* Image Area */}
+                    <div
+                      className={`relative w-full flex-1 min-h-[150px] max-h-[185px] my-2.5 rounded-none overflow-hidden flex items-center justify-center p-3 shadow-2xs border ${
+                        isLight
+                          ? "bg-neutral-50 border-neutral-200/50"
+                          : "bg-neutral-900 border-neutral-800"
+                      }`}
+                    >
+                      <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none" />
+                      <img
+                        src={formatHeroImageUrl(img)}
+                        alt={title}
+                        className="h-full w-full object-contain mix-blend-multiply select-none"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "/models/model1.png";
+                        }}
+                      />
+                      <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
+                        <span className="px-2 py-0.5 rounded-none bg-black text-[9px] font-mono font-bold text-white uppercase tracking-wider">
+                          DROP SPOTLIGHT
+                        </span>
                       </div>
+                      <div className="absolute top-2 right-2 z-10 pointer-events-none">
+                        <span className="px-1.5 py-0.5 rounded-none bg-[#FF3B00] text-[9px] font-mono font-black text-white uppercase tracking-wider">
+                          NEW
+                        </span>
+                      </div>
+                    </div>
 
-                      <div className="h-20 w-20 rounded-2xl bg-white/5 border border-white/10 p-1.5 shrink-0 flex items-center justify-center">
-                        <img
-                          src={spotlightPreviewImage}
-                          alt=""
-                          className="h-full w-full object-contain"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "/models/model1.png";
-                          }}
-                        />
+                    {/* Content Section */}
+                    <div className="flex flex-col space-y-1 z-10">
+                      <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest truncate">
+                        TAGAS • UNISEX
+                      </p>
+                      <h4 className="text-sm sm:text-base font-black uppercase tracking-tight line-clamp-1">
+                        {title}
+                      </h4>
+                      <div className="flex items-baseline gap-2.5 pt-0.5">
+                        <span className="text-lg sm:text-xl font-mono font-black text-[#FF3B00]">
+                          ₹{price}
+                        </span>
+                        <span className="text-[11px] font-mono text-neutral-400 font-bold uppercase">
+                          {subtitle}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Bottom Action Strip */}
+                    <div
+                      className={`flex items-center justify-between pt-3 mt-2 border-t z-10 ${
+                        isLight ? "border-neutral-200" : "border-neutral-800"
+                      }`}
+                    >
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400">
+                        CLICK TO INSPECT SILHOUETTE
+                      </span>
+                      <div className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-black">
+                        <ArrowUpRight size={14} strokeWidth={2.5} />
                       </div>
                     </div>
                   </div>
                 );
               })()}
 
-              <button
-                type="button"
-                onClick={handleSave}
-                className="mt-4 w-full py-3 rounded-2xl bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-wider transition cursor-pointer shadow-md flex items-center justify-center gap-2"
-              >
-                <Check size={16} strokeWidth={3} className="text-emerald-400" />
-                <span>Save Spotlight Changes</span>
-              </button>
+              {/* Drop 02: Tactical Bottomwear Preview */}
+              {(() => {
+                const badge = masterConfig.tactical?.badgeText || "HEAVYWEIGHT 280 GSM";
+                const tag = masterConfig.tactical?.tag || "TRENDING CARGO";
+                const brand = masterConfig.tactical?.brand || "GENZ ARCHIVE";
+                const title = masterConfig.tactical?.title || tacticalPreviewTitle;
+                const price = masterConfig.tactical?.price || tacticalPreviewPrice;
+                const origPrice = masterConfig.tactical?.originalPrice || tacticalPreviewOriginalPrice;
+                const subtitle = masterConfig.tactical?.subtitle || "RAW ECRU • RELAXED FIT";
+                const img = masterConfig.tactical?.image || tacticalPreviewImage;
+
+                return (
+                  <div className="relative rounded-none border border-neutral-200/90 bg-white text-neutral-950 p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-all shadow-xs">
+                    {/* Top Bar */}
+                    <div className="flex items-center justify-between gap-2 z-10">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider bg-neutral-100 text-neutral-800 border border-neutral-200">
+                        <span className="h-1.5 w-1.5 rounded-none bg-[#FF3B00]" />
+                        {badge}
+                      </span>
+                      <span className="text-[11px] font-mono font-black uppercase tracking-wider text-[#FF3B00]">
+                        {tag}
+                      </span>
+                    </div>
+
+                    {/* Image Area */}
+                    <div className="relative w-full flex-1 min-h-[150px] max-h-[185px] my-2.5 rounded-none overflow-hidden bg-neutral-50 border border-neutral-200/50 flex items-center justify-center p-3 shadow-2xs">
+                      <div className="absolute inset-0 bg-[radial-gradient(#0000000c_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none" />
+                      <img
+                        src={formatHeroImageUrl(img)}
+                        alt={title}
+                        className="h-full w-full object-contain mix-blend-multiply select-none"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "/collections/baggy_pants.png";
+                        }}
+                      />
+                      <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
+                        <span className="px-2 py-0.5 rounded-none bg-neutral-900/90 text-[9px] font-mono font-bold text-white uppercase tracking-wider border border-white/10">
+                          BOTTOMWEAR RADAR
+                        </span>
+                      </div>
+                      <div className="absolute top-2 right-2 z-10 pointer-events-none">
+                        <span className="px-1.5 py-0.5 rounded-none bg-black text-[9px] font-mono font-black text-white uppercase tracking-wider">
+                          HOT DROP
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="flex flex-col space-y-1 z-10">
+                      <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest truncate">
+                        {brand} • UNISEX
+                      </p>
+                      <h4 className="text-sm sm:text-base font-black uppercase tracking-tight text-neutral-950 line-clamp-1">
+                        {title}
+                      </h4>
+                      <div className="flex items-baseline gap-2.5 pt-0.5">
+                        <span className="text-lg sm:text-xl font-mono font-black text-[#FF3B00]">
+                          ₹{price}
+                        </span>
+                        {origPrice && (
+                          <span className="text-xs font-mono text-neutral-400 line-through">
+                            ₹{origPrice}
+                          </span>
+                        )}
+                        <span className="text-[11px] font-mono text-neutral-400 font-bold uppercase">
+                          {subtitle}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Bottom Action Strip */}
+                    <div className="flex items-center justify-between pt-3 mt-2 border-t border-neutral-200 z-10">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400">
+                        CLICK TO INSPECT SILHOUETTE
+                      </span>
+                      <div className="flex h-7 w-7 items-center justify-center rounded-none bg-black text-white">
+                        <ArrowUpRight size={14} strokeWidth={2.5} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
