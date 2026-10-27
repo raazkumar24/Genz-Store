@@ -142,7 +142,7 @@ export const HeroSliderCard = ({
                 <img
                   src={formatHeroImageUrl(slide.image)}
                   alt={slide.title}
-                  className="h-full w-auto max-h-full max-w-full object-contain object-bottom drop-shadow-2xl select-none pointer-events-none"
+                  className="h-full w-auto max-h-full max-w-full object-contain object-bottom select-none pointer-events-none"
                 />
 
                 {/* Floating Micro Spec Pill */}
