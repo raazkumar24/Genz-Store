@@ -21,7 +21,9 @@ import { useProducts } from "../context/ProductContext";
 import { useToast } from "../context/ToastContext";
 import {
   getHeroMasterConfig,
+  fetchHeroMasterConfig,
   saveHeroMasterConfig,
+  uploadHeroImageFile,
   resetHeroMasterConfig,
   DEFAULT_ARCHIVED_CATALOG,
   DEFAULT_HERO_SLIDES,
@@ -130,6 +132,7 @@ const HeroShowcaseEdit = () => {
   // Master Configuration State
   const [masterConfig, setMasterConfig] = useState(getHeroMasterConfig);
   const [saving, setSaving] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   // Sub-states for specific tabs
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(0);
@@ -137,7 +140,15 @@ const HeroShowcaseEdit = () => {
   const [spotlightCategoryFilter, setSpotlightCategoryFilter] = useState("all");
 
   useEffect(() => {
-    setMasterConfig(getHeroMasterConfig());
+    let isMounted = true;
+    fetchHeroMasterConfig().then((cfg) => {
+      if (isMounted && cfg) {
+        setMasterConfig(cfg);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Update Lookbook Section Header
@@ -269,52 +280,64 @@ const HeroShowcaseEdit = () => {
     addToast("Hero slide delete ho gayi.", "info");
   };
 
-  // Model image direct upload with automatic Canvas compression (Prevents LocalStorage quota limits!)
-  const handleImageUpload = (e) => {
+  // Model image upload directly to backend / Cloudinary with fallback compression
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 8 * 1024 * 1024) {
-      addToast("Image size 8MB se kam hona chahiye.", "warning");
+    if (file.size > 10 * 1024 * 1024) {
+      addToast("Image size 10MB se kam hona chahiye.", "warning");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        try {
-          const maxDim = 1200;
-          let { width, height } = img;
-          if (width > maxDim || height > maxDim) {
-            const ratio = Math.min(maxDim / width, maxDim / height);
-            width = Math.round(width * ratio);
-            height = Math.round(height * ratio);
+    setIsUploadingImage(true);
+    addToast("Uploading model image to cloud/backend...", "info");
+
+    try {
+      // 1. Direct upload to server & Cloudinary
+      const uploadedUrl = await uploadHeroImageFile(file);
+      handleSlideChange("image", uploadedUrl);
+      addToast("Model image uploaded to cloud successfully! Click 'SAVE & PUBLISH' to persist.", "success");
+    } catch (uploadErr) {
+      console.warn("Direct upload error, compressing locally:", uploadErr);
+      addToast("Server upload issue. Compressing locally...", "warning");
+
+      // 2. Client-side canvas compression fallback
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const maxDim = 1200;
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+              const ratio = Math.min(maxDim / width, maxDim / height);
+              width = Math.round(width * ratio);
+              height = Math.round(height * ratio);
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const isPng = file.type === "image/png";
+            const compressedDataUrl = canvas.toDataURL(isPng ? "image/png" : "image/webp", 0.85);
+
+            handleSlideChange("image", compressedDataUrl);
+            addToast("Model image attached! Click 'SAVE & PUBLISH'.", "success");
+          } catch (err) {
+            handleSlideChange("image", event.target?.result);
+            addToast("Model image attached! Click 'SAVE & PUBLISH'.", "success");
           }
-
-          const canvas = document.createElement("canvas");
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
-
-          // WebP agar supported ho ya PNG with transparency preserve
-          const isPng = file.type === "image/png";
-          const compressedDataUrl = canvas.toDataURL(isPng ? "image/png" : "image/webp", 0.85);
-
-          handleSlideChange("image", compressedDataUrl);
-          addToast("Model image updated & compressed! 'SAVE & PUBLISH' click karein.", "success");
-        } catch (err) {
-          console.error("Image compression error:", err);
-          handleSlideChange("image", event.target?.result);
-          addToast("Model image uploaded! 'SAVE & PUBLISH' click karein.", "success");
-        }
+        };
+        img.src = event.target?.result;
       };
-      img.onerror = () => {
-        addToast("Invalid image file.", "error");
-      };
-      img.src = event.target?.result;
-    };
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingImage(false);
+      if (e.target) e.target.value = "";
+    }
   };
 
   // Update Spotlight Bento Field
@@ -419,27 +442,32 @@ const HeroShowcaseEdit = () => {
     addToast(`Selected "${product.name}" for Hero Spotlight!`, "info");
   };
 
-  // Save changes
-  const handleSave = () => {
+  // Save changes to backend database & publish
+  const handleSave = async () => {
     setSaving(true);
-    const success = saveHeroMasterConfig(masterConfig);
-    setTimeout(() => {
-      setSaving(false);
-      if (success) {
-        // Guarantee state is 100% in sync with localStorage
-        setMasterConfig(getHeroMasterConfig());
-        addToast("Hero & Lookbook Studio updated live across Storefront!", "success");
+    try {
+      const result = await saveHeroMasterConfig(masterConfig);
+      if (result?.backendError) {
+        addToast(`Saved locally, but backend sync had issue: ${result.backendError}`, "warning");
       } else {
-        addToast("Failed to save changes. Please try again.", "error");
+        addToast("Hero banner & text successfully saved to backend database!", "success");
       }
-    }, 250);
+      setMasterConfig(result?.config || getHeroMasterConfig());
+    } catch (err) {
+      console.error("Error saving hero master config:", err);
+      addToast(err.response?.data?.message || "Failed to save to backend. Please check connection.", "error");
+    } finally {
+      setSaving(false);
+    }
   };
 
   // Reset to default
-  const handleReset = () => {
+  const handleReset = async () => {
     if (window.confirm("Reset all Hero Slides, Bento Cards, and Archived Lookbook to defaults?")) {
-      resetHeroMasterConfig();
+      setSaving(true);
+      await resetHeroMasterConfig();
       setMasterConfig(getHeroMasterConfig());
+      setSaving(false);
       addToast("Reset all Hero & Lookbook components to pristine defaults.", "info");
     }
   };
@@ -901,7 +929,7 @@ const HeroShowcaseEdit = () => {
                   </p>
                 </div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  Zero Database • Instant Local
+                  Cloud & DB Persisted
                 </span>
               </div>
 
@@ -916,7 +944,7 @@ const HeroShowcaseEdit = () => {
                       Upload Model Photo From Computer
                     </span>
                     <span className="text-[11px] text-gray-500 font-medium">
-                      PNG/JPG/WEBP (Recommended transparent background, under 3.5MB)
+                      PNG/JPG/WEBP (Auto-saved to cloud backend for all visitors)
                     </span>
                   </div>
                 </div>
@@ -926,15 +954,17 @@ const HeroShowcaseEdit = () => {
                   ref={fileInputRef}
                   onChange={handleImageUpload}
                   accept="image/*"
+                  disabled={isUploadingImage}
                   className="hidden"
                 />
                 <button
                   type="button"
+                  disabled={isUploadingImage}
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 rounded-xl bg-black hover:bg-[#FF3B00] text-white text-xs font-black uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-xs flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl bg-black hover:bg-[#FF3B00] disabled:bg-gray-400 text-white text-xs font-black uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-xs flex items-center gap-1.5"
                 >
-                  <Upload size={13} />
-                  <span>Choose Image File</span>
+                  <Upload size={13} className={isUploadingImage ? "animate-bounce" : ""} />
+                  <span>{isUploadingImage ? "Uploading to Cloud..." : "Choose Image File"}</span>
                 </button>
               </div>
 

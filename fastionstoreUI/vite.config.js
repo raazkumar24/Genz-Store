@@ -12,6 +12,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      '/uploads': {
+        target: 'https://genz-store-x36t.onrender.com',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 })

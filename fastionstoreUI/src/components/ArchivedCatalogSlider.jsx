@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import {
   getHeroMasterConfig,
+  fetchHeroMasterConfig,
   HERO_CHANNEL_NAME,
 } from "../services/heroShowcaseService";
 
@@ -31,8 +32,11 @@ const ArchivedCatalogSlider = () => {
       }
     };
 
-    // 1. Initial check
+    // 1. Initial check + fetch fresh from backend DB
     syncLookbook();
+    fetchHeroMasterConfig().then((fresh) => {
+      if (fresh) syncLookbook(fresh);
+    });
 
     // 2. Same-window event
     const handleUpdate = (e) => syncLookbook(e.detail);

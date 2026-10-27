@@ -146,6 +146,8 @@ import collectionRoutes from './routes/collectionRoutes.js';
 import dotenv from 'dotenv';
 import path from 'path';
 
+import heroConfigRoutes from './routes/heroConfigRoutes.js';
+
 dotenv.config(); // ye line .env file ko load kar rahi hai, taki hum process.env.MONGO_URI ka use kar sakein.
 
 // Connect to the database
@@ -169,6 +171,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/collections', collectionRoutes);
+app.use('/api/hero-config', heroConfigRoutes);
 
 
 // Start the server

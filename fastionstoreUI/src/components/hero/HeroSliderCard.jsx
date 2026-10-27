@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Flame } from "lucide-react";
+import { formatHeroImageUrl } from "../../services/heroShowcaseService";
 
 /**
  * ============================================================================
@@ -126,7 +127,7 @@ export const HeroSliderCard = ({
               className="relative h-full w-full flex items-center justify-center"
             >
               <img
-                src={slide.image}
+                src={formatHeroImageUrl(slide.image)}
                 alt={slide.title}
                 className="h-full w-auto max-h-full max-w-full object-contain object-bottom drop-shadow-xl select-none pointer-events-none"
               />

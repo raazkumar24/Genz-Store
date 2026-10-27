@@ -1,7 +1,10 @@
+import axios from 'axios';
+import { API_URL } from './api';
+
 /**
  * Master Hero & Homepage Configuration Service
  * Controls all Hero bento grid components:
- * 1. Main Hero Editorial Slides
+ * 1. Main Hero Editorial Slides (Left 8-col slider)
  * 2. Right Bento Spotlight Card (Oversized Boxy Showcase)
  * 3. Right Bento Tactical Drop Card
  * 4. Archived Catalog Lifestyle Lookbook Carousel (Matches Streetwear Drops UI)
@@ -9,6 +12,23 @@
 
 const SPOTLIGHT_STORAGE_KEY = "genz_hero_spotlight_config";
 const MASTER_STORAGE_KEY = "genz_hero_master_config";
+export const HERO_CHANNEL_NAME = "genz_hero_channel";
+
+const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+});
+
+export const formatHeroImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url;
+  }
+  if (url.startsWith('/uploads')) {
+    const base = API_URL.replace(/\/api$/, '');
+    return `${base}${url}`;
+  }
+  return url;
+};
 
 export const DEFAULT_HERO_SLIDES = [
   {
@@ -131,13 +151,32 @@ export const DEFAULT_MASTER_CONFIG = {
 };
 
 /**
- * Retrieve master homepage & hero configuration
+ * Sanitizes and fills any missing fields with defaults
+ */
+const sanitizeConfig = (raw) => {
+  if (!raw || typeof raw !== 'object') return DEFAULT_MASTER_CONFIG;
+  return {
+    slides: Array.isArray(raw.slides) && raw.slides.length > 0 ? raw.slides : DEFAULT_HERO_SLIDES,
+    spotlight: { ...DEFAULT_HERO_SPOTLIGHT, ...(raw.spotlight || {}) },
+    tactical: { ...DEFAULT_TACTICAL_DROP, ...(raw.tactical || {}) },
+    archivedCatalog: {
+      ...DEFAULT_ARCHIVED_CATALOG,
+      ...(raw.archivedCatalog || {}),
+      cards:
+        Array.isArray(raw.archivedCatalog?.cards) && raw.archivedCatalog.cards.length > 0
+          ? raw.archivedCatalog.cards
+          : DEFAULT_ARCHIVED_CATALOG.cards,
+    },
+  };
+};
+
+/**
+ * Synchronous local retrieval for instant mount (avoids layout shift)
  */
 export const getHeroMasterConfig = () => {
   try {
     const raw = localStorage.getItem(MASTER_STORAGE_KEY);
     if (!raw) {
-      // Check legacy spotlight config
       const legacySpotlight = localStorage.getItem(SPOTLIGHT_STORAGE_KEY);
       if (legacySpotlight) {
         try {
@@ -153,85 +192,153 @@ export const getHeroMasterConfig = () => {
       return DEFAULT_MASTER_CONFIG;
     }
     const parsed = JSON.parse(raw);
-    return {
-      slides: Array.isArray(parsed.slides) ? parsed.slides : DEFAULT_HERO_SLIDES,
-      spotlight: { ...DEFAULT_HERO_SPOTLIGHT, ...(parsed.spotlight || {}) },
-      tactical: { ...DEFAULT_TACTICAL_DROP, ...(parsed.tactical || {}) },
-      archivedCatalog: {
-        ...DEFAULT_ARCHIVED_CATALOG,
-        ...(parsed.archivedCatalog || {}),
-        cards:
-          Array.isArray(parsed.archivedCatalog?.cards) &&
-          parsed.archivedCatalog.cards.length > 0
-            ? parsed.archivedCatalog.cards
-            : DEFAULT_ARCHIVED_CATALOG.cards,
-      },
-    };
+    return sanitizeConfig(parsed);
   } catch (e) {
     console.error("Error reading hero master config:", e);
     return DEFAULT_MASTER_CONFIG;
   }
 };
 
-export const HERO_CHANNEL_NAME = "genz_hero_channel";
+/**
+ * Asynchronous fetch from backend database with localStorage fallback
+ */
+export const fetchHeroMasterConfig = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/hero-config`, { timeout: 10000 });
+    if (response.data) {
+      const sanitized = sanitizeConfig(response.data);
+      // Cache in localStorage for instant subsequent loads
+      try {
+        localStorage.setItem(MASTER_STORAGE_KEY, JSON.stringify(sanitized));
+        localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(sanitized.spotlight));
+      } catch (storageErr) {
+        console.warn("Could not cache to localStorage:", storageErr.message);
+      }
+
+      // Dispatch live update events
+      window.dispatchEvent(new CustomEvent("heroConfigUpdated", { detail: sanitized }));
+      window.dispatchEvent(new CustomEvent("heroSpotlightUpdated", { detail: sanitized.spotlight }));
+
+      return sanitized;
+    }
+  } catch (err) {
+    console.warn("Failed to fetch hero config from backend, using local fallback:", err.message);
+  }
+  return getHeroMasterConfig();
+};
 
 /**
- * Save master configuration and trigger live updates across the storefront (both same-tab and cross-tab)
+ * Upload an image file for Hero slide/card directly to backend / Cloudinary
+ * Returns permanent URL (e.g. https://res.cloudinary.com/... or /uploads/...)
  */
-export const saveHeroMasterConfig = (config) => {
+export const uploadHeroImageFile = async (file) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await axios.post(`${API_URL}/hero-config/upload-image`, formData, {
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "multipart/form-data",
+    },
+    timeout: 30000,
+  });
+
+  if (!response.data?.url) {
+    throw new Error(response.data?.message || "Failed to get image URL from server");
+  }
+
+  return response.data.url;
+};
+
+/**
+ * Save master configuration to backend database and update local state
+ */
+export const saveHeroMasterConfig = async (config) => {
+  const current = getHeroMasterConfig();
+  const merged = {
+    slides:
+      Array.isArray(config.slides) && config.slides.length > 0
+        ? config.slides
+        : current.slides || DEFAULT_HERO_SLIDES,
+    spotlight: { ...current.spotlight, ...(config.spotlight || {}) },
+    tactical: { ...current.tactical, ...(config.tactical || {}) },
+    archivedCatalog: {
+      ...current.archivedCatalog,
+      ...(config.archivedCatalog || {}),
+    },
+  };
+
+  // 1. Optimistic local cache & event trigger for instant preview
   try {
-    const current = getHeroMasterConfig();
-    const merged = {
-      slides:
-        Array.isArray(config.slides) && config.slides.length > 0
-          ? config.slides
-          : current.slides || DEFAULT_HERO_SLIDES,
-      spotlight: { ...current.spotlight, ...(config.spotlight || {}) },
-      tactical: { ...current.tactical, ...(config.tactical || {}) },
-      archivedCatalog: {
-        ...current.archivedCatalog,
-        ...(config.archivedCatalog || {}),
-      },
-    };
-
     localStorage.setItem(MASTER_STORAGE_KEY, JSON.stringify(merged));
-    localStorage.setItem(
-      SPOTLIGHT_STORAGE_KEY,
-      JSON.stringify(merged.spotlight)
-    );
+    localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(merged.spotlight));
+  } catch (err) {
+    console.warn("Could not write to localStorage (quota or disabled):", err.message);
+  }
 
-    // 1. Same-window CustomEvent
-    window.dispatchEvent(
-      new CustomEvent("heroConfigUpdated", { detail: merged })
-    );
-    window.dispatchEvent(
-      new CustomEvent("heroSpotlightUpdated", { detail: merged.spotlight })
-    );
+  window.dispatchEvent(new CustomEvent("heroConfigUpdated", { detail: merged }));
+  window.dispatchEvent(new CustomEvent("heroSpotlightUpdated", { detail: merged.spotlight }));
 
-    // 2. Cross-tab BroadcastChannel notification
-    if (typeof BroadcastChannel !== "undefined") {
-      try {
-        const channel = new BroadcastChannel(HERO_CHANNEL_NAME);
-        channel.postMessage({ type: "HERO_CONFIG_UPDATED", config: merged });
-        channel.close();
-      } catch {}
+  if (typeof BroadcastChannel !== "undefined") {
+    try {
+      const channel = new BroadcastChannel(HERO_CHANNEL_NAME);
+      channel.postMessage({ type: "HERO_CONFIG_UPDATED", config: merged });
+      channel.close();
+    } catch {}
+  }
+
+  // 2. Persist to Backend MongoDB
+  try {
+    const response = await axios.put(`${API_URL}/hero-config`, merged, {
+      headers: {
+        ...getAuthHeaders(),
+        "Content-Type": "application/json",
+      },
+      timeout: 15000,
+    });
+
+    if (response.data?.config) {
+      const sanitized = sanitizeConfig(response.data.config);
+      localStorage.setItem(MASTER_STORAGE_KEY, JSON.stringify(sanitized));
+      return { success: true, config: sanitized };
     }
-
-    return true;
-  } catch (e) {
-    console.error("Error saving hero master config:", e);
-    return false;
+    return { success: true, config: merged };
+  } catch (backendErr) {
+    console.error("Backend error saving hero config:", backendErr);
+    // Return partial success if saved locally, with error message
+    return {
+      success: true,
+      savedLocally: true,
+      backendError: backendErr.response?.data?.message || backendErr.message,
+      config: merged,
+    };
   }
 };
 
 /**
- * Reset all Hero configurations to pristine defaults
+ * Reset all Hero configurations to pristine defaults both on backend and locally
  */
-export const resetHeroMasterConfig = () => {
+export const resetHeroMasterConfig = async () => {
   try {
+    // 1. Backend reset call
+    try {
+      await axios.post(
+        `${API_URL}/hero-config/reset`,
+        {},
+        {
+          headers: getAuthHeaders(),
+          timeout: 10000,
+        }
+      );
+    } catch (backendErr) {
+      console.warn("Backend reset failed, resetting local store:", backendErr.message);
+    }
+
+    // 2. Clear localStorage
     localStorage.removeItem(MASTER_STORAGE_KEY);
     localStorage.removeItem(SPOTLIGHT_STORAGE_KEY);
 
+    // 3. Dispatch events
     window.dispatchEvent(
       new CustomEvent("heroConfigUpdated", { detail: DEFAULT_MASTER_CONFIG })
     );

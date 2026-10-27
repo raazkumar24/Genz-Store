@@ -4,6 +4,7 @@ import { fetchPopularColors } from "../services/productService";
 import {
   getHeroSpotlightConfig,
   getHeroMasterConfig,
+  fetchHeroMasterConfig,
   HERO_CHANNEL_NAME,
 } from "../services/heroShowcaseService";
 import { useProducts } from "../context/ProductContext";
@@ -70,8 +71,11 @@ const Hero = () => {
       }
     };
 
-    // 1. Initial sync on mount
+    // 1. Initial sync on mount from cache + live fetch from backend DB
     syncConfig();
+    fetchHeroMasterConfig().then((fresh) => {
+      if (fresh) syncConfig(fresh);
+    });
 
     // 2. Same-window custom events (from admin panel in same tab)
     const handleMasterUpdate = (e) => syncConfig(e.detail);
