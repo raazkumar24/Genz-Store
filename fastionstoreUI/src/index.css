@@ -3,23 +3,33 @@
 @source "./src";
 
 :root {
-  /* Backgrounds: Standardized warm architectural off-white canvas */
+  /* Architectural Canvas & Monochrome */
   --color-bg: #F4F4F0; 
   --color-bg-secondary: #FFFFFF;
   --color-surface: #EFEFEA;
   --color-surface-hover: #E5E5DE;
+  --color-dark: #0D0D11;
+  --color-dark-surface: #14151B;
 
-  /* Primary Streetwear Accent */
-  --color-primary: #FF2E00; /* Vibrant Electric Crimson */
-  --color-primary-hover: #E02600;
-  --color-primary-light: #FFF0ED;
+  /* Signature Streetwear Accents */
+  --color-primary: #e34234;       /* Cinnabar Flame / High-End Vermilion */
+  --color-primary-hover: #c93326;
+  --color-primary-light: #fdf1ef;
+
+  --color-volt: #d4ff3f;          /* Electric Acid Lime / Volt Neon */
+  --color-volt-hover: #bde829;
+  --color-volt-light: #f7fee2;
+
+  --color-lilac: #cbb3eb;         /* Digital Lavender / Aesthetic Lilac */
+  --color-lilac-hover: #b598dc;
+  --color-lilac-light: #f6f1fc;
 
   /* Text */
   --color-text: #0D0D11; /* Pitch Soft Black */
   --color-text-muted: #6B6B76; /* Sophisticated Neutral Slate */
   --color-text-subtle: #9898A4;
 
-  /* Accent */
+  /* Accent Secondary */
   --color-accent: #0044FF; /* Hyper Blue */
   --color-accent-hover: #0033CC;
 
@@ -27,11 +37,12 @@
   --color-border: #E8E8E2;
   --color-border-subtle: #F0F0EA;
   --color-success: #10B981;
-  --color-error: #EF4444;
+  --color-error: #e34234;
   --color-white: #FFFFFF;
 
-  /* Typography */
-  --font-heading: 'Poppins', sans-serif;
+  /* Typography Architecture: Curated Avant-Garde Streetwear */
+  --font-heading: 'Syne', 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Syne', 'Bebas Neue', sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Space Grotesk', monospace;
   --font-condensed: 'Bebas Neue', 'Anton', sans-serif;
@@ -163,72 +174,81 @@ div[class*="h-1.5"][class*="w-1.5"],
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Text outline / hollow stroked typography utilities (matches crisp LOOKS & DROPS streetwear reference) */
+/* Accent Typography Utilities (Solid high-fashion streetwear typography - zero vector artifacts) */
 .text-outline-primary,
-.text-outline-red,
-.text-outline-dark,
-.text-outline-black,
-.text-outline-white {
+.text-outline-red {
   display: inline-block;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.03em !important;
+  color: #e34234 !important;
+  -webkit-text-fill-color: #e34234 !important;
+  -webkit-text-stroke: 0 !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
   line-height: 1.1;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  paint-order: stroke fill;
   max-width: 100%;
   word-break: break-word;
 }
 
-.text-outline-primary {
-  -webkit-text-stroke: 1.5px var(--color-primary);
+.text-outline-volt {
+  display: inline-block;
+  color: #d4ff3f !important;
+  -webkit-text-fill-color: #d4ff3f !important;
+  -webkit-text-stroke: 0 !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1;
 }
 
-.text-outline-red {
-  -webkit-text-stroke: 1.5px #FF2E00;
+.text-outline-lilac {
+  display: inline-block;
+  color: #cbb3eb !important;
+  -webkit-text-fill-color: #cbb3eb !important;
+  -webkit-text-stroke: 0 !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1;
 }
 
 .text-outline-dark,
 .text-outline-black {
-  -webkit-text-stroke: 1.5px #0D0D11;
+  display: inline-block;
+  color: #0D0D11 !important;
+  -webkit-text-fill-color: #0D0D11 !important;
+  -webkit-text-stroke: 0 !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1;
 }
 
 .text-outline-white {
-  -webkit-text-stroke: 1.5px #FFFFFF;
+  display: inline-block;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  -webkit-text-stroke: 0 !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1;
 }
 
-@media (min-width: 640px) {
-  .text-outline-primary {
-    -webkit-text-stroke: 2px var(--color-primary);
-  }
-  .text-outline-red {
-    -webkit-text-stroke: 2px #FF2E00;
-  }
-  .text-outline-dark,
-  .text-outline-black {
-    -webkit-text-stroke: 2px #0D0D11;
-  }
-  .text-outline-white {
-    -webkit-text-stroke: 2px #FFFFFF;
-  }
-}
+/* Curated Streetwear Color Accent Classes */
+.text-volt { color: #d4ff3f !important; }
+.bg-volt { background-color: #d4ff3f !important; }
+.border-volt { border-color: #d4ff3f !important; }
 
-@media (min-width: 1024px) {
-  .text-outline-primary {
-    -webkit-text-stroke: 2.25px var(--color-primary);
-  }
-  .text-outline-red {
-    -webkit-text-stroke: 2.25px #FF2E00;
-  }
-  .text-outline-dark,
-  .text-outline-black {
-    -webkit-text-stroke: 2.25px #0D0D11;
-  }
-}
+.text-lilac { color: #cbb3eb !important; }
+.bg-lilac { background-color: #cbb3eb !important; }
+.border-lilac { border-color: #cbb3eb !important; }
+
+.text-cinnabar { color: #e34234 !important; }
+.bg-cinnabar { background-color: #e34234 !important; }
+.border-cinnabar { border-color: #e34234 !important; }
 
 /* Bento Grid & Technical Streetwear UI Tokens (Crafted for tactile editorial feel) */
 .bento-card {

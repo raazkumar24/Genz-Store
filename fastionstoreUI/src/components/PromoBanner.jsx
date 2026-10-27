@@ -107,8 +107,8 @@ const PromoBanner = () => {
             {/* Left Side: Typography & Copy */}
             <div className="max-w-2xl text-left flex-1 space-y-5">
               {/* Top Pill / Badge (NO //) */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none border border-[#FF3B00]/40 bg-[#FF3B00]/10">
-                <span className="text-[10px] md:text-[11px] font-mono font-bold uppercase tracking-widest text-[#FF3B00]">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none border border-[#e34234]/40 bg-[#e34234]/10">
+                <span className="text-[10px] md:text-[11px] font-mono font-bold uppercase tracking-widest text-[#e34234]">
                   LIMITED ARCHIVAL CLEARANCE - FINAL BATCH
                 </span>
               </div>
@@ -121,7 +121,7 @@ const PromoBanner = () => {
                 >
                   SEASONAL{" "}
                   <span
-                    className="font-normal lowercase text-[#FF3B00] tracking-normal"
+                    className="font-normal lowercase text-[#e34234] tracking-normal"
                     style={{ fontFamily: "var(--font-serif-italic)" }}
                   >
                     clearance
@@ -139,7 +139,7 @@ const PromoBanner = () => {
               {/* Technical Specifications Grid */}
               <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-3 pb-2 border-y border-neutral-800/80">
                 <div>
-                  <p className="text-base sm:text-xl font-black text-[#FF3B00] font-mono">
+                  <p className="text-base sm:text-xl font-black text-[#e34234] font-mono">
                     UP TO {discountPercent}%
                   </p>
                   <p className="text-[10px] sm:text-[11px] text-neutral-400 font-bold uppercase tracking-wider mt-0.5">
@@ -168,7 +168,7 @@ const PromoBanner = () => {
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link
                   to={productUrl}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-none bg-white hover:bg-[#FF3B00] text-neutral-950 hover:text-white text-xs font-black uppercase tracking-wider transition-colors shadow-xs"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-none bg-white hover:bg-[#e34234] text-neutral-950 hover:text-white text-xs font-black uppercase tracking-wider transition-colors shadow-xs"
                 >
                   <span>COP DROP FOR ₹{salePrice}</span>
                   <ArrowUpRight size={15} strokeWidth={2.5} />
@@ -203,7 +203,7 @@ const PromoBanner = () => {
 
                   {/* Top-Left Badge (NO //) */}
                   <div className="absolute top-2.5 left-2.5">
-                    <span className="rounded-none bg-[#FF3B00] text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider">
+                    <span className="rounded-none bg-[#e34234] text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider">
                       SAVE {discountPercent}% - ₹{salePrice}
                     </span>
                   </div>
@@ -222,11 +222,11 @@ const PromoBanner = () => {
                     <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
                       02-04-GIYU - BLACK
                     </p>
-                    <h3 className="text-xs sm:text-[13px] font-black uppercase text-white truncate tracking-tight mt-0.5 group-hover:text-[#FF3B00] transition-colors">
+                    <h3 className="text-xs sm:text-[13px] font-black uppercase text-white truncate tracking-tight mt-0.5 group-hover:text-[#e34234] transition-colors">
                       {productName}
                     </h3>
                   </div>
-                  <span className="text-sm font-mono font-black text-[#FF3B00] shrink-0">
+                  <span className="text-sm font-mono font-black text-[#e34234] shrink-0">
                     ₹{salePrice}
                   </span>
                 </div>

@@ -76,10 +76,10 @@ export const SectionHeading = ({
       {actionText && actionLink && (
         <Link
           to={actionLink}
-          className="group inline-flex items-center gap-2 text-xs sm:text-sm font-mono font-black uppercase tracking-wider text-neutral-900 hover:text-[#FF3B00] transition-colors shrink-0"
+          className="group inline-flex items-center gap-2 text-xs sm:text-sm font-mono font-black uppercase tracking-wider text-neutral-900 hover:text-[#e34234] transition-colors shrink-0"
         >
           <span>{actionText}</span>
-          <span className="flex h-7 w-7 items-center justify-center rounded-none bg-neutral-900 text-white group-hover:bg-[#FF3B00] transition-colors">
+          <span className="flex h-7 w-7 items-center justify-center rounded-none bg-neutral-900 text-white group-hover:bg-[#e34234] transition-colors">
             <ArrowUpRight size={14} strokeWidth={2.5} />
           </span>
         </Link>

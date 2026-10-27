@@ -444,8 +444,8 @@ const ProductDetails = () => {
                   </span>
                 </div>
 
-                <span className="text-[11px] font-mono font-bold text-[#FF3B00] flex items-center gap-1.5">
-                  <Eye size={13} className="text-[#FF3B00]" />
+                <span className="text-[11px] font-mono font-bold text-[#e34234] flex items-center gap-1.5">
+                  <Eye size={13} className="text-[#e34234]" />
                   <span>{liveViewers} viewing this fit</span>
                 </span>
               </div>
@@ -484,7 +484,7 @@ const ProductDetails = () => {
                     </span>
                   )}
                   {isSaleActive && discountPercent > 0 && (
-                    <span className="rounded-none bg-[#FF3B00] text-white px-2 py-0.5 text-xs font-mono font-black uppercase tracking-wider">
+                    <span className="rounded-none bg-[#e34234] text-white px-2 py-0.5 text-xs font-mono font-black uppercase tracking-wider">
                       {discountPercent}% OFF • SAVE ₹{savingsAmount}
                     </span>
                   )}
@@ -504,7 +504,7 @@ const ProductDetails = () => {
                 <div className="flex items-center justify-between text-xs font-mono tracking-wider">
                   <span className="text-sm font-black uppercase text-neutral-900 tracking-tight">
                     COLOUR:{" "}
-                    <span className="text-[#FF3B00] font-black">
+                    <span className="text-[#e34234] font-black">
                       {selectedColor || "SELECT"}
                     </span>
                   </span>
@@ -544,7 +544,7 @@ const ProductDetails = () => {
                         <div
                           className={`relative w-14 h-18 sm:w-16 sm:h-20 rounded-2xl overflow-hidden bg-[#F7F7F5] transition-all duration-200 flex items-center justify-center p-1.5 ${
                             isSelected
-                              ? "border-2 border-[#FF3B00] shadow-[0_0_0_3px_rgba(255,59,0,0.22)] scale-105"
+                              ? "border-2 border-[#e34234] shadow-[0_0_0_3px_rgba(227,66,52,0.22)] scale-105"
                               : "border border-neutral-300/80 hover:border-neutral-500 hover:scale-[1.02]"
                           }`}
                         >
@@ -573,7 +573,7 @@ const ProductDetails = () => {
                         <span
                           className={`mt-1.5 block text-[11px] font-mono uppercase tracking-wider text-center max-w-[68px] truncate transition-colors ${
                             isSelected
-                              ? "font-black text-[#FF3B00]"
+                              ? "font-black text-[#e34234]"
                               : "font-semibold text-neutral-700 group-hover:text-black"
                           }`}
                         >
@@ -595,7 +595,7 @@ const ProductDetails = () => {
                     </span>
                   </span>
 
-                  <span className="text-[#FF3B00] flex items-center gap-1 text-[11px] font-bold">
+                  <span className="text-[#e34234] flex items-center gap-1 text-[11px] font-bold">
                     <Ruler size={12} /> {selectedSize || "XL"}: Chest 48 in /
                     Length 30.5 in
                   </span>
@@ -665,7 +665,7 @@ const ProductDetails = () => {
                         ? "bg-emerald-600 hover:bg-emerald-700 text-white"
                         : isAlreadyInCart
                           ? "bg-neutral-900 hover:bg-black text-white"
-                          : "bg-[#FF3B00] hover:bg-[#e03400] text-white"
+                          : "bg-[#e34234] hover:bg-[#c93326] text-white"
                     }`}
                   >
                     {justAdded ? (
@@ -711,7 +711,7 @@ const ProductDetails = () => {
                       size={18}
                       className={
                         product && isInWishlist(product._id)
-                          ? "fill-[#FF3B00] text-[#FF3B00]"
+                          ? "fill-[#e34234] text-[#e34234]"
                           : "text-neutral-700"
                       }
                     />
@@ -737,7 +737,7 @@ const ProductDetails = () => {
               {/* Row 8: Pincode Delivery Speed Checker */}
               <div className="pt-3 border-t border-neutral-200/80">
                 <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-neutral-700 mb-2 flex items-center gap-1.5">
-                  <MapPin size={13} className="text-[#FF3B00]" />
+                  <MapPin size={13} className="text-[#e34234]" />
                   Check Delivery Speed & Cash on Delivery
                 </p>
                 <form onSubmit={handlePincodeCheck} className="flex gap-2">
@@ -777,7 +777,7 @@ const ProductDetails = () => {
               {/* 4 Pillars of Streetwear Trust */}
               <div className="grid grid-cols-2 gap-2 border-t pt-3 border-neutral-200/80">
                 <div className="flex items-center gap-2 p-2 rounded-none bg-neutral-50 border border-neutral-200/60">
-                  <Zap size={14} className="text-[#FF3B00] shrink-0" />
+                  <Zap size={14} className="text-[#e34234] shrink-0" />
                   <div className="min-w-0">
                     <p className="text-[10px] font-mono font-bold uppercase text-neutral-900 leading-tight">
                       Fast Dispatch
@@ -789,7 +789,7 @@ const ProductDetails = () => {
                 </div>
 
                 <div className="flex items-center gap-2 p-2 rounded-none bg-neutral-50 border border-neutral-200/60">
-                  <Layers size={14} className="text-[#FF3B00] shrink-0" />
+                  <Layers size={14} className="text-[#e34234] shrink-0" />
                   <div className="min-w-0">
                     <p className="text-[10px] font-mono font-bold uppercase text-neutral-900 leading-tight">
                       280 GSM Cotton
@@ -801,7 +801,7 @@ const ProductDetails = () => {
                 </div>
 
                 <div className="flex items-center gap-2 p-2 rounded-none bg-neutral-50 border border-neutral-200/60">
-                  <RotateCcw size={14} className="text-[#FF3B00] shrink-0" />
+                  <RotateCcw size={14} className="text-[#e34234] shrink-0" />
                   <div className="min-w-0">
                     <p className="text-[10px] font-mono font-bold uppercase text-neutral-900 leading-tight">
                       14-Day Exchanges
@@ -813,7 +813,7 @@ const ProductDetails = () => {
                 </div>
 
                 <div className="flex items-center gap-2 p-2 rounded-none bg-neutral-50 border border-neutral-200/60">
-                  <ShieldCheck size={14} className="text-[#FF3B00] shrink-0" />
+                  <ShieldCheck size={14} className="text-[#e34234] shrink-0" />
                   <div className="min-w-0">
                     <p className="text-[10px] font-mono font-bold uppercase text-neutral-900 leading-tight">
                       100% Authentic
@@ -865,7 +865,7 @@ const ProductDetails = () => {
                     onClick={() => setActiveImage(img)}
                     className={`h-16 w-16 overflow-hidden rounded-none border-2 transition cursor-pointer ${
                       activeImage === img
-                        ? "border-[#FF3B00]"
+                        ? "border-[#e34234]"
                         : "border-transparent opacity-60"
                     }`}
                   >
@@ -1045,7 +1045,7 @@ const ProductDetails = () => {
             <p className="text-[11px] font-mono font-black uppercase text-neutral-900 truncate leading-tight">
               {product.name}
             </p>
-            <p className="text-sm font-mono font-black text-[#FF3B00]">
+            <p className="text-sm font-mono font-black text-[#e34234]">
               ₹{currentPrice}
             </p>
           </div>
@@ -1064,7 +1064,7 @@ const ProductDetails = () => {
               size={18}
               className={
                 product && isInWishlist(product._id)
-                  ? "fill-[#FF3B00] text-[#FF3B00]"
+                  ? "fill-[#e34234] text-[#e34234]"
                   : "text-neutral-700"
               }
             />
@@ -1072,7 +1072,7 @@ const ProductDetails = () => {
           <button
             onClick={handleAddToCart}
             disabled={isAddDisabled}
-            className="h-10 px-4 text-xs font-mono font-black uppercase tracking-wider bg-[#FF3B00] text-white rounded-none shadow-xs shrink-0 disabled:bg-neutral-300 disabled:cursor-not-allowed"
+            className="h-10 px-4 text-xs font-mono font-black uppercase tracking-wider bg-[#e34234] text-white rounded-none shadow-xs shrink-0 disabled:bg-neutral-300 disabled:cursor-not-allowed"
           >
             {isAddDisabled ? "Sold Out" : "Add to Bag"}
           </button>

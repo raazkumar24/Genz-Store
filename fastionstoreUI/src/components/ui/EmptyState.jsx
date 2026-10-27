@@ -71,7 +71,7 @@ export const EmptyState = ({
             className="group inline-flex items-center gap-3 rounded-none bg-neutral-900 hover:bg-black text-white pl-6 pr-2.5 py-2.5 text-xs font-mono font-black uppercase tracking-wider transition-all shadow-md active:scale-95"
           >
             <span>{actionText || "Explore Catalog"}</span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-neutral-900 group-hover:bg-[#FF3B00] group-hover:text-white transition-colors">
+            <span className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-neutral-900 group-hover:bg-[#e34234] group-hover:text-white transition-colors">
               <ArrowUpRight size={14} strokeWidth={2.5} />
             </span>
           </Link>
@@ -79,7 +79,7 @@ export const EmptyState = ({
           <button
             type="button"
             onClick={onActionClick}
-            className="px-6 py-2.5 rounded-none bg-neutral-900 text-white text-xs font-mono font-black uppercase tracking-wider hover:bg-[#FF3B00] transition-colors cursor-pointer shadow-xs active:scale-95"
+            className="px-6 py-2.5 rounded-none bg-neutral-900 text-white text-xs font-mono font-black uppercase tracking-wider hover:bg-[#e34234] transition-colors cursor-pointer shadow-xs active:scale-95"
           >
             {actionText || "Reset Filters"}
           </button>

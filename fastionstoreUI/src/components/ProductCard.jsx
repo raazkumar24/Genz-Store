@@ -191,7 +191,7 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
         {/* Top-Left Technical Badges (Compact on mobile so garment artwork stays unobstructed) */}
         <div className="absolute top-2 left-2 md:top-2.5 md:left-2.5 z-20 flex flex-row sm:flex-col items-start gap-1 pointer-events-none max-w-[80%] flex-wrap">
           {isSaleActive && discountPercent > 0 && (
-            <span className="rounded-none bg-[#FF3B00] text-white px-1.5 py-0.5 text-[8px] md:text-[10px] font-black uppercase tracking-wider shadow-2xs">
+            <span className="rounded-none bg-[#e34234] text-white px-1.5 py-0.5 text-[8px] md:text-[10px] font-black uppercase tracking-wider shadow-2xs">
               {discountPercent}% OFF
             </span>
           )}
@@ -227,7 +227,7 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
           <Heart
             size={14}
             className={`transition-all duration-200 ${
-              isFav ? "fill-[#FF3B00] text-[#FF3B00]" : "text-neutral-700 hover:text-black"
+              isFav ? "fill-[#e34234] text-[#e34234]" : "text-neutral-700 hover:text-black"
             }`}
             strokeWidth={2.2}
           />
@@ -245,7 +245,7 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
             <span className="text-neutral-400 font-bold">
               {added ? "ITEM ADDED TO BAG!" : isItemInCart ? "ALREADY IN BAG • SELECT SIZE:" : "QUICK ADD SIZE:"}
             </span>
-            <span className="text-[#FF3B00] font-black">BOXY DROP-SHOULDER</span>
+            <span className="text-[#e34234] font-black">BOXY DROP-SHOULDER</span>
           </div>
 
           <div className="grid grid-cols-5 gap-1 pt-0.5">
@@ -281,7 +281,7 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
                     isSzInCart
                       ? "bg-emerald-700 text-white shadow-xs font-black"
                       : isSelectedSz
-                      ? "bg-[#FF3B00] text-white shadow-xs"
+                      ? "bg-[#e34234] text-white shadow-xs"
                       : isSzInStock
                       ? "bg-neutral-800 text-neutral-200 hover:bg-neutral-700 hover:text-white"
                       : "bg-neutral-900 text-neutral-600 line-through cursor-not-allowed"
@@ -322,12 +322,13 @@ const ProductCard = ({ product, highlight: highlightProp = false, dark = false }
         <div className="flex items-baseline justify-between gap-2 pt-0.5">
           <Link
             to={productUrl}
-            className="flex-1 min-w-0 group-hover:text-[#FF3B00] transition-colors"
+            className="flex-1 min-w-0 group-hover:text-[#e34234] transition-colors"
           >
             <h2
               className={`text-xs sm:text-[13px] md:text-[14px] font-black uppercase tracking-tight truncate leading-snug ${
                 dark ? "text-white" : "text-neutral-950"
               }`}
+              style={{ fontFamily: "var(--font-heading)" }}
               title={product.name}
             >
               {product.name}

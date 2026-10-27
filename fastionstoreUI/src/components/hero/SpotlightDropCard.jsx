@@ -56,11 +56,11 @@ export const SpotlightDropCard = ({
               : "bg-white/10 text-neutral-200 border border-white/10"
           }`}
         >
-          <span className="h-1.5 w-1.5 rounded-none bg-[#FF3B00]" />
+          <span className="h-1.5 w-1.5 rounded-none bg-[#e34234]" />
           {spotlightBadge}
         </span>
 
-        <span className="text-[11px] font-mono font-black uppercase tracking-wider text-[#FF3B00]">
+        <span className="text-[11px] font-mono font-black uppercase tracking-wider text-[#e34234]">
           {spotlightTag}
         </span>
       </div>
@@ -88,7 +88,7 @@ export const SpotlightDropCard = ({
         </div>
 
         <div className="absolute top-2 right-2 z-10 pointer-events-none">
-          <span className="px-1.5 py-0.5 rounded-none bg-[#FF3B00] text-[9px] font-mono font-black text-white uppercase tracking-wider">
+          <span className="px-1.5 py-0.5 rounded-none bg-[#cbb3eb] text-black text-[9px] font-mono font-black uppercase tracking-wider shadow-2xs">
             NEW
           </span>
         </div>
@@ -102,14 +102,15 @@ export const SpotlightDropCard = ({
         <h2
           className={`text-sm sm:text-base font-black uppercase tracking-tight transition-colors line-clamp-1 ${
             isLightCard
-              ? "text-neutral-950 group-hover:text-[#FF3B00]"
-              : "text-white group-hover:text-[#FF3B00]"
+              ? "text-neutral-950 group-hover:text-[#e34234]"
+              : "text-white group-hover:text-[#e34234]"
           }`}
+          style={{ fontFamily: "var(--font-heading)" }}
         >
           {spotlightName}
         </h2>
         <div className="flex items-baseline gap-2.5 pt-0.5">
-          <span className="text-lg sm:text-xl font-mono font-black text-[#FF3B00]">
+          <span className="text-lg sm:text-xl font-mono font-black text-[#e34234]">
             ₹{spotlightPrice}
           </span>
           <span className="text-[11px] font-mono text-neutral-400 font-bold uppercase">
@@ -124,10 +125,10 @@ export const SpotlightDropCard = ({
           isLightCard ? "border-neutral-200" : "border-neutral-800"
         }`}
       >
-        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 group-hover:text-[#FF3B00] transition-colors">
+        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 group-hover:text-[#e34234] transition-colors">
           CLICK TO INSPECT SILHOUETTE
         </span>
-        <div className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-black group-hover:bg-[#FF3B00] group-hover:text-white transition-colors">
+        <div className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-black group-hover:bg-[#e34234] group-hover:text-white transition-colors">
           <ArrowUpRight size={14} strokeWidth={2.5} />
         </div>
       </div>

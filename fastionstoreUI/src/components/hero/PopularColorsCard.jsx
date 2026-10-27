@@ -22,7 +22,7 @@ export const PopularColorsCard = ({
     <div className="bg-white rounded-none border border-neutral-200/90 p-4 sm:p-5 shadow-xs flex-1 flex flex-col justify-between min-h-[140px]">
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-mono font-black uppercase tracking-wider text-neutral-950 flex items-center gap-1.5">
-          <Palette size={14} className="text-[#FF3B00]" />
+          <Palette size={14} className="text-[#e34234]" />
           Popular Colors
         </span>
         <span className="text-[10px] font-mono font-bold text-neutral-500 uppercase tracking-wider bg-neutral-100 px-2 py-0.5 rounded-none border border-neutral-200">

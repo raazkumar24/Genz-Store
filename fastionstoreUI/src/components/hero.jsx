@@ -434,7 +434,7 @@ const Hero = () => {
           {/* Popular Colors Quick Swatches */}
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-[11px] font-mono font-black uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
-              <Palette size={13} className="text-[#FF3B00]" />
+              <Palette size={13} className="text-[#e34234]" />
               POPULAR PALETTES:
             </span>
             <div className="flex items-center gap-2">
@@ -467,8 +467,8 @@ const Hero = () => {
 
             <span className="hidden sm:inline text-neutral-300">•</span>
 
-            <span className="flex items-center gap-1 text-[#FF3B00]">
-              <Flame size={12} className="fill-[#FF3B00]" />
+            <span className="flex items-center gap-1 text-[#e34234]">
+              <Flame size={12} className="fill-[#e34234]" />
               <span>DROP 04 SHIPS IN 24H</span>
             </span>
 
@@ -482,7 +482,7 @@ const Hero = () => {
                 if (el) el.scrollIntoView({ behavior: "smooth" });
                 else navigate("/new-arrivals");
               }}
-              className="text-neutral-900 hover:text-[#FF3B00] transition-colors flex items-center gap-1 font-black"
+              className="text-neutral-900 hover:text-[#e34234] transition-colors flex items-center gap-1 font-black"
             >
               <span>ARCHIVED CATALOG (460+ DROPS)</span>
               <ArrowUpRight size={12} strokeWidth={2.5} />
@@ -496,7 +496,7 @@ const Hero = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-5 sm:mb-6">
             <div>
-              <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-[#FF3B00]">
+              <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-[#e34234]">
                 01 - STUDIO CURATED SHOWCASE
               </span>
               <h2
@@ -509,7 +509,7 @@ const Hero = () => {
 
             <Link
               to="/collections/hoodies"
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-neutral-900 hover:text-[#FF3B00] transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-neutral-900 hover:text-[#e34234] transition-colors"
             >
               <span>EXPLORE ALL DROPS</span>
               <ArrowUpRight size={14} strokeWidth={2.5} />

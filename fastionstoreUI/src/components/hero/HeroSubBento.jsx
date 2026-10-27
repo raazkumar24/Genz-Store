@@ -81,7 +81,7 @@ export const VerifiedRadarComboCard = () => {
             <div className="flex h-7 w-7 items-center justify-center rounded-none bg-black text-white text-[9px] font-mono font-black">
               10K
             </div>
-            <div className="flex h-7 w-7 items-center justify-center rounded-none bg-[#FF3B00] text-white text-[9px] font-mono font-black">
+            <div className="flex h-7 w-7 items-center justify-center rounded-none bg-[#e34234] text-white text-[9px] font-mono font-black">
               <span className="flex items-center gap-0.5">
                 <span>4.9</span>
                 <Star size={8} className="fill-white text-white" />
@@ -100,9 +100,10 @@ export const VerifiedRadarComboCard = () => {
         </div>
 
         <div className="flex items-center gap-1 hidden sm:flex">
-          <span className="h-2 w-2 rounded-full bg-black" />
-          <span className="h-2 w-2 rounded-full bg-[#78350F]" />
-          <span className="h-2 w-2 rounded-full bg-[#EDE6D6]" />
+          <span className="h-2 w-2 rounded-full bg-[#0D0D11]" title="Noir Black" />
+          <span className="h-2 w-2 rounded-full bg-[#e34234]" title="Cinnabar" />
+          <span className="h-2 w-2 rounded-full bg-[#d4ff3f]" title="Volt Lime" />
+          <span className="h-2 w-2 rounded-full bg-[#cbb3eb]" title="Digital Lilac" />
         </div>
       </div>
 
@@ -112,11 +113,11 @@ export const VerifiedRadarComboCard = () => {
         className="group/radar flex items-center justify-between gap-2 pt-2.5 border-t border-neutral-100 transition-colors"
       >
         <div className="flex items-center gap-2 min-w-0">
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-none bg-[#FF3B00]/10 text-[#FF3B00] text-[9px] font-mono font-bold uppercase tracking-wider shrink-0">
-            <Flame size={10} className="fill-[#FF3B00]" />
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-none bg-[#e34234]/10 text-[#e34234] text-[9px] font-mono font-bold uppercase tracking-wider shrink-0">
+            <Flame size={10} className="fill-[#e34234]" />
             HOT RADAR
           </span>
-          <span className="text-[11px] font-mono font-bold text-neutral-900 group-hover/radar:text-[#FF3B00] transition-colors truncate">
+          <span className="text-[11px] font-mono font-bold text-neutral-900 group-hover/radar:text-[#e34234] transition-colors truncate">
             Drop 04 Ships in 24 Hours
           </span>
         </div>

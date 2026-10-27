@@ -46,11 +46,11 @@ export const TacticalDropCard = ({
       {/* 1. Top Bar: Technical Specification Badge + Category Tag Pill */}
       <div className="flex items-center justify-between gap-2 z-10">
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none text-[10px] font-mono font-bold uppercase tracking-wider bg-neutral-100 text-neutral-800 border border-neutral-200">
-          <span className="h-1.5 w-1.5 rounded-none bg-[#FF3B00]" />
+          <span className="h-1.5 w-1.5 rounded-none bg-[#e34234]" />
           {cargoBadge}
         </span>
 
-        <span className="text-[11px] font-mono font-black uppercase tracking-wider text-[#FF3B00]">
+        <span className="text-[11px] font-mono font-black uppercase tracking-wider text-[#e34234]">
           {cargoTag}
         </span>
       </div>
@@ -78,7 +78,7 @@ export const TacticalDropCard = ({
         </div>
 
         <div className="absolute top-2 right-2 z-10 pointer-events-none">
-          <span className="px-1.5 py-0.5 rounded-none bg-black text-[9px] font-mono font-black text-white uppercase tracking-wider">
+          <span className="px-1.5 py-0.5 rounded-none bg-[#d4ff3f] text-black text-[9px] font-mono font-black uppercase tracking-wider shadow-2xs">
             HOT DROP
           </span>
         </div>
@@ -89,11 +89,14 @@ export const TacticalDropCard = ({
         <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest truncate">
           {brand} • UNISEX
         </p>
-        <h2 className="text-sm sm:text-base font-black uppercase tracking-tight transition-colors line-clamp-1 text-neutral-950 group-hover:text-[#FF3B00]">
+        <h2 
+          className="text-sm sm:text-base font-black uppercase tracking-tight transition-colors line-clamp-1 text-neutral-950 group-hover:text-[#e34234]"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
           {cargoName}
         </h2>
         <div className="flex items-baseline gap-2.5 pt-0.5">
-          <span className="text-lg sm:text-xl font-mono font-black text-[#FF3B00]">
+          <span className="text-lg sm:text-xl font-mono font-black text-[#e34234]">
             ₹{cargoPrice}
           </span>
           {cargoOriginalPrice && (
@@ -111,10 +114,10 @@ export const TacticalDropCard = ({
 
       {/* 4. Bottom Action Strip: Silhouette Inspection CTA + Arrow */}
       <div className="flex items-center justify-between pt-3 mt-2 border-t border-neutral-200 z-10">
-        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 group-hover:text-[#FF3B00] transition-colors">
+        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-400 group-hover:text-[#e34234] transition-colors">
           CLICK TO INSPECT SILHOUETTE
         </span>
-        <div className="flex h-7 w-7 items-center justify-center rounded-none bg-black text-white group-hover:bg-[#FF3B00] transition-colors">
+        <div className="flex h-7 w-7 items-center justify-center rounded-none bg-black text-white group-hover:bg-[#e34234] transition-colors">
           <ArrowUpRight size={14} strokeWidth={2.5} />
         </div>
       </div>

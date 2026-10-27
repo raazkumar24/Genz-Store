@@ -309,7 +309,7 @@ const Navbar = () => {
                 }
               >
                 New Arrivals
-                <span className="flex h-1.5 w-1.5 rounded-none bg-emerald-500 animate-pulse" />
+                <span className="flex h-1.5 w-1.5 rounded-none bg-[#d4ff3f] shadow-[0_0_6px_#d4ff3f] animate-pulse" />
               </NavLink>
 
               <NavLink

@@ -82,7 +82,7 @@ const Wishlist = () => {
                 className="group inline-flex items-center gap-2.5 rounded-none bg-neutral-900 hover:bg-black text-white pl-5 pr-2 py-2 text-xs font-mono font-black uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer"
               >
                 <span>Add All To Bag</span>
-                <span className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-neutral-900 group-hover:bg-[#FF3B00] group-hover:text-white transition-colors">
+                <span className="flex h-7 w-7 items-center justify-center rounded-none bg-white text-neutral-900 group-hover:bg-[#e34234] group-hover:text-white transition-colors">
                   <ShoppingBag size={13} />
                 </span>
               </button>
