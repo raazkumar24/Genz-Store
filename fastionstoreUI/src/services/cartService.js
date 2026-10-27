@@ -24,6 +24,20 @@ export const getCartHeaders = () => {
   return headers;
 };
 
+// Automatically purge expired or invalid auth token so requests can gracefully proceed as guest
+const handleAuthError = (error) => {
+  if (error?.response?.status === 401) {
+    const msg = error.response?.data?.message || '';
+    if (msg.toLowerCase().includes('expired') || msg.toLowerCase().includes('invalid') || msg.toLowerCase().includes('token')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('role');
+      localStorage.removeItem('isAdmin');
+      window.dispatchEvent(new Event('authChange'));
+    }
+  }
+};
+
 export const addToCartAPI = async (cartItem) => {
   try {
     const response = await axios.post(`${API_URL}/cart/add`, cartItem, {
@@ -32,6 +46,7 @@ export const addToCartAPI = async (cartItem) => {
     });
     return response.data;
   } catch (error) {
+    handleAuthError(error);
     console.warn('Backend addToCartAPI warning:', error.response?.data?.message || error.message);
     return null;
   }
@@ -45,6 +60,7 @@ export const updateCartAPI = async (cartItem) => {
     });
     return response.data;
   } catch (error) {
+    handleAuthError(error);
     console.warn('Backend updateCartAPI warning:', error.response?.data?.message || error.message);
     return null;
   }
@@ -59,6 +75,7 @@ export const removeFromCartAPI = async (cartItem) => {
     });
     return response.data;
   } catch (error) {
+    handleAuthError(error);
     console.warn('Backend removeFromCartAPI warning:', error.response?.data?.message || error.message);
     return null;
   }
@@ -73,6 +90,7 @@ export const fetchCartAPI = async (userId = null) => {
     });
     return response.data;
   } catch (error) {
+    handleAuthError(error);
     console.warn('Backend fetchCartAPI warning:', error.response?.data?.message || error.message);
     return null;
   }
@@ -86,6 +104,7 @@ export const clearCartAPI = async () => {
     });
     return response.data;
   } catch (error) {
+    handleAuthError(error);
     console.warn('Backend clearCartAPI warning:', error.response?.data?.message || error.message);
     return null;
   }
@@ -100,6 +119,7 @@ export const syncCartAPI = async (items) => {
     });
     return response.data;
   } catch (error) {
+    handleAuthError(error);
     console.warn('Backend syncCartAPI warning:', error.response?.data?.message || error.message);
     return null;
   }

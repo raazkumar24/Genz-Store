@@ -74,7 +74,11 @@ const DualImageInput = ({
       }
     } catch (uploadErr) {
       console.warn("Upload fallback to local compression:", uploadErr);
-      addToast("Backend upload issue. Compressing locally...", "warning");
+      if (uploadErr.response?.status === 401) {
+        addToast("Admin session expired. Please log in again to upload images to cloud.", "error");
+      } else {
+        addToast("Backend upload issue. Compressing locally...", "warning");
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         const img = new Image();
@@ -547,7 +551,11 @@ const HeroShowcaseEdit = () => {
       addToast("Model image uploaded to cloud successfully! Click 'SAVE & PUBLISH' to persist.", "success");
     } catch (uploadErr) {
       console.warn("Direct upload error, compressing locally:", uploadErr);
-      addToast("Server upload issue. Compressing locally...", "warning");
+      if (uploadErr.response?.status === 401) {
+        addToast("Admin session expired. Please log in again to upload model image to cloud.", "error");
+      } else {
+        addToast("Server upload issue. Compressing locally...", "warning");
+      }
 
       // 2. Client-side canvas compression fallback
       const reader = new FileReader();

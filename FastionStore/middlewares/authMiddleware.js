@@ -25,9 +25,17 @@ const authMiddleware = (req, res, next) => {
     req.user = verified;
     next();
   } catch (error) {
+    // If request has guest ID or is a cart route, gracefully fallback to guest mode
+    if (req.baseUrl.includes('/cart') || req.headers['x-guest-id']) {
+      const guestId = req.headers['x-guest-id'] || `guest_${Date.now()}`;
+      req.user = { id: guestId, role: 'guest' };
+      return next();
+    }
+
     // Invalid/expired token — reject with 401 for protected routes
     return res.status(401).json({ 
-      message: "Invalid or expired token. Please login again." 
+      message: "Invalid or expired token. Please login again.",
+      code: "TOKEN_EXPIRED"
     });
   }
 };

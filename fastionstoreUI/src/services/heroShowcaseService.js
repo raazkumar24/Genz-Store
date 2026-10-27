@@ -307,11 +307,17 @@ export const saveHeroMasterConfig = async (config) => {
     return { success: true, config: merged };
   } catch (backendErr) {
     console.error("Backend error saving hero config:", backendErr);
+    let errMsg = backendErr.response?.data?.message || backendErr.message;
+    if (backendErr.response?.status === 413) {
+      errMsg = "Payload too large (413). Server body limit exceeded by large image data URLs.";
+    } else if (backendErr.response?.status === 401) {
+      errMsg = "Admin session expired or invalid (401). Please log in again to persist changes to the server.";
+    }
     // Return partial success if saved locally, with error message
     return {
       success: true,
       savedLocally: true,
-      backendError: backendErr.response?.data?.message || backendErr.message,
+      backendError: errMsg,
       config: merged,
     };
   }
